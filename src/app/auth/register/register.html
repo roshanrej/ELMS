@@ -1,0 +1,94 @@
+<div class="register-page">
+
+  <!-- LEFT PANEL (UNCHANGED THEME) -->
+  <div class="left-panel">
+    <div class="brand-mark">
+      <div class="brand-icon">
+        <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M9 2L15 6V12L9 16L3 12V6L9 2Z" stroke="#fff" stroke-width="1.2"/>
+          <circle cx="9" cy="9" r="2.2" fill="#fff"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <span class="brand-name">ELMS</span>
+        <span class="brand-sub">Leave Management System</span>
+      </div>
+    </div>
+    <div class="left-foot">&copy; 2026 ELMS</div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="right-panel">
+    <div class="form-wrap">
+
+      <h1 class="form-title">Create account</h1>
+      <p class="form-sub">Fill in your details to get started.</p>
+
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" novalidate>
+
+        <!-- NAME -->
+        <div class="field">
+          <label>Name</label>
+          <input type="text" formControlName="name" placeholder="Your name"
+            [class.input-error]="submitted && f.name.errors"/>
+          <span class="error-msg" *ngIf="submitted && f.name.errors?.['required']">
+            Name is required.
+          </span>
+        </div>
+
+        <!-- EMAIL -->
+        <div class="field">
+          <label>Email</label>
+          <input type="email" formControlName="email" placeholder="you@company.com"
+            [class.input-error]="submitted && f.email.errors"/>
+          <span class="error-msg" *ngIf="submitted && f.email.errors?.['required']">
+            Email is required.
+          </span>
+          <span class="error-msg" *ngIf="submitted && f.email.errors?.['email']">
+            Enter a valid email.
+          </span>
+        </div>
+
+        <!-- PASSWORD -->
+        <div class="field">
+          <label>Password</label>
+          <input type="password" formControlName="password" placeholder="••••••••"
+            [class.input-error]="submitted && f.password.errors"/>
+          <span class="error-msg" *ngIf="submitted && f.password.errors?.['required']">
+            Password is required.
+          </span>
+        </div>
+
+        <!-- CONFIRM PASSWORD -->
+        <div class="field">
+          <label>Confirm Password</label>
+          <input type="password" formControlName="confirmPassword" placeholder="••••••••"
+            [class.input-error]="submitted && f.confirmPassword.errors"/>
+          <span class="error-msg" *ngIf="submitted && f.confirmPassword.errors?.['required']">
+            Confirm your password.
+          </span>
+        </div>
+
+        <span class="server-error" *ngIf="serverError">{{ serverError }}</span>
+
+        <button type="submit" class="submit-btn" [disabled]="loading">
+          <span>{{ loading ? 'Creating...' : 'Create account' }}</span>
+          <svg *ngIf="!loading" viewBox="0 0 14 14" fill="none" stroke="#fff" stroke-width="1.5"
+            stroke-linecap="round">
+            <path d="M2 7h10M8 3.5L11.5 7 8 10.5" />
+          </svg>
+        </button>
+
+        <!-- BACK TO LOGIN -->
+        <p class="login-link">
+          Already have an account?
+          <a routerLink="/login">
+            Sign in
+          </a>
+        </p>
+
+      </form>
+    </div>
+  </div>
+
+</div>
