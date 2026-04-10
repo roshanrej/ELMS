@@ -1,12 +1,11 @@
 <div class="register-page">
 
-  <!-- LEFT PANEL (UNCHANGED THEME) -->
   <div class="left-panel">
     <div class="brand-mark">
       <div class="brand-icon">
         <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M9 2L15 6V12L9 16L3 12V6L9 2Z" stroke="#fff" stroke-width="1.2"/>
-          <circle cx="9" cy="9" r="2.2" fill="#fff"/>
+          <path d="M9 2L15 6V12L9 16L3 12V6L9 2Z" stroke="#fff" stroke-width="1.2" />
+          <circle cx="9" cy="9" r="2.2" fill="#fff" />
         </svg>
       </div>
       <div class="brand-text">
@@ -17,78 +16,131 @@
     <div class="left-foot">&copy; 2026 ELMS</div>
   </div>
 
-  <!-- RIGHT PANEL -->
   <div class="right-panel">
     <div class="form-wrap">
-
-      <h1 class="form-title">Create account</h1>
-      <p class="form-sub">Fill in your details to get started.</p>
+      <h1 class="form-title">Create an account</h1>
+      <p class="form-sub">Enter your credentials below to register.</p>
 
       <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" novalidate>
-
-        <!-- NAME -->
         <div class="field">
-          <label>Name</label>
-          <input type="text" formControlName="name" placeholder="Your name"
-            [class.input-error]="submitted && f.name.errors"/>
-          <span class="error-msg" *ngIf="submitted && f.name.errors?.['required']">
-            Name is required.
+          <label for="name">Username</label>
+          <input id="username" type="text" formControlName="username" placeholder="John Doe" autocomplete="username"
+            [class.input-error]="submitted && f['username'].errors" />
+          <span class="error-msg" *ngIf="submitted && f['username'].errors?.['required']">
+            Username is required.
+          </span>
+          <span class="error-msg" *ngIf="submitted && f['username'].errors?.['username']">
+            Enter a valid username.
           </span>
         </div>
 
-        <!-- EMAIL -->
         <div class="field">
-          <label>Email</label>
-          <input type="email" formControlName="email" placeholder="you@company.com"
-            [class.input-error]="submitted && f.email.errors"/>
-          <span class="error-msg" *ngIf="submitted && f.email.errors?.['required']">
+          <label for="email">Email</label>
+          <input id="email" type="email" formControlName="email" placeholder="you@company.com" autocomplete="email"
+            [class.input-error]="submitted && f['email'].errors" />
+          <span class="error-msg" *ngIf="submitted && f['email'].errors?.['required']">
             Email is required.
           </span>
-          <span class="error-msg" *ngIf="submitted && f.email.errors?.['email']">
-            Enter a valid email.
+          <span class="error-msg" *ngIf="submitted && f['email'].errors?.['email']">
+            Enter a valid email address.
           </span>
         </div>
 
-        <!-- PASSWORD -->
         <div class="field">
-          <label>Password</label>
-          <input type="password" formControlName="password" placeholder="••••••••"
-            [class.input-error]="submitted && f.password.errors"/>
-          <span class="error-msg" *ngIf="submitted && f.password.errors?.['required']">
+          <label for="department">Department</label>
+          <select id="department" formControlName="department"
+            [class.input-error]="submitted && f['department'].errors">
+            <option value="" disabled>Select a department</option>
+            <option *ngFor="let dept of departments" [value]="dept.value">{{ dept.label }}</option>
+          </select>
+          <span class="error-msg" *ngIf="submitted && f['department'].errors?.['required']">
+            Department is required.
+          </span>
+        </div>
+
+        <div class="field">
+          <div class="field-row">
+            <label for="password">Password</label>
+          </div>
+
+          <div class="input-group">
+            <input id="password" [type]="passwordVisible ? 'text' : 'password'" formControlName="password"
+              placeholder="••••••••" autocomplete="current-password"
+              [class.input-error]="submitted && f['password'].errors" />
+            <button type="button" class="password-toggle" (click)="togglePassword('password')"
+              [attr.aria-label]="passwordVisible ? 'Hide password' : 'Show password'">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="1.8" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+            </button>
+          </div>
+          <a class="forgot-link" routerLink="/forgot-password">Forgot password?</a>
+          <span class="error-msg" *ngIf="submitted && f['password'].errors?.['required']">
             Password is required.
           </span>
+          <span class="error-msg" *ngIf="submitted && f['password'].errors?.['minlength']">
+            Password must be at least 8 characters.
+          </span>
         </div>
 
-        <!-- CONFIRM PASSWORD -->
         <div class="field">
-          <label>Confirm Password</label>
-          <input type="password" formControlName="confirmPassword" placeholder="••••••••"
-            [class.input-error]="submitted && f.confirmPassword.errors"/>
-          <span class="error-msg" *ngIf="submitted && f.confirmPassword.errors?.['required']">
-            Confirm your password.
+          <div class="field-row">
+            <label for="confirm-password">Confirm Password</label>
+          </div>
+          <div class="input-group">
+
+            <input id="confirm-password" [type]="confirmPasswordVisible ? 'text' : 'password'"
+              formControlName="confirmPassword" ngOnChange="passwordCheck()" placeholder="••••••••"
+              autocomplete="current-password" [class.input-error]="submitted && f['confirmPassword'].errors" />
+
+            <button type="button" class="password-toggle" (click)="togglePassword('confirmPassword')"
+              [attr.aria-label]="confirmPasswordVisible ? 'Hide password' : 'Show password'">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="1.8" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+            </button>
+
+          </div>
+          <span class="error-msg" *ngIf="submitted && f['confirmPassword'].errors?.['required']">
+            Password is required.
           </span>
+          <span class="error-msg" *ngIf="submitted && f['confirmPassword'].errors?.['minlength']">
+            Password must be at least 8 characters.
+          </span>
+          <span class="error-msg" *ngIf="submitted && !passwordCheck()">
+            Passwords must be identical.
+          </span>
+
         </div>
 
         <span class="server-error" *ngIf="serverError">{{ serverError }}</span>
 
         <button type="submit" class="submit-btn" [disabled]="loading">
-          <span>{{ loading ? 'Creating...' : 'Create account' }}</span>
-          <svg *ngIf="!loading" viewBox="0 0 14 14" fill="none" stroke="#fff" stroke-width="1.5"
-            stroke-linecap="round">
+          <span>{{ loading ? 'Creating your account...' : 'Create account' }}</span>
+          <svg *ngIf="!loading" viewBox="0 0 14 14" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round">
             <path d="M2 7h10M8 3.5L11.5 7 8 10.5" />
           </svg>
         </button>
 
-        <!-- BACK TO LOGIN -->
         <p class="login-link">
           Already have an account?
-          <a routerLink="/login">
-            Sign in
-          </a>
+          <a routerLink="/login" style="text-decoration: none; color:  #1d9e75;">Login</a>
         </p>
 
+
+
       </form>
+
     </div>
+
+
+
   </div>
+
+
 
 </div>

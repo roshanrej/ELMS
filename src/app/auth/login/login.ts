@@ -14,25 +14,33 @@ export class Login {
   submitted = false;
   loading = false;
   serverError = '';
-   
-  private fb = inject(FormBuilder); // modern way to inject services in Angular
-
+  passwordVisible = false;
+  
+  private fb = inject(FormBuilder);
 
   loginForm = this.fb.group({
-     email: ['', [Validators.required, Validators.email]],
-  password: ['', [Validators.required, Validators.minLength(8)]]
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required, Validators.minLength(8)]]
   });
+  
+  understandFormControlandBuilding(){
+   const controls = this.loginForm.controls
+  }
 
   get f() {
     return this.loginForm.controls;
   }
+
+  togglePassword(): void {
+    this.passwordVisible = !this.passwordVisible;
+  }
+
   onSubmit() {
-  this.submitted = true;
+    this.submitted = true;
 
-  if (this.loginForm.invalid) return;
+    if (this.loginForm.invalid) return;
+    this.loading = true;
+    // later → call auth service
+  }
 
-  this.loading = true;
-
-  // later → call auth service
-}
 }
