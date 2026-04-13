@@ -1,10 +1,14 @@
-import { Routes } from '@angular/router';
-import { authRoutes } from './auth/auth.routes';
 
-export const routes: Routes = [
-{ path: '', redirectTo: 'login', pathMatch: 'full' }, // startupPage
-{path: '', children: authRoutes,
-}, // authroutes
+import { Route } from '@angular/router';
 
+export const routes : Route[]=[
     
-];
+{
+    path:'',
+    loadChildren:()=> import('./auth/auth.routes').then(r=>r.authRoutes)
+ 
+},
+{
+  path: 'admin',
+  loadChildren: ()=> import('./features/admin/admin.routes').then( m=>m.adminRoutes )
+}]

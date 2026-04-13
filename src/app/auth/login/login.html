@@ -21,7 +21,7 @@
             <h1 class="form-title">Sign in</h1>
             <p class="form-sub">Enter your credentials to continue.</p>
 
-            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+            <form [formGroup]="loginForm" (ngSubmit)="login()" novalidate>
 
                 <div class="field">
                     <label for="email">Email</label>

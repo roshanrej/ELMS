@@ -1,0 +1,85 @@
+<div class="dashboard">
+    <header class="dashboard-header">
+        <div>
+            <span class="eyebrow">Admin Overview</span>
+            <h1>Welcome back, {{ user?user.name:'ADMIN' }}</h1>
+            <p class="intro">Monitor workforce health, approvals, and leave planning from one place.</p>
+        </div>
+
+        <div class="dashboard-status">
+            <span class="status-pill">Live data</span>
+            <p class="status-text">All key metrics are current for this session.</p>
+        </div>
+    </header>
+
+    <section class="summary-grid">
+        <article class="summary-card summary-card--primary">
+            <div class="summary-card__header">
+                <span>Total Employees</span>
+                <span class="summary-chip">Workforce</span>
+            </div>
+            <p class="value">{{ employeeCount }}</p>
+            <p class="meta">Active workforce across departments</p>
+        </article>
+
+        <article class="summary-card summary-card--secondary">
+            <div class="summary-card__header">
+                <span>Departments</span>
+                <span class="summary-chip">Structure</span>
+            </div>
+            <p class="value">{{ departmentCount }}</p>
+            <p class="meta">Organizational units defined</p>
+        </article>
+
+        <article class="summary-card summary-card--accent">
+            <div class="summary-card__header">
+                <span>Pending Requests</span>
+                <span class="summary-chip">Action needed</span>
+            </div>
+            <p class="value">{{ pendingRequests }}</p>
+            <p class="meta">Requests waiting for approval</p>
+        </article>
+    </section>
+
+    <section class="actions-section">
+        <div class="section-heading">
+            <div>
+                <h2>Quick Actions</h2>
+                <p class="section-subtitle">Jump straight to the most common admin tasks.</p>
+            </div>
+            <div class="action-state">
+                <span class="action-state__label">Last action</span>
+                <strong>{{ selectedAction() || 'None selected yet' }}</strong>
+            </div>
+        </div>
+
+        <div class="actions-grid">
+            <a class="action-card" routerLink="/admin/employees"
+                (click)="dispatchAction('Add / Manage Employees', '/admin/employees')">
+                <div class="action-card__icon">👥</div>
+                <div>
+                    <h4>Add / Manage Employees</h4>
+                    <p>Create new employees or update existing records.</p>
+                </div>
+            </a>
+
+            <a class="action-card" routerLink="/admin/departments"
+                (click)="dispatchAction('Manage Departments', '/admin/departments')">
+                <div class="action-card__icon">🏢</div>
+                <div>
+                    <h4>Manage Departments</h4>
+                    <p>Define teams, reporting lines, and organizational structure.</p>
+                </div>
+            </a>
+
+            <a class="action-card" routerLink="/admin/leave-quotas"
+                (click)="dispatchAction('Set Leave Quotas', '/admin/leave-quotas')">
+                <div class="action-card__icon">📅</div>
+                <div>
+                    <h4>Set Leave Quotas</h4>
+                    <p>Configure yearly leave allocations and policies.</p>
+                </div>
+            </a>
+        </div>
+    </section>
+</div>
