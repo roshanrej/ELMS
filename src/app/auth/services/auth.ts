@@ -1,8 +1,8 @@
 import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
 import { UserModel } from '../../core/models/user.model';
 import { AuthStore } from '../store/auth.store';
+import { HttpClient } from '@angular/common/http';
 
 
 
@@ -14,8 +14,9 @@ import { AuthStore } from '../store/auth.store';
 })
 export class Auth {
   
-  private router = inject(Router)
-  private authStore = inject (AuthStore)
+  private router:Router = inject(Router)
+  private authStore : AuthStore = inject (AuthStore)
+  private http : HttpClient =  inject(HttpClient)
 
 
   login( email : string, password : string ){
@@ -44,10 +45,10 @@ export class Auth {
     }
 
   logout() {
-    //api call logged out true or false or with neccessary data
-  this.authStore.setUser(null); // if true
-  this.router.navigate(['/login']); // true navigate 
-
-}
+    //api call
+  
+  this.authStore.setUser(null); //ui reflection
+   
+  }
 }
 

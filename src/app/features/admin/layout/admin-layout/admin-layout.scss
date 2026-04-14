@@ -1,72 +1,71 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap');
+$navy: #0c2340;
+$green: #1d9e75;
+$green-dim: rgba(29, 158, 117, 0.12);
+$white: #ffffff;
+$bg-page: #f3f4f6;
+$text-dark: #0c2340;
+$text-muted: #6b7280;
+$text-faint: rgba(255, 255, 255, 0.35);
+$sidebar-w: 232px;
+$radius: 8px;
 
-// ── Tokens (matches login theme) ─────────────────────────────
-$navy:          #0c2340;
-$navy-deep:     #091b30;
-$navy-mid:      #0f2d50;
-$green:         #1d9e75;
-$green-dim:     rgba(29, 158, 117, 0.12);
-$green-border:  rgba(29, 158, 117, 0.3);
-
-$white:         #ffffff;
-$bg-page:       #f3f4f6;
-$bg-field:      #f9fafb;
-$border:        #e5e7eb;
-$border-soft:   #d1d5db;
-
-$text-dark:     #0c2340;
-$text-body:     #374151;
-$text-muted:    #6b7280;
-$text-faint:    rgba(255,255,255,0.35);
-
-$sidebar-w:     232px;
-$radius:        8px;
-
-// ── Shell ────────────────────────────────────────────────────
 :host {
   display: block;
+  min-height: 100vh;
   height: 100vh;
 }
 
 .admin-shell {
   display: grid;
   grid-template-columns: $sidebar-w 1fr;
+  min-height: 100vh;
   height: 100vh;
   overflow: hidden;
   font-family: 'DM Sans', sans-serif;
-  background: $bg-page;
+  background:
+    radial-gradient(circle at top right, rgba(29, 158, 117, 0.1), transparent 24%),
+    linear-gradient(180deg, #eef2f6 0%, #f7f8fa 100%);
 }
 
-// ── Sidebar ──────────────────────────────────────────────────
 .sidebar {
-  background: $navy;
+  position: relative;
   display: flex;
   flex-direction: column;
   height: 100%;
   overflow: hidden;
+  background: $navy;
 
-
-  // Subtle geometric decoration — mirrors login left panel
+  &::before,
   &::after {
     content: '';
     position: absolute;
-    bottom: -70px;
-    right: -70px;
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  &::before {
+    top: -120px;
+    left: -80px;
     width: 220px;
     height: 220px;
-    border-radius: 50%;
-    border: 1px solid rgba(255,255,255,0.05);
-    pointer-events: none;
+    background: radial-gradient(circle, rgba(29, 158, 117, 0.2), transparent 70%);
+  }
+
+  &::after {
+    right: -70px;
+    bottom: -70px;
+    width: 220px;
+    height: 220px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
   }
 }
 
-// ── Brand ────────────────────────────────────────────────────
 .sidebar-brand {
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 28px 20px 24px;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   flex-shrink: 0;
 }
 
@@ -95,40 +94,45 @@ $radius:        8px;
 }
 
 .brand-sub {
-  font-size: 10px;
-  color: $text-faint;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
   margin-top: 2px;
+  color: $white;
   font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
 }
 
-// ── Nav ──────────────────────────────────────────────────────
 .sidebar-nav {
   flex: 1;
-  padding: 20px 12px;
   display: flex;
   flex-direction: column;
   gap: 2px;
   overflow-y: auto;
+  padding: 20px 12px;
 
-  // Thin scrollbar
-  &::-webkit-scrollbar { width: 3px; }
-  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar {
+    width: 3px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
   &::-webkit-scrollbar-thumb {
-    background: rgba(255,255,255,0.1);
+    background: rgba(255, 255, 255, 0.1);
     border-radius: 3px;
   }
 }
 
 .nav-section-label {
+  display: block;
+  padding: 14px 8px 6px;
+  color:white;
   font-family: 'DM Mono', monospace;
-  font-size: 9.5px;
+  font-size: 12px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.22);
-  padding: 14px 8px 6px;
-  display: block;
 
   &:first-child {
     padding-top: 0;
@@ -136,29 +140,29 @@ $radius:        8px;
 }
 
 .nav-item {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 9px 12px;
   border-radius: $radius;
-  text-decoration: none;
-  color: rgba(255,255,255,0.55);
-  font-size: 13.5px;
-  font-weight: 400;
+  color: rgba(255, 255, 255, 0.55);
   cursor: pointer;
-  transition: background 0.15s, color 0.15s;
-  position: relative;
+  font-size: 13.9px;
+  font-weight: 400;
+  text-decoration: none;
+  transition: background 0.15s ease, color 0.15s ease;
 
   .nav-item-icon {
+    width: 16px;
     display: flex;
     align-items: center;
     flex-shrink: 0;
-    width: 16px;
   }
 
   &:hover {
-    background: rgba(255,255,255,0.06);
-    color: rgba(255,255,255,0.85);
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.85);
   }
 
   &.active {
@@ -166,16 +170,15 @@ $radius:        8px;
     color: $white;
     font-weight: 500;
 
-    // Green left accent bar
     &::before {
       content: '';
       position: absolute;
-      left: 0;
       top: 6px;
       bottom: 6px;
+      left: 0;
       width: 3px;
-      background: $green;
       border-radius: 0 3px 3px 0;
+      background: $green;
     }
 
     .nav-item-icon {
@@ -184,7 +187,6 @@ $radius:        8px;
   }
 }
 
-// ── Sidebar Footer ───────────────────────────────────────────
 .sidebar-footer {
   flex-shrink: 0;
   padding: 12px 12px 20px;
@@ -192,8 +194,8 @@ $radius:        8px;
 
 .sidebar-divider {
   height: 1px;
-  background: rgba(255,255,255,0.07);
   margin-bottom: 14px;
+  background: rgba(255, 255, 255, 0.07);
 }
 
 .user-block {
@@ -202,67 +204,66 @@ $radius:        8px;
   gap: 10px;
   padding: 8px 10px;
   border-radius: $radius;
-  transition: background 0.15s;
+  transition: background 0.15s ease;
 
   &:hover {
-    background: rgba(255,255,255,0.04);
+    background: rgba(255, 255, 255, 0.04);
   }
 }
 
 .user-avatar {
   width: 32px;
   height: 32px;
-  border-radius: 6px;
-  background: $green;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+  border-radius: 6px;
+  background: $green;
+  color: $white;
   font-family: 'DM Mono', monospace;
   font-size: 13px;
   font-weight: 500;
-  color: $white;
-  flex-shrink: 0;
-  letter-spacing: 0;
 }
 
 .user-info {
+  min-width: 0;
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 2px;
-  flex: 1;
-  min-width: 0;
 }
 
 .user-email {
+  overflow: hidden;
+  color: rgba(255, 255, 255, 0.85);
   font-size: 12.5px;
   font-weight: 500;
-  color: rgba(255,255,255,0.85);
-  white-space: nowrap;
-  overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .user-role {
+  color: rgba(255, 255, 255, 0.28);
   font-family: 'DM Mono', monospace;
   font-size: 9.5px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.28);
 }
 
 .logout-btn {
+  width: 30px;
+  height: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
   flex-shrink: 0;
   border: none;
-  background: transparent;
   border-radius: 6px;
-  color: rgba(255,255,255,0.35);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.35);
   cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+  transition: background 0.15s ease, color 0.15s ease;
 
   &:hover {
     background: rgba(226, 75, 74, 0.12);
@@ -270,31 +271,152 @@ $radius:        8px;
   }
 }
 
-// ── Main Content ─────────────────────────────────────────────
-.main-content {
+.workspace {
+  min-width: 0;
+  display: grid;
+  grid-template-rows: auto 1fr;
   height: 100%;
-  background: $bg-page;
-  overflow-y: auto;
+  overflow: hidden;
 }
 
-// ── Responsive ───────────────────────────────────────────────
+.workspace-header {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 28px 30px 18px;
+}
+
+.workspace-header__left {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+
+.workspace-header__right {
+  flex: 0 0 240px;
+  display: flex;
+  align-items: stretch;
+}
+
+.workspace-copy h1 {
+  margin: 6px 0 0;
+  color: $text-dark;
+  font-size: 30px;
+  font-weight: 500;
+  line-height: 1.05;
+}
+
+.workspace-copy p {
+  max-width: 620px;
+  margin: 10px 0 0;
+  color: $text-muted;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.workspace-eyebrow,
+.context-label {
+  display: inline-block;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.workspace-eyebrow {
+  color: $green;
+}
+
+.workspace-context {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  padding: 16px 18px;
+  border: 1px solid rgba(12, 35, 64, 0.08);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 20px 40px rgba(12, 35, 64, 0.05);
+  backdrop-filter: blur(12px);
+}
+
+.context-label {
+  color: $text-muted;
+}
+
+.workspace-context strong {
+  color: $text-dark;
+  font-size: 14px;
+  font-weight: 500;
+  word-break: break-word;
+}
+
+.workspace-main {
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0 30px 30px;
+}
+
+.content-shell {
+  min-height: 100%;
+  box-sizing: border-box;
+  padding: 18px;
+  border: 1px solid rgba(12, 35, 64, 0.06);
+  
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.94)),
+    $white;
+  box-shadow:
+    0 24px 60px rgba(12, 35, 64, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.content-stage {
+  min-height: 100%;
+  overflow: hidden;
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(243, 244, 246, 0.95), rgba(255, 255, 255, 1));
+}
+
 @media (max-width: 768px) {
   .admin-shell {
     grid-template-columns: 1fr;
+    height: auto;
+    min-height: 100vh;
   }
 
   .sidebar {
-    width: 100%;
     height: auto;
-    position: relative;
-    flex-direction: row;
-    align-items: center;
-    flex-wrap: wrap;
 
-    &::after { display: none; }
+    &::after {
+      display: none;
+    }
   }
 
-  .main-content {
-    margin-left: 0;
+  .workspace-header {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 22px 18px 14px;
+  }
+
+  .workspace-header__right {
+    flex-basis: auto;
+  }
+
+  .workspace-main {
+    padding: 0 18px 18px;
+  }
+
+  .content-shell {
+    padding: 12px;
+    border-radius: 20px;
+  }
+
+  .content-stage {
+    border-radius: 16px;
   }
 }

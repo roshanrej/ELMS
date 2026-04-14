@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { Auth } from '../services/auth';
@@ -12,17 +12,17 @@ import { AuthStore } from '../store/auth.store';
   styleUrl: './login.scss',
 })
 export class Login {
-  submitted = false;
-  loading = false;
-  serverError = '';
-  passwordVisible = false;
+  submitted : boolean = false;
+  loading : boolean = false;
+  serverError : string = '';
+  passwordVisible :boolean = false;
   
-  private fb = inject(FormBuilder);
-  private auth = inject(Auth);
+  private fb : FormBuilder= inject(FormBuilder);
+  private auth : Auth= inject(Auth);
   private router : Router = inject(Router)
-  private authStore :AuthStore = inject(AuthStore)
+  private authStore : AuthStore = inject(AuthStore)
 
-  loginForm = this.fb.group({
+  loginForm : FormGroup = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(8)]]
   });
@@ -42,17 +42,23 @@ export class Login {
   login() {
     this.submitted = true;
     if (this.loginForm.invalid) return;
-    this.loading = true;
-     const email = this.loginForm.controls.email.value
-     const password = this.loginForm.controls.password.value
+    
+    
+     const email : string = this.loginForm.controls['email'].value
+     const password : string = this.loginForm.controls['password'].value
+
      if(! email || !password) { 
       this.loading = false; 
       return ;
      } 
+     this.loading = true;
      this.auth.login(email, password)// → calling auth service
 
      const user : UserModel | null = this.authStore.currentUser
-     if(!user) return console.error("error validating user");
+     if(!user){
+      this.router.navigate(['/login'])
+      return console.error("error validating user");
+     } 
      // redirecting
      if(user.roleId == 1){
       this.router.navigate(['/admin/dashboard'])

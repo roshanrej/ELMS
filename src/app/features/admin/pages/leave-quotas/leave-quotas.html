@@ -1,1 +1,50 @@
-<p>leave-quotas works!</p>
+<section class="admin-page">
+  <header class="page-hero">
+    <div>
+      <span class="page-eyebrow">Leave Policy</span>
+      <h2>Quota design and policy consistency</h2>
+      <p>Set clear yearly leave allowances and review groups that may need special policy handling before leave requests increase.</p>
+    </div>
+
+    <div class="hero-summary">
+      <span>Policy cycle</span>
+      <strong>FY 2026 allocation planning</strong>
+    </div>
+  </header>
+
+  <section class="policy-grid">
+    <article class="policy-card" *ngFor="let policy of policyCards()">
+      <span class="policy-card__label">{{ policy.label }}</span>
+      <strong>{{ policy.days }} days</strong>
+      <p>{{ policy.note }}</p>
+    </article>
+  </section>
+
+  <section class="panel">
+    <div class="panel-heading">
+      <div>
+        <h3>Quota Mapping by Group</h3>
+        <p>Review allowances before admins and managers start relying on balances for approval decisions.</p>
+      </div>
+      <span class="pill">Policy Matrix</span>
+    </div>
+
+    <div class="quota-table">
+      <div class="quota-table__head">
+        <span>Group</span>
+        <span>Annual</span>
+        <span>Sick</span>
+        <span>Casual</span>
+        <span>Status</span>
+      </div>
+
+      <div class="quota-table__row" *ngFor="let row of quotaRows">
+        <span>{{ row.group }}</span>
+        <span>{{ row.annual }}</span>
+        <span>{{ row.sick }}</span>
+        <span>{{ row.casual }}</span>
+        <span class="status-badge" [class.status-badge--review]="row.status === 'Review'">{{ row.status }}</span>
+      </div>
+    </div>
+  </section>
+</section>

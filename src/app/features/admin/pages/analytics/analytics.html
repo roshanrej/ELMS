@@ -1,0 +1,65 @@
+<section class="analytics-page">
+  <header class="analytics-hero">
+    <div>
+      <span class="page-eyebrow">Admin Analytics</span>
+      <h2>Request and leave balance summary</h2>
+      <p>This starter view keeps analytics inside the admin workflow by focusing on request counts, department totals, and balance summaries.</p>
+    </div>
+
+    <div class="hero-badge">
+      <span>Skeleton</span>
+      <strong>Ready for service integration</strong>
+    </div>
+  </header>
+
+  <section class="metric-grid">
+    <article class="metric-card" *ngFor="let card of metricCards">
+      <span class="metric-card__label">{{ card.label }}</span>
+      <strong>{{ card.value }}</strong>
+      <p>{{ card.note }}</p>
+    </article>
+  </section>
+
+  <section class="analytics-grid">
+    <article class="panel">
+      <div class="panel-heading">
+        <div>
+          <h3>Department Request Snapshot</h3>
+          <p>Simple counts that can later map to API or store data.</p>
+        </div>
+      </div>
+
+      <div class="table-shell">
+        <div class="table-head">
+          <span>Department</span>
+          <span>Requests</span>
+          <span>Pending</span>
+          <span>Avg Balance</span>
+        </div>
+
+        <div class="table-row" *ngFor="let row of departmentRows">
+          <span>{{ row.name }}</span>
+          <span>{{ row.requests }}</span>
+          <span>{{ row.pending }}</span>
+          <span>{{ row.avgBalance }}</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="panel">
+      <div class="panel-heading">
+        <div>
+          <h3>Implementation Notes</h3>
+          <p>Keep this page lightweight until analytics services are wired.</p>
+        </div>
+      </div>
+
+      <div class="notes-list">
+        <div class="note-item" *ngFor="let note of balanceNotes">
+          <span class="note-dot"></span>
+          <p>{{ note }}</p>
+        </div>
+      </div>
+    </article>
+  </section>
+</section>

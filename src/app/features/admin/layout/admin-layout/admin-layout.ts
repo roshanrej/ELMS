@@ -1,13 +1,14 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { Auth } from '../../../../auth/services/auth';
 import { UserModel } from '../../../../core/models/user.model';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthStore } from '../../../../auth/store/auth.store';
 
+
 @Component({
   selector: 'app-admin-layout',
-  imports: [RouterOutlet, CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, RouterLinkActive, RouterOutlet],
   templateUrl: './admin-layout.html',
   styleUrl: './admin-layout.scss',
 })
