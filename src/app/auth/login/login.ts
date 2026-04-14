@@ -60,9 +60,9 @@ export class Login {
       return console.error("error validating user");
      } 
      // redirecting
-     if(user.roleId == 1){
+    
       this.router.navigate(['/admin/dashboard'])
-     }
+     
 
 
   }

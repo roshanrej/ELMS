@@ -3,11 +3,16 @@ import { Router } from '@angular/router';
 import { UserModel } from '../../core/models/user.model';
 import { AuthStore } from '../store/auth.store';
 import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
 
-
-
-
-
+ export enum Role {
+    Admin="ADMIN",
+    Manager = "Manager",
+    Employee = "EMPLOYEE"
+}
+export enum Department{
+    IT="IT"
+}
 
 @Injectable({
   providedIn: 'root',
@@ -17,32 +22,44 @@ export class Auth {
   private router:Router = inject(Router)
   private authStore : AuthStore = inject (AuthStore)
   private http : HttpClient =  inject(HttpClient)
+  
 
+  
 
-  login( email : string, password : string ){
-    //api call and return statement as a response
-    const user:UserModel | null = this.validateUser(email,password) 
-    this.authStore.setUser(user)//population of auth store
-    console.log('LOGIN USER:', user); 
-    // user identity and permission based navigation at the login component => utilizing auth.store.ts
-    // object
-    
+async login(email: string, password: string): Promise<UserModel | null> {
+
+  if (!email || !password) {
+    console.log("Error on data validation");
+    return null;
   }
+
+  const requestData = {
+    email,
+    password
+  };
+
+  try {
+    const user = await firstValueFrom(
+      this.http.post<UserModel>('http://localhost:3000/auth/login', requestData)
+    );
+
+    console.log('[SERVICE] LOGIN USER:', user);
+
+    this.authStore.setUser(user);
+
+    return user;
+
+  } catch (error) {
+    console.log('[SERVICE] login failed', error);
+    return null;
+  }
+}
   register(newUser : Omit<UserModel,"id">) : UserModel | null {
-    //email uniqueness and enforcing default role on post
+    //api service
+   this.http.post('api/register',newUser) // action returning an observable
    return null
   }
-  validateUser(email : string, password : string):UserModel|null {
-    // api contract and backend call and key value utilization
-    // for json data retrieval
-    const userData : UserModel ={id : 1,
-                                email : 'admin@yahoo.com',
-                                name : 'Rosh',
-                                deptId : 2, 
-                                passwordHash : 'admin123', 
-                                roleId : 1 } // api response after call
-    return (email === userData.email && password === userData.passwordHash) ?  userData : null;
-    }
+ 
 
   logout() {
     //api call
