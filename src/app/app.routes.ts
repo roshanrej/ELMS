@@ -1,5 +1,6 @@
 
 import { Route } from '@angular/router';
+import { Sidebar } from './shared/components/sidebar/sidebar';
 
 export const routes : Route[]=[
     
@@ -9,6 +10,7 @@ export const routes : Route[]=[
  
 },
 {
-  path: 'admin',
-  loadChildren: ()=> import('./features/admin/admin.routes').then( m=>m.adminRoutes )
-}]
+  path:'\sidebar',
+  component:Sidebar
+}
+]

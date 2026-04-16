@@ -19,5 +19,5 @@ export class Employees {
     { name: 'Rahul Menon', role: 'QA Analyst', department: 'Engineering', status: 'Review', balance: '10 days', email: 'rahul.menon@elms.io' },
     { name: 'Meera Nair', role: 'HR Executive', department: 'People Ops', status: 'Active', balance: '18 days', email: 'meera.nair@elms.io' },
     { name: 'Daniel Roy', role: 'Support Lead', department: 'Support', status: 'On Leave', balance: '07 days', email: 'daniel.roy@elms.io' },
-  ];// employee details UNION leave balance
+  ];// employee details UNION leave balance db dummy
 }

@@ -1,1 +1,11 @@
-<p>sidebar works!</p>
+<div class="main-sidebar">
+  <nav class="nav-elements">
+
+    <div class="nav-link"  *ngFor="let nav of adminSidebar">
+      <a [routerLink]="nav.route">
+        {{ nav.label }}
+      </a>
+    </div>
+
+  </nav>
+</div>
