@@ -18,8 +18,14 @@
     </a>
   </nav>
 
-  <div class="sidebar-note mt-auto d-none d-md-block">
-    <span class="small opacity-75">Current view</span>
-    <div class="fw-semibold">Workspace</div>
+  <!-- Logout Section Aligned Conventionally -->
+  <div class="mt-auto p-3 border-top">
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <span class="small text-muted">Signed in as</span>
+        <div class="h5 fw-bold mb-1">{{ user?.name || user?.email }}</div>
+      </div>
+      <button class="btn btn-outline-danger btn-sm" >Logout</button>
+    </div>
   </div>
 </aside>

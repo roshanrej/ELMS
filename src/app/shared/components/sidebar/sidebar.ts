@@ -3,6 +3,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthStore } from '../../../auth/store/auth.store';
 import { RoleType } from '../../../core/models/role.model';
+import { UserModel } from '../../../core/models/user.model';
 
 @Component({
   selector: 'app-sidebar',
@@ -12,6 +13,8 @@ import { RoleType } from '../../../core/models/role.model';
 })
 export class Sidebar implements OnInit {
   private authStore = inject(AuthStore);
+  user : UserModel| null = this.authStore.currentUser
+  
   navLinks: { label: string; route: string }[] = [];
 
   navLinksMap = {
