@@ -1,8 +1,9 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-leave-calendar',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './leave-calendar.html',
   styleUrl: './leave-calendar.scss',
 })

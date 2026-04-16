@@ -1,0 +1,41 @@
+<section class="app-page">
+  <header class="app-page__hero">
+    <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
+      <div>
+        <span class="app-eyebrow">Leave Quotas</span>
+        <h2 class="display-6 fw-bold mb-3">Quota planning skeleton</h2>
+        <p class="text-app-muted mb-0">Set the visual structure for allocation, usage, and remaining leave balances.</p>
+      </div>
+      <button type="button" class="btn btn-app align-self-start">Update Cycle</button>
+    </div>
+  </header>
+
+  <section class="app-card overflow-hidden">
+    <div class="table-responsive">
+      <table class="table app-table align-middle">
+        <thead>
+          <tr>
+            <th>Leave Type</th>
+            <th>Total</th>
+            <th>Used</th>
+            <th>Remaining</th>
+            <th>Usage</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let quota of quotas">
+            <td class="fw-bold">{{ quota.type }}</td>
+            <td>{{ quota.total }} days</td>
+            <td>{{ quota.used }} days</td>
+            <td><span class="badge badge-soft-red rounded-pill">{{ quota.remaining }} days</span></td>
+            <td class="quota-usage">
+              <div class="progress" role="progressbar" aria-label="Leave usage">
+                <div class="progress-bar" [style.width.%]="(quota.used / quota.total) * 100"></div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</section>

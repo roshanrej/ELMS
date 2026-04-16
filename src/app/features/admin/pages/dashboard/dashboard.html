@@ -1,0 +1,71 @@
+<section class="app-page">
+  <header class="app-page__hero">
+    <div class="row g-4 align-items-center">
+      <div class="col-lg-8">
+        <span class="app-eyebrow">Admin Dashboard</span>
+        <h2 class="display-6 fw-bold mb-3">Control leave operations from one clean view.</h2>
+        <p class="text-app-muted mb-0">Review employees, departments, quotas, and leave activity with a consistent cream workspace and red action language.</p>
+      </div>
+      <div class="col-lg-4">
+        <div class="app-card p-3">
+          <span class="small text-app-muted">Signed in as</span>
+          <div class="h5 fw-bold mb-1">{{ user?.name || user?.email || 'Admin user' }}</div>
+          <span class="badge badge-soft-red rounded-pill">Administrator</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="row g-3">
+    <div class="col-md-4" *ngFor="let card of summaryCards">
+      <article class="app-card app-stat p-4">
+        <span class="app-eyebrow">{{ card.label }}</span>
+        <div class="app-stat__value my-3">{{ card.value }}</div>
+        <p class="text-app-muted mb-0">{{ card.note }}</p>
+      </article>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-lg-7">
+      <section class="app-card p-4 h-100">
+        <div class="d-flex justify-content-between align-items-start mb-4">
+          <div>
+            <span class="app-eyebrow">Workflow</span>
+            <h3 class="h5 fw-bold mb-1">Administrative focus</h3>
+            <p class="text-app-muted mb-0">A basic operating skeleton for the current module set.</p>
+          </div>
+          <button type="button" class="btn btn-cream btn-sm">Review</button>
+        </div>
+
+        <div class="list-group list-group-flush">
+          <div class="list-group-item px-0 bg-transparent d-flex justify-content-between">
+            <span>Department coverage</span>
+            <span class="badge badge-soft-red">Stable</span>
+          </div>
+          <div class="list-group-item px-0 bg-transparent d-flex justify-content-between">
+            <span>Employee records</span>
+            <span class="badge badge-soft-red">Needs review</span>
+          </div>
+          <div class="list-group-item px-0 bg-transparent d-flex justify-content-between">
+            <span>Leave quota cycle</span>
+            <span class="badge badge-soft-red">Ready</span>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="col-lg-5">
+      <section class="app-card p-4 h-100">
+        <span class="app-eyebrow">Placeholder</span>
+        <h3 class="h5 fw-bold mb-3">Workspace preview</h3>
+        <div class="placeholder-stack mb-3" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <p class="text-app-muted mb-0">Reserved space for the next admin summary panel.</p>
+      </section>
+    </div>
+  </div>
+</section>

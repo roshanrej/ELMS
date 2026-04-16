@@ -1,1 +1,53 @@
-<p>analytics works!</p>
+<section class="app-page">
+  <header class="app-page__hero">
+    <span class="app-eyebrow">Manager Analytics</span>
+    <h2 class="display-6 fw-bold mb-3">Team leave patterns</h2>
+    <p class="text-app-muted mb-0">A compact analytics skeleton for requests, utilization, and coverage health.</p>
+  </header>
+
+  <div class="row g-3">
+    <div class="col-md-4">
+      <article class="app-card app-stat p-4">
+        <span class="app-eyebrow">Approval Rate</span>
+        <div class="app-stat__value my-3">92%</div>
+        <p class="text-app-muted mb-0">Requests approved after coverage review.</p>
+      </article>
+    </div>
+    <div class="col-md-4">
+      <article class="app-card app-stat p-4">
+        <span class="app-eyebrow">Average Balance</span>
+        <div class="app-stat__value my-3">11</div>
+        <p class="text-app-muted mb-0">Average remaining days across the team.</p>
+      </article>
+    </div>
+    <div class="col-md-4">
+      <article class="app-card app-stat p-4">
+        <span class="app-eyebrow">Peak Month</span>
+        <div class="app-stat__value my-3">May</div>
+        <p class="text-app-muted mb-0">Highest planned leave activity.</p>
+      </article>
+    </div>
+  </div>
+
+  <section class="app-card p-4">
+    <h3 class="h5 fw-bold mb-3">Utilization by leave type</h3>
+    <div class="mb-3">
+      <div class="d-flex justify-content-between mb-1">
+        <span>Annual leave</span>
+        <span class="fw-semibold">68%</span>
+      </div>
+      <div class="progress" role="progressbar" aria-label="Annual utilization">
+        <div class="progress-bar" style="width: 68%;"></div>
+      </div>
+    </div>
+    <div>
+      <div class="d-flex justify-content-between mb-1">
+        <span>Sick leave</span>
+        <span class="fw-semibold">24%</span>
+      </div>
+      <div class="progress" role="progressbar" aria-label="Sick utilization">
+        <div class="progress-bar" style="width: 24%;"></div>
+      </div>
+    </div>
+  </section>
+</section>

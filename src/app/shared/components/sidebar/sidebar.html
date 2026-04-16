@@ -1,11 +1,25 @@
-<div class="main-sidebar">
-  <nav class="nav-elements">
-
-    <div class="nav-link"  *ngFor="let nav of adminSidebar">
-      <a [routerLink]="nav.route">
-        {{ nav.label }}
-      </a>
+<aside class="sidebar d-flex flex-column h-100">
+  <div class="sidebar-header pb-3 mb-3">
+    <span class="brand-mark d-inline-flex align-items-center justify-content-center fw-bold">E</span>
+    <div>
+      <h2 class="h5 mb-0 fw-bold">ELMS</h2>
+      <span class="small opacity-75">Employee Leave</span>
     </div>
+  </div>
 
+  <nav class="nav nav-pills flex-column gap-2" aria-label="Main navigation">
+    <a
+      *ngFor="let nav of navLinks"
+      [routerLink]="nav.route"
+      routerLinkActive="active"
+      class="nav-link"
+    >
+      {{ nav.label }}
+    </a>
   </nav>
-</div>
+
+  <div class="sidebar-note mt-auto d-none d-md-block">
+    <span class="small opacity-75">Current view</span>
+    <div class="fw-semibold">Workspace</div>
+  </div>
+</aside>

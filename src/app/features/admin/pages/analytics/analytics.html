@@ -1,65 +1,71 @@
-<section class="analytics-page">
-  <header class="analytics-hero">
-    <div>
-      <span class="page-eyebrow">Admin Analytics</span>
-      <h2>Request and leave balance summary</h2>
-      <p>This starter view keeps analytics inside the admin workflow by focusing on request counts, department totals, and balance summaries.</p>
-    </div>
-
-    <div class="hero-badge">
-      <span>Skeleton</span>
-      <strong>Ready for service integration</strong>
+<section class="app-page">
+  <header class="app-page__hero">
+    <div class="row g-4 align-items-center">
+      <div class="col-lg-8">
+        <span class="app-eyebrow">Admin Analytics</span>
+        <h2 class="display-6 fw-bold mb-3">Request and leave balance summary</h2>
+        <p class="text-app-muted mb-0">A Bootstrap analytics skeleton for request counts, department totals, and balance summaries.</p>
+      </div>
+      <div class="col-lg-4">
+        <div class="app-card p-3">
+          <span class="small text-app-muted">Status</span>
+          <div class="h5 fw-bold mb-1">Ready for service integration</div>
+          <span class="badge badge-soft-red rounded-pill">Skeleton</span>
+        </div>
+      </div>
     </div>
   </header>
 
-  <section class="metric-grid">
-    <article class="metric-card" *ngFor="let card of metricCards">
-      <span class="metric-card__label">{{ card.label }}</span>
-      <strong>{{ card.value }}</strong>
-      <p>{{ card.note }}</p>
-    </article>
-  </section>
+  <div class="row g-3">
+    <div class="col-sm-6 col-xl-3" *ngFor="let card of metricCards">
+      <article class="app-card app-stat p-4">
+        <span class="app-eyebrow">{{ card.label }}</span>
+        <div class="app-stat__value my-3">{{ card.value }}</div>
+        <p class="text-app-muted mb-0">{{ card.note }}</p>
+      </article>
+    </div>
+  </div>
 
-  <section class="analytics-grid">
-    <article class="panel">
-      <div class="panel-heading">
-        <div>
-          <h3>Department Request Snapshot</h3>
-          <p>Simple counts that can later map to API or store data.</p>
+  <div class="row g-3">
+    <div class="col-lg-7">
+      <section class="app-card overflow-hidden h-100">
+        <div class="p-4 border-bottom">
+          <h3 class="h5 fw-bold mb-1">Department Request Snapshot</h3>
+          <p class="text-app-muted mb-0">Counts that can later map to API or store data.</p>
         </div>
-      </div>
+        <div class="table-responsive">
+          <table class="table app-table align-middle">
+            <thead>
+              <tr>
+                <th>Department</th>
+                <th>Requests</th>
+                <th>Pending</th>
+                <th>Avg Balance</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let row of departmentRows">
+                <td class="fw-bold">{{ row.name }}</td>
+                <td>{{ row.requests }}</td>
+                <td>{{ row.pending }}</td>
+                <td>{{ row.avgBalance }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
 
-      <div class="table-shell">
-        <div class="table-head">
-          <span>Department</span>
-          <span>Requests</span>
-          <span>Pending</span>
-          <span>Avg Balance</span>
+    <div class="col-lg-5">
+      <section class="app-card p-4 h-100">
+        <h3 class="h5 fw-bold mb-3">Implementation Notes</h3>
+        <div class="list-group list-group-flush">
+          <div class="list-group-item bg-transparent px-0 d-flex gap-3" *ngFor="let note of balanceNotes">
+            <span class="badge badge-soft-red rounded-pill align-self-start">Note</span>
+            <p class="text-app-muted mb-0">{{ note }}</p>
+          </div>
         </div>
-
-        <div class="table-row" *ngFor="let row of departmentRows">
-          <span>{{ row.name }}</span>
-          <span>{{ row.requests }}</span>
-          <span>{{ row.pending }}</span>
-          <span>{{ row.avgBalance }}</span>
-        </div>
-      </div>
-    </article>
-
-    <article class="panel">
-      <div class="panel-heading">
-        <div>
-          <h3>Implementation Notes</h3>
-          <p>Keep this page lightweight until analytics services are wired.</p>
-        </div>
-      </div>
-
-      <div class="notes-list">
-        <div class="note-item" *ngFor="let note of balanceNotes">
-          <span class="note-dot"></span>
-          <p>{{ note }}</p>
-        </div>
-      </div>
-    </article>
-  </section>
+      </section>
+    </div>
+  </div>
 </section>

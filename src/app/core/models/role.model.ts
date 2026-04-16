@@ -1,4 +1,5 @@
-export interface RoleModel {
-     id: number,
-     role :"ADMIN" | "MANAGER" |"EMPLOYEE"
-}
+export enum RoleType { 
+      Admin ="ADMIN",
+      Employee = 'EMPLOYEE',
+      Manager = 'MANAGER'
+     }

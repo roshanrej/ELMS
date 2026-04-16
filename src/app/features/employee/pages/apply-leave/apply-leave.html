@@ -1,1 +1,54 @@
-<p>apply-leave works!</p>
+<section class="app-page">
+  <header class="app-page__hero">
+    <span class="app-eyebrow">Request Leave</span>
+    <h2 class="display-6 fw-bold mb-3">Apply for time away</h2>
+    <p class="text-app-muted mb-0">A Bootstrap form skeleton ready for leave request wiring.</p>
+  </header>
+
+  <div class="row g-3">
+    <div class="col-lg-8">
+      <section class="app-card p-4">
+        <form>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold" for="leave-type">Leave type</label>
+              <select class="form-select" id="leave-type">
+                <option>Annual leave</option>
+                <option>Sick leave</option>
+                <option>Casual leave</option>
+                <option>Work from home</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label fw-semibold" for="start-date">Start date</label>
+              <input class="form-control" id="start-date" type="date" />
+            </div>
+            <div class="col-md-3">
+              <label class="form-label fw-semibold" for="end-date">End date</label>
+              <input class="form-control" id="end-date" type="date" />
+            </div>
+            <div class="col-12">
+              <label class="form-label fw-semibold" for="reason">Reason</label>
+              <textarea class="form-control" id="reason" rows="5" placeholder="Add a short reason for the request"></textarea>
+            </div>
+            <div class="col-12 d-flex gap-2">
+              <button type="button" class="btn btn-app">Submit Request</button>
+              <button type="button" class="btn btn-cream">Save Draft</button>
+            </div>
+          </div>
+        </form>
+      </section>
+    </div>
+
+    <div class="col-lg-4">
+      <aside class="app-card p-4 h-100">
+        <span class="app-eyebrow">Balance</span>
+        <div class="app-stat__value my-3">14</div>
+        <p class="text-app-muted mb-4">Annual leave days available before this request.</p>
+        <div class="progress" role="progressbar" aria-label="Leave balance">
+          <div class="progress-bar" style="width: 58%;"></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>

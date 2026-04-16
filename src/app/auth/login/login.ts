@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { Auth } from '../services/auth';
 import { UserModel } from '../../core/models/user.model';
 import { AuthStore } from '../store/auth.store';
+import { RoleType } from '../../core/models/role.model';
 @Component({
   selector: 'app-login',
   imports: [ReactiveFormsModule, CommonModule , RouterLink],
@@ -20,16 +21,14 @@ export class Login {
   private fb : FormBuilder= inject(FormBuilder);
   private auth : Auth= inject(Auth);
   private router : Router = inject(Router)
-  private authStore : AuthStore = inject(AuthStore)
+  
 
   loginForm : FormGroup = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(8)]]
   });
   
-  understandFormControlandBuilding(){
-   const controls = this.loginForm.controls
-  }
+  
 
   get f() {
     return this.loginForm.controls;
@@ -39,32 +38,42 @@ export class Login {
     this.passwordVisible = !this.passwordVisible;
   }
 
-  login() {
-    this.submitted = true;
-    if (this.loginForm.invalid) return;
-    
-    
-     const email : string = this.loginForm.controls['email'].value
-     const password : string = this.loginForm.controls['password'].value
+  async login() {
+  this.submitted = true;
+  if (this.loginForm.invalid) return;
 
-     if(! email || !password) { 
-      this.loading = false; 
-      return ;
-     } 
-     this.loading = true;
-     this.auth.login(email, password)// → calling auth service
+  const email: string = this.loginForm.controls['email'].value;
+  const password: string = this.loginForm.controls['password'].value;
 
-     const user : UserModel | null = this.authStore.currentUser
-     if(!user){
-      this.router.navigate(['/login'])
-      return console.error("error validating user");
-     } 
-     // redirecting
-    
-      this.router.navigate(['/admin/dashboard'])
-     
-
-
+  if (!email || !password) {
+    this.loading = false;
+    return;
   }
+
+  this.loading = true;
+
+  // wait for login to complete
+  const user = await this.auth.login(email, password);
+
+  this.loading = false;
+
+  if (!user) {
+    this.router.navigate(['/login']);
+    console.error("error validating user");
+    return;
+  }
+
+  // 
+  console.log(user.role)
+  if (user.role === RoleType.Admin) {
+    this.router.navigate(['/admin/dashboard']);
+  }
+  else if(user.role === RoleType.Employee){
+    this.router.navigate(['/employee/dashboard'])
+  }
+  else {
+    this.router.navigate(['/manager/dashboard'])
+  }
+}
 
 }

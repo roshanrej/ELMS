@@ -1,0 +1,13 @@
+:host {
+  display: block;
+}
+
+.data-table-card__header {
+  padding: 1.15rem 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .data-table-card__header {
+    padding: 1.35rem 1.5rem;
+  }
+}

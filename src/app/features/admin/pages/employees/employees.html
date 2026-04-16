@@ -1,0 +1,54 @@
+<section class="app-page">
+  <header class="app-page__hero">
+    <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
+      <div>
+        <span class="app-eyebrow">Employees</span>
+        <h2 class="display-6 fw-bold mb-3">Employee roster</h2>
+        <p class="text-app-muted mb-0">A cream workspace for employee records, leave balances, and profile status.</p>
+      </div>
+      <button type="button" class="btn btn-app align-self-start">Add Employee</button>
+    </div>
+  </header>
+
+  <div class="row g-3">
+    <div class="col-md-4" *ngFor="let stat of employeeStats">
+      <article class="app-card app-stat p-4">
+        <span class="app-eyebrow">{{ stat.label }}</span>
+        <div class="app-stat__value my-3">{{ stat.value }}</div>
+        <p class="text-app-muted mb-0">{{ stat.note }}</p>
+      </article>
+    </div>
+  </div>
+
+  <section class="app-card overflow-hidden">
+    <div class="p-4 border-bottom">
+      <h3 class="h5 fw-bold mb-1">Directory</h3>
+      <p class="text-app-muted mb-0">Bootstrap table skeleton for the current employee model.</p>
+    </div>
+    <div class="table-responsive">
+      <table class="table app-table align-middle">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Role</th>
+            <th>Department</th>
+            <th>Status</th>
+            <th>Balance</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let employee of employees">
+            <td>
+              <div class="fw-bold">{{ employee.name }}</div>
+              <div class="small text-app-muted">{{ employee.email }}</div>
+            </td>
+            <td>{{ employee.role }}</td>
+            <td>{{ employee.department }}</td>
+            <td><span class="badge badge-soft-red rounded-pill">{{ employee.status }}</span></td>
+            <td class="fw-semibold">{{ employee.balance }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</section>

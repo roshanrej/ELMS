@@ -1,10 +1,12 @@
-import { Role } from '../../auth/services/auth'
+
 import { Department } from '../../auth/services/auth'
+import { RoleType } from './role.model';
+
 export interface UserModel {
-  id: number;
+  id: number,
   email: string;
-  password : string,
-  role: Role;
-  name : 'Rosh'
-  dept: Department
+  name: string;
+  role: RoleType;
+  department: Department;
+  createdAt: Date;
 }

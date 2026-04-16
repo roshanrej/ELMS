@@ -1,1 +1,29 @@
-<p>employee-form works!</p>
+<section class="app-card p-4">
+  <span class="app-eyebrow">Employee Form</span>
+  <h3 class="h5 fw-bold mb-3">Employee details</h3>
+  <div class="row g-3">
+    <div class="col-md-6">
+      <label class="form-label fw-semibold" for="employee-name">Name</label>
+      <input id="employee-name" class="form-control" type="text" placeholder="Employee name" />
+    </div>
+    <div class="col-md-6">
+      <label class="form-label fw-semibold" for="employee-email">Email</label>
+      <input id="employee-email" class="form-control" type="email" placeholder="employee@company.com" />
+    </div>
+    <div class="col-md-6">
+      <label class="form-label fw-semibold" for="employee-department">Department</label>
+      <select id="employee-department" class="form-select">
+        <option>Engineering</option>
+        <option>People Ops</option>
+        <option>Support</option>
+      </select>
+    </div>
+    <div class="col-md-6">
+      <label class="form-label fw-semibold" for="employee-role">Role</label>
+      <input id="employee-role" class="form-control" type="text" placeholder="Role" />
+    </div>
+    <div class="col-12">
+      <button type="button" class="btn btn-app">Save Employee</button>
+    </div>
+  </div>
+</section>

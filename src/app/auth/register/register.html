@@ -1,146 +1,132 @@
-<div class="register-page">
-
-  <div class="left-panel">
-    <div class="brand-mark">
-      <div class="brand-icon">
-        <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M9 2L15 6V12L9 16L3 12V6L9 2Z" stroke="#fff" stroke-width="1.2" />
-          <circle cx="9" cy="9" r="2.2" fill="#fff" />
-        </svg>
-      </div>
-      <div class="brand-text">
-        <span class="brand-name">ELMS</span>
-        <span class="brand-sub">Leave Management System</span>
+<div class="auth-page">
+  <aside class="auth-panel">
+    <div class="auth-brand">
+      <span class="auth-brand__mark">E</span>
+      <div>
+        <div class="h4 mb-0 fw-bold">ELMS</div>
+        <div class="small opacity-75">Leave Management System</div>
       </div>
     </div>
-    <div class="left-foot">&copy; 2026 ELMS</div>
-  </div>
 
-  <div class="right-panel">
-    <div class="form-wrap">
-      <h1 class="form-title">Create an account</h1>
-      <p class="form-sub">Enter your credentials below to register.</p>
+    <div class="mt-5">
+      <span class="badge rounded-pill bg-white text-app-red mb-3">New profile</span>
+      <h1 class="display-6 fw-bold mb-3">Create a clean employee record.</h1>
+      <p class="mb-0 opacity-75">Register once, then manage leave balances and approvals from a single workspace.</p>
+    </div>
+
+    <div class="small opacity-75 mt-5">&copy; 2026 ELMS</div>
+  </aside>
+
+  <main class="auth-form-wrap">
+    <section class="auth-form-card">
+      <span class="app-eyebrow">Get started</span>
+      <h2 class="fw-bold mb-2">Create an account</h2>
+      <p class="text-app-muted mb-4">Enter your credentials below to register.</p>
 
       <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" novalidate>
-        <div class="field">
-          <label for="name">Username</label>
-          <input id="username" type="text" formControlName="username" placeholder="John Doe" autocomplete="username"
-            [class.input-error]="submitted && f['username'].errors" />
-          <span class="error-msg" *ngIf="submitted && f['username'].errors?.['required']">
-            Username is required.
-          </span>
-          <span class="error-msg" *ngIf="submitted && f['username'].errors?.['username']">
-            Enter a valid username.
-          </span>
-        </div>
-
-        <div class="field">
-          <label for="email">Email</label>
-          <input id="email" type="email" formControlName="email" placeholder="you@company.com" autocomplete="email"
-            [class.input-error]="submitted && f['email'].errors" />
-          <span class="error-msg" *ngIf="submitted && f['email'].errors?.['required']">
-            Email is required.
-          </span>
-          <span class="error-msg" *ngIf="submitted && f['email'].errors?.['email']">
-            Enter a valid email address.
-          </span>
-        </div>
-
-        <div class="field">
-          <label for="department">Department</label>
-          <select id="department" formControlName="department"
-            [class.input-error]="submitted && f['department'].errors">
-            <option value="" disabled>Select a department</option>
-            <option *ngFor="let dept of departments" [value]="dept.value">{{ dept.label }}</option>
-          </select>
-          <span class="error-msg" *ngIf="submitted && f['department'].errors?.['required']">
-            Department is required.
-          </span>
-        </div>
-
-        <div class="field">
-          <div class="field-row">
-            <label for="password">Password</label>
+        <div class="row g-3">
+          <div class="col-12">
+            <label class="form-label fw-semibold" for="username">Username</label>
+            <input
+              id="username"
+              type="text"
+              formControlName="username"
+              class="form-control"
+              placeholder="John Doe"
+              autocomplete="username"
+              [class.input-error]="submitted && f['username'].errors"
+            />
+            <span class="error-msg" *ngIf="submitted && f['username'].errors?.['required']">Username is required.</span>
           </div>
 
-          <div class="input-group">
-            <input id="password" [type]="passwordVisible ? 'text' : 'password'" formControlName="password"
-              placeholder="••••••••" autocomplete="current-password"
-              [class.input-error]="submitted && f['password'].errors" />
-            <button type="button" class="password-toggle" (click)="togglePassword('password')"
-              [attr.aria-label]="passwordVisible ? 'Hide password' : 'Show password'">
-              <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="1.8" stroke-linecap="round"
-                stroke-linejoin="round">
-                <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z" />
-                <circle cx="12" cy="12" r="3" />
-              </svg>
-            </button>
+          <div class="col-12">
+            <label class="form-label fw-semibold" for="email">Email</label>
+            <input
+              id="email"
+              type="email"
+              formControlName="email"
+              class="form-control"
+              placeholder="you@company.com"
+              autocomplete="email"
+              [class.input-error]="submitted && f['email'].errors"
+            />
+            <span class="error-msg" *ngIf="submitted && f['email'].errors?.['required']">Email is required.</span>
+            <span class="error-msg" *ngIf="submitted && f['email'].errors?.['email']">Enter a valid email address.</span>
           </div>
-          <a class="forgot-link" routerLink="/forgot-password">Forgot password?</a>
-          <span class="error-msg" *ngIf="submitted && f['password'].errors?.['required']">
-            Password is required.
-          </span>
-          <span class="error-msg" *ngIf="submitted && f['password'].errors?.['minlength']">
-            Password must be at least 8 characters.
-          </span>
+
+          <div class="col-12">
+            <label class="form-label fw-semibold" for="department">Department</label>
+            <select
+              id="department"
+              formControlName="department"
+              class="form-select"
+              [class.input-error]="submitted && f['department'].errors"
+            >
+              <option value="" disabled>Select a department</option>
+              <option *ngFor="let dept of departments" [value]="dept.value">{{ dept.label }}</option>
+            </select>
+            <span class="error-msg" *ngIf="submitted && f['department'].errors?.['required']">Department is required.</span>
+          </div>
+
+          <div class="col-12 col-lg-6">
+            <label class="form-label fw-semibold" for="password">Password</label>
+            <div class="password-field">
+              <input
+                id="password"
+                [type]="passwordVisible ? 'text' : 'password'"
+                formControlName="password"
+                class="form-control"
+                placeholder="Password"
+                autocomplete="new-password"
+                [class.input-error]="submitted && f['password'].errors"
+              />
+              <button type="button" class="password-toggle" (click)="togglePassword('password')" [attr.aria-label]="passwordVisible ? 'Hide password' : 'Show password'">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+              </button>
+            </div>
+            <span class="error-msg" *ngIf="submitted && f['password'].errors?.['required']">Password is required.</span>
+            <span class="error-msg" *ngIf="submitted && f['password'].errors?.['minlength']">Password must be at least 8 characters.</span>
+          </div>
+
+          <div class="col-12 col-lg-6">
+            <label class="form-label fw-semibold" for="confirm-password">Confirm Password</label>
+            <div class="password-field">
+              <input
+                id="confirm-password"
+                [type]="confirmPasswordVisible ? 'text' : 'password'"
+                formControlName="confirmPassword"
+                class="form-control"
+                placeholder="Confirm password"
+                autocomplete="new-password"
+                [class.input-error]="submitted && f['confirmPassword'].errors"
+              />
+              <button type="button" class="password-toggle" (click)="togglePassword('confirmPassword')" [attr.aria-label]="confirmPasswordVisible ? 'Hide password' : 'Show password'">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+              </button>
+            </div>
+            <span class="error-msg" *ngIf="submitted && f['confirmPassword'].errors?.['required']">Password is required.</span>
+            <span class="error-msg" *ngIf="submitted && f['confirmPassword'].errors?.['minlength']">Password must be at least 8 characters.</span>
+            <span class="error-msg" *ngIf="submitted && !passwordCheck()">Passwords must be identical.</span>
+          </div>
         </div>
 
-        <div class="field">
-          <div class="field-row">
-            <label for="confirm-password">Confirm Password</label>
-          </div>
-          <div class="input-group">
+        <span class="server-error mt-3" *ngIf="serverError">{{ serverError }}</span>
 
-            <input id="confirm-password" [type]="confirmPasswordVisible ? 'text' : 'password'"
-              formControlName="confirmPassword" ngOnChange="passwordCheck()" placeholder="••••••••"
-              autocomplete="current-password" [class.input-error]="submitted && f['confirmPassword'].errors" />
-
-            <button type="button" class="password-toggle" (click)="togglePassword('confirmPassword')"
-              [attr.aria-label]="confirmPasswordVisible ? 'Hide password' : 'Show password'">
-              <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="1.8" stroke-linecap="round"
-                stroke-linejoin="round">
-                <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z" />
-                <circle cx="12" cy="12" r="3" />
-              </svg>
-            </button>
-
-          </div>
-          <span class="error-msg" *ngIf="submitted && f['confirmPassword'].errors?.['required']">
-            Password is required.
-          </span>
-          <span class="error-msg" *ngIf="submitted && f['confirmPassword'].errors?.['minlength']">
-            Password must be at least 8 characters.
-          </span>
-          <span class="error-msg" *ngIf="submitted && !passwordCheck()">
-            Passwords must be identical.
-          </span>
-
-        </div>
-
-        <span class="server-error" *ngIf="serverError">{{ serverError }}</span>
-
-        <button type="submit" class="submit-btn" [disabled]="loading">
-          <span>{{ loading ? 'Creating your account...' : 'Create account' }}</span>
-          <svg *ngIf="!loading" viewBox="0 0 14 14" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round">
-            <path d="M2 7h10M8 3.5L11.5 7 8 10.5" />
-          </svg>
+        <button type="submit" class="btn btn-app w-100 py-2 mt-4" [disabled]="loading">
+          {{ loading ? 'Creating your account...' : 'Create account' }}
         </button>
 
-        <p class="login-link">
+        <p class="text-center text-app-muted mt-4 mb-0">
           Already have an account?
-          <a routerLink="/login" style="text-decoration: none; color:  #1d9e75;">Login</a>
+          <a routerLink="/login" class="text-decoration-none fw-semibold text-app-red">Login</a>
         </p>
-
-
-
       </form>
-
-    </div>
-
-
-
-  </div>
-
-
-
+    </section>
+  </main>
 </div>

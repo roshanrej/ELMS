@@ -33,10 +33,7 @@ async login(email: string, password: string): Promise<UserModel | null> {
     return null;
   }
 
-  const requestData = {
-    email,
-    password
-  };
+  const requestData = { email, password };
 
   try {
     const user = await firstValueFrom(
@@ -45,7 +42,9 @@ async login(email: string, password: string): Promise<UserModel | null> {
 
     console.log('[SERVICE] LOGIN USER:', user);
 
-    this.authStore.setUser(user);
+    if (user) {
+      this.authStore.setUser(user);
+    }
 
     return user;
 

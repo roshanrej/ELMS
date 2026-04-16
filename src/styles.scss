@@ -1,14 +1,273 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap');
 
-html, body {
+:root {
+  --app-red: #f87171;
+  --app-red-dark: #dc2626;
+  --app-red-soft: #fff1f2;
+  --app-cream: #fffaf0;
+  --app-cream-strong: #fff4de;
+  --app-white: #ffffff;
+  --app-ink: #241916;
+  --app-muted: #7b6b64;
+  --app-border: #f0d9cf;
+
+  --bs-body-font-family: 'DM Sans', Arial, sans-serif;
+  --bs-body-color: var(--app-ink);
+  --bs-body-bg: var(--app-cream);
+  --bs-border-radius: 0.5rem;
+  --bs-border-color: var(--app-border);
+  --bs-link-color: var(--app-red-dark);
+  --bs-link-hover-color: #b91c1c;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
   height: 100%;
   margin: 0;
-  overflow: hidden;   /* 🔥 disable page scroll */
-}
-app-root {
-  display: block;
-  min-height: 100%;
-  height: 100%;
+  overflow: hidden;
 }
 
-/* You can add global styles to this file, and also import other style files */
+body {
+  background: var(--bs-body-bg);
+  color: var(--bs-body-color);
+  font-family: var(--bs-body-font-family);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+app-root {
+  display: block;
+  height: 100%;
+  min-height: 100%;
+}
+
+.btn-app {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: var(--app-red);
+  --bs-btn-border-color: var(--app-red);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--app-red-dark);
+  --bs-btn-hover-border-color: var(--app-red-dark);
+  --bs-btn-active-bg: var(--app-red-dark);
+  --bs-btn-active-border-color: var(--app-red-dark);
+  font-weight: 600;
+}
+
+.btn-cream {
+  --bs-btn-color: var(--app-red-dark);
+  --bs-btn-bg: var(--app-white);
+  --bs-btn-border-color: var(--app-border);
+  --bs-btn-hover-color: var(--app-red-dark);
+  --bs-btn-hover-bg: var(--app-red-soft);
+  --bs-btn-hover-border-color: var(--app-red);
+  font-weight: 600;
+}
+
+.text-app-muted {
+  color: var(--app-muted) !important;
+}
+
+.text-app-red {
+  color: var(--app-red-dark) !important;
+}
+
+.bg-app-cream {
+  background: var(--app-cream) !important;
+}
+
+.app-page {
+  display: grid;
+  gap: 1rem;
+  margin-inline: auto;
+  max-width: 1280px;
+  width: 100%;
+}
+
+.app-page__hero,
+.app-card {
+  background: var(--app-white);
+  border: 1px solid var(--app-border);
+  border-radius: var(--bs-border-radius);
+  min-width: 0;
+}
+
+.app-page__hero {
+  padding: 1.5rem;
+}
+
+.app-eyebrow {
+  color: var(--app-red-dark);
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+  text-transform: uppercase;
+}
+
+.app-stat {
+  min-height: 150px;
+}
+
+.app-stat__value {
+  color: var(--app-ink);
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.app-table {
+  margin-bottom: 0;
+}
+
+.app-table > :not(caption) > * > * {
+  padding: 0.9rem 1rem;
+  vertical-align: middle;
+}
+
+.app-table thead th {
+  background: var(--app-red-soft);
+  color: var(--app-red-dark);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.badge-soft-red {
+  background: var(--app-red-soft);
+  border: 1px solid rgba(248, 113, 113, 0.35);
+  color: var(--app-red-dark);
+  font-weight: 600;
+}
+
+.progress {
+  --bs-progress-bg: var(--app-cream-strong);
+  --bs-progress-bar-bg: var(--app-red);
+}
+
+.form-control,
+.form-select {
+  border-color: var(--app-border);
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--app-red);
+  box-shadow: 0 0 0 0.2rem rgba(248, 113, 113, 0.16);
+}
+
+.auth-page {
+  background: var(--app-cream);
+  display: grid;
+  grid-template-columns: minmax(280px, 0.8fr) minmax(0, 1.2fr);
+  min-height: 100vh;
+}
+
+.auth-panel {
+  background: var(--app-red);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: clamp(2rem, 5vw, 3.5rem);
+}
+
+.auth-brand {
+  align-items: center;
+  display: flex;
+  gap: 0.75rem;
+}
+
+.auth-brand__mark {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  border-radius: var(--bs-border-radius);
+  display: inline-flex;
+  font-weight: 700;
+  height: 44px;
+  justify-content: center;
+  width: 44px;
+}
+
+.auth-form-wrap {
+  align-items: center;
+  background: var(--app-white);
+  display: flex;
+  justify-content: center;
+  overflow-y: auto;
+  padding: clamp(1.5rem, 5vw, 4rem);
+}
+
+.auth-form-card {
+  max-width: 480px;
+  width: 100%;
+}
+
+.error-msg,
+.server-error {
+  color: var(--app-red-dark);
+  display: block;
+  font-size: 0.8rem;
+  margin-top: 0.35rem;
+}
+
+.input-error {
+  background: var(--app-red-soft) !important;
+  border-color: var(--app-red-dark) !important;
+}
+
+.password-field {
+  position: relative;
+}
+
+.password-field .form-control {
+  padding-right: 3rem;
+}
+
+.password-toggle {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: var(--app-muted);
+  display: inline-flex;
+  height: 2.25rem;
+  justify-content: center;
+  position: absolute;
+  right: 0.45rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2.25rem;
+}
+
+.password-toggle svg {
+  height: 18px;
+  width: 18px;
+}
+
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+
+  .auth-page {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-panel {
+    min-height: 180px;
+  }
+
+  .auth-form-wrap {
+    align-items: flex-start;
+  }
+
+  .app-page__hero {
+    padding: 1rem;
+  }
+}

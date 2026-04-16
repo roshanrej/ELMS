@@ -1,0 +1,56 @@
+<section class="app-page">
+  <header class="app-page__hero">
+    <span class="app-eyebrow">Employee Dashboard</span>
+    <h2 class="display-6 fw-bold mb-3">Your leave workspace</h2>
+    <p class="text-app-muted mb-0">A clean overview for balances, upcoming time away, and recent request activity.</p>
+  </header>
+
+  <div class="row g-3">
+    <div class="col-md-4">
+      <article class="app-card app-stat p-4">
+        <span class="app-eyebrow">Annual Balance</span>
+        <div class="app-stat__value my-3">14</div>
+        <p class="text-app-muted mb-0">Days remaining in the current cycle.</p>
+      </article>
+    </div>
+    <div class="col-md-4">
+      <article class="app-card app-stat p-4">
+        <span class="app-eyebrow">Pending</span>
+        <div class="app-stat__value my-3">02</div>
+        <p class="text-app-muted mb-0">Requests waiting for manager approval.</p>
+      </article>
+    </div>
+    <div class="col-md-4">
+      <article class="app-card app-stat p-4">
+        <span class="app-eyebrow">Used</span>
+        <div class="app-stat__value my-3">10</div>
+        <p class="text-app-muted mb-0">Leave days used this year.</p>
+      </article>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-lg-7">
+      <section class="app-card p-4 h-100">
+        <h3 class="h5 fw-bold mb-3">Upcoming leave</h3>
+        <div class="list-group list-group-flush">
+          <div class="list-group-item bg-transparent px-0 d-flex justify-content-between">
+            <span>Annual leave</span>
+            <span class="badge badge-soft-red rounded-pill">May 12 - May 14</span>
+          </div>
+          <div class="list-group-item bg-transparent px-0 d-flex justify-content-between">
+            <span>Work from home</span>
+            <span class="badge badge-soft-red rounded-pill">May 22</span>
+          </div>
+        </div>
+      </section>
+    </div>
+    <div class="col-lg-5">
+      <section class="app-card p-4 h-100">
+        <h3 class="h5 fw-bold mb-3">Quick action</h3>
+        <p class="text-app-muted">Submit a request using the red action pattern and cream form surfaces.</p>
+        <a routerLink="/employee/request-leave" class="btn btn-app">Request Leave</a>
+      </section>
+    </div>
+  </div>
+</section>

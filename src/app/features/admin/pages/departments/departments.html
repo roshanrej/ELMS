@@ -1,0 +1,27 @@
+<section class="app-page">
+  <header class="app-page__hero">
+    <span class="app-eyebrow">Departments</span>
+    <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
+      <div>
+        <h2 class="display-6 fw-bold mb-3">Department coverage overview</h2>
+        <p class="text-app-muted mb-0">A simple admin skeleton for monitoring team ownership and leave coverage readiness.</p>
+      </div>
+      <button type="button" class="btn btn-app align-self-start">Add Department</button>
+    </div>
+  </header>
+
+  <div class="row g-3">
+    <div class="col-md-6 col-xl-3" *ngFor="let department of departments">
+      <article class="app-card p-4 h-100">
+        <span class="badge badge-soft-red rounded-pill mb-3">{{ department.status }}</span>
+        <h3 class="h5 fw-bold mb-1">{{ department.name }}</h3>
+        <p class="text-app-muted mb-3">Head: {{ department.head }}</p>
+        <div class="d-flex justify-content-between border-top pt-3 mb-3">
+          <span class="text-app-muted">Members</span>
+          <strong>{{ department.members }}</strong>
+        </div>
+        <p class="small text-app-muted mb-0">{{ department.note }}</p>
+      </article>
+    </div>
+  </div>
+</section>

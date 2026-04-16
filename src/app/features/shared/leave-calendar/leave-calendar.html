@@ -1,1 +1,16 @@
-<p>leave-calendar works!</p>
+<section class="app-card p-4">
+  <div class="d-flex justify-content-between align-items-start mb-4">
+    <div>
+      <span class="app-eyebrow">Calendar</span>
+      <h3 class="h5 fw-bold mb-1">Leave calendar</h3>
+      <p class="text-app-muted mb-0">Shared calendar skeleton for planned absences.</p>
+    </div>
+    <span class="badge badge-soft-red rounded-pill">Month</span>
+  </div>
+
+  <div class="row g-2 text-center">
+    <div class="col" *ngFor="let day of ['Mon', 'Tue', 'Wed', 'Thu', 'Fri']">
+      <div class="border rounded p-3 bg-app-cream fw-semibold">{{ day }}</div>
+    </div>
+  </div>
+</section>
