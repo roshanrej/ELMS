@@ -1,34 +1,54 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --app-red: #f87171;
-  --app-red-dark: #dc2626;
-  --app-red-soft: #fff1f2;
-  --app-cream: #fffaf0;
-  --app-cream-strong: #fff4de;
-  --app-white: #ffffff;
-  --app-ink: #241916;
-  --app-muted: #7b6b64;
-  --app-border: #f0d9cf;
+  /* Primary */
+  --app-red: #ef4444;
+  --app-red-dark: #b91c1c;
+  --app-red-soft: #fef2f2;
 
-  --bs-body-font-family: 'DM Sans', Arial, sans-serif;
-  --bs-body-color: var(--app-ink);
-  --bs-body-bg: var(--app-cream);
-  --bs-border-radius: 0.5rem;
-  --bs-border-color: var(--app-border);
-  --bs-link-color: var(--app-red-dark);
-  --bs-link-hover-color: #b91c1c;
+  /* Background */
+  --app-cream: #fdfaf6;
+  --app-cream-strong: #f7efe5;
+  --app-white: #ffffff;
+
+  /* Text */
+  --app-ink: #1f1f1f;
+  --app-muted: #6b7280;
+
+  /* Border */
+  --app-border: #e5e7eb;
+
+  /* Status (more muted, integrated) */
+  --app-green-soft: #f0fdf4;
+  --app-green-dark: #166534;
+
+  --app-yellow-soft: #fefce8;
+  --app-yellow-dark: #854d0e;
+
+  --app-gray-soft: #f9fafb;
+  --app-gray-dark: #374151;
+   --bg-page: #fdfaf6;          /* main background */
+  --bg-section: #f7efe5;       /* subtle separation */
+  --bg-card: #ffffff;          /* main content */
+
+  /* Hover / interaction */
+  --bg-hover: #fafafa;
+
+  /* Table specific */
+  --bg-table-header: #fafafa;
+  --bg-table-row-hover: #fafafa;
 }
 
 * {
   box-sizing: border-box;
 }
 
-html,
-body {
+html, body {
   height: 100%;
   margin: 0;
-  overflow: hidden;
+  /* REMOVED: overflow: hidden - This was causing responsiveness jank */
+  overflow-x: hidden; 
+  background-color: var(--app-cream);
 }
 
 body {
@@ -103,7 +123,7 @@ app-root {
 .app-eyebrow {
   color: var(--app-red-dark);
   display: inline-block;
-  font-size: 0.75rem;
+  font-size: 1rem;
   font-weight: 700;
   margin-bottom: 0.35rem;
   text-transform: uppercase;
@@ -120,31 +140,62 @@ app-root {
   line-height: 1;
 }
 
-.app-table {
-  margin-bottom: 0;
+/* Table Container for Responsiveness */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--bs-border-radius);
+  border: 1px solid var(--app-border);
+  background: var(--app-white);
 }
 
-.app-table > :not(caption) > * > * {
-  padding: 0.9rem 1rem;
-  vertical-align: middle;
+.app-table {
+  width: 100%;
+  border-collapse: separate; /* Changed from collapse for rounded corners */
+  border-spacing: 0;
+  margin-bottom: 0;
 }
 
 .app-table thead th {
   background: var(--app-red-soft);
   color: var(--app-red-dark);
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 1rem;
+  border-bottom: 2px solid var(--app-border);
   white-space: nowrap;
 }
 
-.badge-soft-red {
-  background: var(--app-red-soft);
-  border: 1px solid rgba(248, 113, 113, 0.35);
-  color: var(--app-red-dark);
-  font-weight: 600;
+.app-table tbody td {
+  padding: 1rem;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--app-border);
+  color: var(--app-ink);
+  font-size: 0.9rem;
 }
 
+/* Badges Refinement */
+// In parent scss - add to .badge-soft
+.badge-soft {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  min-width: 90px; // 👈 add this
+}
+
+.badge-soft-red { background: var(--app-red-soft); color: var(--app-red-dark); border-color: rgba(248, 113, 113, 0.2); }
+.badge-soft-green { background: var(--app-green-soft); color: var(--app-green-dark); border-color: rgba(52, 211, 153, 0.2); }
+.badge-soft-yellow { background: var(--app-yellow-soft); color: var(--app-yellow-dark); border-color: rgba(251, 191, 36, 0.2); }
+.badge-soft-gray{background: var(--app-gray-soft); color: var(--app-gray-dark); border-color: rgba(167, 164, 159, 0.2);}
 .progress {
   --bs-progress-bg: var(--app-cream-strong);
   --bs-progress-bar-bg: var(--app-red);

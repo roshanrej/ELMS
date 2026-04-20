@@ -1,7 +1,7 @@
 import { CanActivateFn, Router } from "@angular/router";
 import { AuthStore } from "../store/auth.store";
 import { inject } from "@angular/core";
-import { RoleType } from "../../core/models/role.model";
+import { RoleTypeEnum } from "../../core/models/role.model";
 
 export const adminGuard : CanActivateFn = () => {
   const authStore = inject(AuthStore);
@@ -9,7 +9,7 @@ export const adminGuard : CanActivateFn = () => {
 
   const user = authStore.currentUser;
 
-  if (user?.role !== RoleType.Admin) {
+  if (user?.role !== RoleTypeEnum.Admin) {
     router.navigate(['/']);
     return false;
   }
@@ -22,7 +22,7 @@ export const employeeGuard : CanActivateFn = () => {
 
   const user = authStore.currentUser;
 
-  if (user?.role !== RoleType.Employee) {
+  if (user?.role !== RoleTypeEnum.Employee) {
     router.navigate(['/']);
     return false;
   }
@@ -35,7 +35,7 @@ export const managerGuard : CanActivateFn = () => {
 
   const user = authStore.currentUser;
 
-  if (user?.role !== RoleType.Manager ) {
+  if (user?.role !== RoleTypeEnum.Manager ) {
     router.navigate(['/']);
     return false;
   }

@@ -1,3 +1,113 @@
 :host {
   display: block;
 }
+
+/* 1. Force Global Center Alignment */
+
+/* Replace the blanket center rule with selective centering */
+
+
+/* Only center these specific columns */
+// In component scss - ensure both th and td are centered
+
+.app-table td {
+  white-space: nowrap;
+  text-align: justify;
+}
+.app-table th:nth-child(5),
+.app-table td:nth-child(5) {
+  text-align: center;
+}
+.app-table th:nth-child(4),
+.app-table td:nth-child(4) {
+  text-align: center;
+}
+.app-table td:nth-child(6),
+.app-table th:nth-child(6){
+  text-align: center;
+}
+
+.badge-soft {
+  width: auto;        /* remove any width: 100% if set */
+  min-width: 90px;    /* keeps all badges same width */
+}
+
+.app-table th:nth-child(7),  /* Action header */
+.app-table td:nth-child(7) { /* Action cell */
+  text-align: center;
+}
+/* 2. The Action Grid: Fixes "Jank" and Handles Wrapping */
+.action-grid {
+  display: grid;
+  /* Automatically fits 1 or 2 buttons, centers them, and wraps if space is tight */
+  grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 160px; /* Prevents the column from getting too wide */
+  margin: 0 auto;   /* Centers the grid within the cell */
+}
+
+/* 3. Badge & Button Internal Centering */
+.rounded-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;      /* Makes elements fill their grid/cell space */
+  min-height: 32px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+/* --- REFINED BUTTONS --- */
+
+.btn-action {
+  border: 1px solid transparent;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* CANCEL: Soft Red/Gray (Semantic & Subtle) */
+.btn-cancel {
+  background: #fef2f2; /* A very pale red-gray */
+  color: #991b1b;      /* Deep muted red */
+  border: 1px solid #fee2e2;
+}
+
+.btn-cancel:hover {
+  background: #fee2e2;
+  color: #7f1d1d;
+  border-color: #fecaca;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(153, 27, 27, 0.08);
+}
+
+/* EDIT: Warm Bordered (Secondary Action) */
+.btn-edit {
+  background: var(--app-white);
+  border: 1px solid var(--app-border);
+  color: var(--app-ink);
+}
+
+.btn-edit:hover {
+  background: var(--app-cream-strong);
+  border-color: #e2c2b3; /* Slightly darker than app-border */
+  color: var(--app-red-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(36, 25, 22, 0.05);
+}
+
+/* 4. Remove rigid vertical borders for a smoother "Cream" look */
+.app-table td + td,
+.app-table th + th {
+  border-left: none;
+}
+
+/* 5. Subtle Row Hover */
+.app-table tbody tr:hover {
+  background-color: var(--app-red-soft);
+  transition: background 0.2s ease-in-out;
+}

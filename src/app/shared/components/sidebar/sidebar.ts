@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthStore } from '../../../auth/store/auth.store';
-import { RoleType } from '../../../core/models/role.model';
+import { RoleTypeEnum } from '../../../core/models/role.model';
 import { UserModel } from '../../../core/models/user.model';
 
 @Component({
@@ -42,12 +42,12 @@ export class Sidebar implements OnInit {
   ngOnInit() {
     const userRole = this.authStore.currentUser?.role;
 
-    if (userRole === RoleType.Admin) {
+    if (userRole === RoleTypeEnum.Admin) {
       this.navLinks = this.navLinksMap.ADMIN;
       return;
     }
 
-    if (userRole === RoleType.Employee) {
+    if (userRole === RoleTypeEnum.Employee) {
       this.navLinks = this.navLinksMap.EMPLOYEE;
       return;
     }

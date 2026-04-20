@@ -1,6 +1,13 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { LeaveApi } from '../../http/leave/leave-api';
 
 @Injectable({
   providedIn: 'root',
 })
-export class LeaveRequest {}
+export class LeaveRequest {
+  private leaveApi : LeaveApi = inject(LeaveApi)
+
+  requestLeave(){
+    
+  }
+}

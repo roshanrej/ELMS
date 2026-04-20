@@ -2,8 +2,8 @@ import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserModel } from '../../core/models/user.model';
 import { AuthStore } from '../store/auth.store';
-import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
+import { Api } from '../../core/http/auth/api';
 
  export enum Role {
     Admin="ADMIN",
@@ -21,7 +21,7 @@ export class Auth {
   
   private router:Router = inject(Router)
   private authStore : AuthStore = inject (AuthStore)
-  private http : HttpClient =  inject(HttpClient)
+  private api : Api = inject (Api)
   
 
   
@@ -32,16 +32,10 @@ async login(email: string, password: string): Promise<UserModel | null> {
     console.log("Error on data validation");
     return null;
   }
-
   const requestData = { email, password };
 
   try {
-    const user = await firstValueFrom(
-      this.http.post<UserModel>('http://localhost:3000/auth/login', requestData)
-    );
-
-    console.log('[SERVICE] LOGIN USER:', user);
-
+    const user = await this.api.loginUser(requestData)
     if (user) {
       this.authStore.setUser(user);
     }
@@ -55,7 +49,7 @@ async login(email: string, password: string): Promise<UserModel | null> {
 }
   register(newUser : Omit<UserModel,"id">) : UserModel | null {
     //api service
-   this.http.post('api/register',newUser) // action returning an observable
+   //this.http.post('api/register',newUser) // action returning an observable
    return null
   }
  

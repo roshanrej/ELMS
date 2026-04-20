@@ -1,12 +1,12 @@
 
 import { Department } from '../../auth/services/auth'
-import { RoleType } from './role.model';
+import { RoleTypeEnum } from './role.model';
 
 export interface UserModel {
   id: number,
   email: string;
   name: string;
-  role: RoleType;
+  role: RoleTypeEnum;
   department: Department;
   createdAt: Date;
 }

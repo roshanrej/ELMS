@@ -3,9 +3,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { Auth } from '../services/auth';
-import { UserModel } from '../../core/models/user.model';
-import { AuthStore } from '../store/auth.store';
-import { RoleType } from '../../core/models/role.model';
+import { RoleTypeEnum } from '../../core/models/role.model';
 @Component({
   selector: 'app-login',
   imports: [ReactiveFormsModule, CommonModule , RouterLink],
@@ -51,7 +49,6 @@ export class Login {
   }
 
   this.loading = true;
-
   // wait for login to complete
   const user = await this.auth.login(email, password);
 
@@ -65,10 +62,10 @@ export class Login {
 
   // 
   console.log(user.role)
-  if (user.role === RoleType.Admin) {
+  if (user.role === RoleTypeEnum.Admin) {
     this.router.navigate(['/admin/dashboard']);
   }
-  else if(user.role === RoleType.Employee){
+  else if(user.role === RoleTypeEnum.Employee){
     this.router.navigate(['/employee/dashboard'])
   }
   else {

@@ -1,46 +1,103 @@
 <section class="app-page">
+
   <header class="app-page__hero">
     <span class="app-eyebrow">My Leaves</span>
-    <h2 class="display-6 fw-bold mb-3">Request history</h2>
-    <p class="text-app-muted mb-0">A focused table for tracking submitted leave requests and statuses.</p>
+    <h2 class="display-6 fw-bold mb-3">Leave Request history</h2>
+    <p class="text-app-muted mb-0">
+      A table for tracking submitted leave requests and statuses.
+    </p>
   </header>
 
-  <section class="app-card overflow-hidden">
+  <!-- 🔥 Filter Bar -->
+  <section class="app-card p-3 d-flex justify-content-between align-items-center">
+    <span class="text-app-muted fw-semibold">
+      Showing: {{ selectedYear === 'ALL' ? 'All Years' : selectedYear }}
+    </span>
+    <div class="d-flex align-items-center gap-3">
+      <div class="d-flex align-items-center gap-2">
+      <label class="text-app-muted fw-semibold text-nowrap mb-0">Filter by year:</label>
+      <select class="form-select w-auto" [(ngModel)]="selectedYear" (change)="applyFilters()">
+        <option [ngValue]="'ALL'">All</option>
+        <option *ngFor="let year of years" [ngValue]="year">{{ year }}</option>
+      </select>
+    </div>
+
+    <div class="d-flex align-items-center gap-2">
+      <label class="text-app-muted fw-semibold text-nowrap mb-0">Filter by status:</label>
+      <select class="form-select w-auto" [(ngModel)]="selectedStatus" (change)="applyFilters()">
+        <option [ngValue]="'ALL'">All</option>
+        <option [ngValue]="LeaveStatusEnum.Pending">Pending</option>
+        <option [ngValue]="LeaveStatusEnum.Approved">Approved</option>
+        <option [ngValue]="LeaveStatusEnum.Rejected">Rejected</option>
+         <option [ngValue]="LeaveStatusEnum.Cancelled">Cancelled</option>
+
+      </select>
+    </div>
+    </div>
+
+  </section>
+
+  <!-- 🔥 Loading -->
+  <section *ngIf="isLoading()" class="app-card p-3">
+    <span class="text-app-muted">Fetching your leaves...</span>
+  </section>
+
+  <!-- 🔥 Data -->
+  <section *ngIf="!isLoading() && filteredLeaves.length > 0" class="app-card overflow-hidden">
     <div class="table-responsive">
       <table class="table app-table align-middle">
         <thead>
           <tr>
             <th>Type</th>
-            <th>Dates</th>
+            <th>Start Date</th>
+            <th>End Date</th>
             <th>Days</th>
             <th>Status</th>
             <th>Approver</th>
+            <th>Action</th>
           </tr>
         </thead>
+
         <tbody>
-          <tr>
-            <td class="fw-bold">Annual Leave</td>
-            <td>May 12 - May 14</td>
-            <td>3</td>
-            <td><span class="badge badge-soft-red rounded-pill">Approved</span></td>
-            <td>Manager</td>
-          </tr>
-          <tr>
-            <td class="fw-bold">Sick Leave</td>
-            <td>Apr 08</td>
-            <td>1</td>
-            <td><span class="badge badge-soft-red rounded-pill">Closed</span></td>
-            <td>Manager</td>
-          </tr>
-          <tr>
-            <td class="fw-bold">Casual Leave</td>
-            <td>Jun 03</td>
-            <td>1</td>
-            <td><span class="badge badge-soft-red rounded-pill">Pending</span></td>
-            <td>Manager</td>
+          <tr *ngFor="let leave of filteredLeaves">
+
+            <td class="fw-bold text-nowrap">{{ leave.leaveType }}</td>
+
+            <td>{{ leave.startDate | date:'MMM d, yyyy' }}</td>
+            <td>{{ leave.endDate | date:'MMM d, yyyy' }}</td>
+
+            <td class="text-center">{{ getLeaveDays(leave) }}</td>
+
+            <td>
+              <span class="badge-soft rounded-pill px-2 py-1" [ngClass]="statusClassMap[leave.status]">
+                {{ leave.status }}
+              </span>
+            </td>
+
+            <td>{{ leave.approverName || '-' }}</td>
+
+            <td>
+              <div class="action-grid">
+                <button *ngIf="getAvailableActions(leave.status).includes('EDIT')"
+                  class="btn btn-sm btn-action btn-edit">
+                  Edit
+                </button>
+                <button *ngIf="getAvailableActions(leave.status).includes('CANCEL')"
+                  class="btn btn-sm btn-action btn-cancel">
+                  Cancel
+                </button>
+              </div>
+            </td>
+
           </tr>
         </tbody>
       </table>
     </div>
   </section>
+
+  <!-- 🔥 Empty State -->
+  <section *ngIf="!isLoading() && filteredLeaves.length === 0" class="app-card p-3 text-app-muted">
+    No leave requests found.
+  </section>
+
 </section>
