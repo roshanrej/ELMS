@@ -4,6 +4,7 @@ import { LeaveModel} from '../../../../core/models/leave-model';
 import { LeaveStatusEnum } from '../../../../core/models/leave-status-enum';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { LeaveTypeEnum } from '../../../../core/models/leave-type-enum';
 
 @Component({
   selector: 'app-my-leaves',
@@ -12,6 +13,8 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './my-leaves.scss',
 })
 export class MyLeaves {
+  LeaveTypeEnum = LeaveTypeEnum
+  selectedType : LeaveTypeEnum|'ALL' = 'ALL';
   LeaveStatusEnum = LeaveStatusEnum
   selectedStatus: LeaveStatusEnum | 'ALL' = 'ALL';
   
@@ -38,6 +41,11 @@ export class MyLeaves {
       leave.status === this.selectedStatus
     );
   }
+  if (this.selectedType !== 'ALL') {
+    filtered = filtered.filter(leave =>
+      leave.leaveType === this.selectedType
+    );
+  }
 
   this.filteredLeaves = filtered;
 }
@@ -58,7 +66,7 @@ export class MyLeaves {
     // ✅ NOW data exists
     this.extractYears();
     this.applyFilters();
-
+  
     this.isLoading.set(false);
   });
    

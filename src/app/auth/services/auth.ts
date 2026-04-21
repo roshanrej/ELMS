@@ -2,8 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserModel } from '../../core/models/user.model';
 import { AuthStore } from '../store/auth.store';
-import { firstValueFrom } from 'rxjs';
-import { Api } from '../../core/http/auth/api';
+import { AuthApi } from '../../core/http/auth/api';
 
  export enum Role {
     Admin="ADMIN",
@@ -18,10 +17,9 @@ export enum Department{
   providedIn: 'root',
 })
 export class Auth {
-  
-  private router:Router = inject(Router)
+
   private authStore : AuthStore = inject (AuthStore)
-  private api : Api = inject (Api)
+  private api : AuthApi = inject (AuthApi)
   
 
   

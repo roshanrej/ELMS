@@ -7,7 +7,7 @@ import { LeaveModel } from '../../models/leave-model';
 @Injectable({
   providedIn: 'root',
 })
-export class Api {
+export class AuthApi {
   private http : HttpClient =  inject(HttpClient)
 
 

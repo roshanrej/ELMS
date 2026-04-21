@@ -11,7 +11,7 @@
     <div class="col-lg-8">
       <section class="app-card p-4">
 
-        <form (ngSubmit)="submitRequest()" #leaveForm="ngForm">
+        <form (ngSubmit)="submitRequest()" [formGroup]="leaveForm">
 
           <div class="row g-3">
 
@@ -22,8 +22,7 @@
               <select 
                 class="form-select"
                 name="leaveType"
-                [(ngModel)]="form.leaveType"
-                required>
+                formControlName ="leaveType">
 
                 <option [ngValue]="null" disabled>Select Leave Type</option>
 
@@ -43,8 +42,7 @@
                 class="form-control"
                 type="date"
                 name="startDate"
-                [(ngModel)]="form.startDate"
-                required />
+                formControlName="startDate" />
             </div>
 
             <!-- End Date -->
@@ -55,8 +53,7 @@
                 class="form-control"
                 type="date"
                 name="endDate"
-                [(ngModel)]="form.endDate"
-                required />
+                formControlName="endDate" />
             </div>
 
             <!-- Reason -->
@@ -67,9 +64,9 @@
                 class="form-control"
                 rows="5"
                 name="reason"
-                [(ngModel)]="form.reason"
+                formControlName="reason"
                 placeholder="Add a short reason"
-                required>
+                >
               </textarea>
             </div>
 

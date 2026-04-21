@@ -1,56 +1,91 @@
 <section class="app-page">
+
   <header class="app-page__hero">
     <span class="app-eyebrow">Employee Dashboard</span>
     <h2 class="display-6 fw-bold mb-3">Your leave workspace</h2>
-    <p class="text-app-muted mb-0">A clean overview for balances, upcoming time away, and recent request activity.</p>
+    <p class="text-app-muted mb-0">
+      A clean overview for balances, upcoming time away, and recent request activity.
+    </p>
   </header>
 
+  <!-- 🔥 STATS -->
   <div class="row g-3">
+
     <div class="col-md-4">
       <article class="app-card app-stat p-4">
         <span class="app-eyebrow">Annual Balance</span>
-        <div class="app-stat__value my-3">14</div>
+        <div class="app-stat__value my-3">{{ leaveBalance }}</div>
         <p class="text-app-muted mb-0">Days remaining in the current cycle.</p>
       </article>
     </div>
+
     <div class="col-md-4">
       <article class="app-card app-stat p-4">
         <span class="app-eyebrow">Pending</span>
-        <div class="app-stat__value my-3">02</div>
+        <div class="app-stat__value my-3">{{ pendingCount }}</div>
         <p class="text-app-muted mb-0">Requests waiting for manager approval.</p>
       </article>
     </div>
+
     <div class="col-md-4">
       <article class="app-card app-stat p-4">
         <span class="app-eyebrow">Used</span>
-        <div class="app-stat__value my-3">10</div>
+        <div class="app-stat__value my-3">{{ usedDays }}</div>
         <p class="text-app-muted mb-0">Leave days used this year.</p>
       </article>
     </div>
+
   </div>
 
+  <!-- 🔥 CONTENT -->
   <div class="row g-3">
+
+    <!-- Upcoming -->
     <div class="col-lg-7">
       <section class="app-card p-4 h-100">
         <h3 class="h5 fw-bold mb-3">Upcoming leave</h3>
-        <div class="list-group list-group-flush">
-          <div class="list-group-item bg-transparent px-0 d-flex justify-content-between">
-            <span>Annual leave</span>
-            <span class="badge badge-soft-red rounded-pill">May 12 - May 14</span>
+
+        <div *ngIf="upcomingLeaves.length > 0; else noUpcoming" class="list-group list-group-flush">
+
+          <div *ngFor="let leave of upcomingLeaves"
+               class="list-group-item bg-transparent px-0 d-flex justify-content-between">
+
+            <span>{{ leave.leaveType }}</span>
+
+            <span class="badge rounded-pill" [ngClass]="statusClassMap[leave.status]">
+              {{ leave.startDate | date:'MMM d' }}
+              <span *ngIf="leave.startDate !== leave.endDate">
+                - {{ leave.endDate | date:'MMM d' }}
+              </span>
+            </span>
+
           </div>
-          <div class="list-group-item bg-transparent px-0 d-flex justify-content-between">
-            <span>Work from home</span>
-            <span class="badge badge-soft-red rounded-pill">May 22</span>
-          </div>
+
         </div>
+
+        <ng-template #noUpcoming>
+          <p class="text-app-muted">No upcoming leave scheduled.</p>
+        </ng-template>
+
       </section>
     </div>
+
+    <!-- Quick Actions -->
     <div class="col-lg-5">
       <section class="app-card p-4 h-100">
         <h3 class="h5 fw-bold mb-3">Quick action</h3>
-        <p class="text-app-muted">Submit a request using the red action pattern and cream form surfaces.</p>
-        <a routerLink="/employee/request-leave" class="btn btn-app">Request Leave</a>
+
+        <p class="text-app-muted">
+          Submit a request using the quick action.
+        </p>
+
+        <a routerLink="/employee/request-leave" class="btn btn-app">
+          Request Leave
+        </a>
+
       </section>
     </div>
+
   </div>
+
 </section>
