@@ -1,6 +1,6 @@
-import { LeaveModel } from '../models/leave-model';
-import { LeaveStatusEnum } from '../models/leave-status-enum';
-import { LeaveTypeEnum } from '../models/leave-type-enum';
+import { LeaveModel } from '../../models/leave-model';
+import { LeaveStatusEnum } from '../../models/leave-status-enum';
+import { LeaveTypeEnum } from '../../models/leave-type-enum';
 
 export type LeaveDto = {
   id?: number | string;

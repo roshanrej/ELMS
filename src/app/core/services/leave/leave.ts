@@ -3,7 +3,7 @@ import { Observable, map } from 'rxjs';
 import { LeaveApi } from '../../http/leave/leave-api';
 import { LeaveModel } from '../../models/leave-model';
 import { LeaveRequestModel } from '../../models/leave-request.model';
-import { mapLeaveDtoToModel } from '../../mappers/leave.mapper';
+import { mapLeaveDtoToModel } from '../../mappers/leave/leave.mapper';
 
 @Injectable({
   providedIn: 'root',

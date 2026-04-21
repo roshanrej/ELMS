@@ -1,5 +1,5 @@
-import { LeaveStatusEnum } from '../models/leave-status-enum';
-import { LeaveTypeEnum } from '../models/leave-type-enum';
+import { LeaveStatusEnum } from '../../models/leave-status-enum';
+import { LeaveTypeEnum } from '../../models/leave-type-enum';
 import { mapLeaveDtoToModel } from './leave.mapper';
 
 describe('mapLeaveDtoToModel', () => {
