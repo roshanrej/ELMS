@@ -68,6 +68,7 @@
           </div>
           <span class="error-msg" *ngIf="submitted && f['password'].errors?.['required']">Password is required.</span>
           <span class="error-msg" *ngIf="submitted && f['password'].errors?.['minlength']">Password must be at least 8 characters.</span>
+          
         </div>
 
         <span class="server-error mb-3" *ngIf="serverError">{{ serverError }}</span>

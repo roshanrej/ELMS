@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { Router} from '@angular/router';
-import { UserModel } from '../../../../core/models/user.model';
+import { UserModel } from '../../../../core/models/user/user.model';
 import { AuthStore } from '../../../../auth/store/auth.store';
 
 

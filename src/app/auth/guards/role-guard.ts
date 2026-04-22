@@ -1,41 +1,27 @@
-import { CanActivateFn, Router } from "@angular/router";
-import { AuthStore } from "../store/auth.store";
-import { inject } from "@angular/core";
-import { RoleTypeEnum } from "../../core/models/role.model";
+import { inject } from '@angular/core';
+import { CanActivateFn, Router, ActivatedRouteSnapshot } from '@angular/router';
+import { AuthStore } from '../store/auth.store';
+import { RoleTypeEnum } from '../../core/types-enums/role-type.enum';
 
-export const adminGuard : CanActivateFn = () => {
+export const roleGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
   const authStore = inject(AuthStore);
   const router = inject(Router);
 
   const user = authStore.currentUser;
+  const expectedRole = route.data['role'] as RoleTypeEnum;
 
-  if (user?.role !== RoleTypeEnum.Admin) {
-    router.navigate(['/']);
+  // ❌ not logged in
+  if (!user) {
+    router.navigate(['/login']);
     return false;
   }
 
-  return true;
-};
-export const employeeGuard : CanActivateFn = () => {
-  const authStore = inject(AuthStore);
-  const router = inject(Router);
-
-  const user = authStore.currentUser;
-
-  if (user?.role !== RoleTypeEnum.Employee) {
-    router.navigate(['/']);
-    return false;
+  if (!expectedRole) {
+    return true;
   }
 
-  return true;
-};
-export const managerGuard : CanActivateFn = () => {
-  const authStore = inject(AuthStore);
-  const router = inject(Router);
-
-  const user = authStore.currentUser;
-
-  if (user?.role !== RoleTypeEnum.Manager ) {
+  // ❌ wrong role
+  if (user.role !== expectedRole) {
     router.navigate(['/']);
     return false;
   }

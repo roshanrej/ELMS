@@ -10,5 +10,10 @@ export const employeeRoutes: Route[]=[
    leaves : leavesResolver}},
  {path:'request-leave', component: ApplyLeave},
  {path:'leaves', component: MyLeaves},
- {path:'leave-balance', component: LeaveBalance}
+ {path:'leave-balance', component: LeaveBalance},
+ {
+  path: 'drafts',
+  component: MyLeaves,
+  data: { mode: 'draft' }
+}
 ]

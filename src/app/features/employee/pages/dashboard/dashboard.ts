@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit} from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { LeaveModel } from '../../../../core/models/leave-model';
-import { LeaveService } from '../../../../core/services/leave/leave';
-import { LeaveStatusEnum } from '../../../../core/models/leave-status-enum';
+import { LeaveModel } from '../../../../core/models/leave/leave-model';
+
+import { LeaveStatusEnum } from '../../../../core/types-enums/leave-status-enum';
 
 @Component({
   selector: 'app-dashboard',
@@ -13,7 +13,7 @@ import { LeaveStatusEnum } from '../../../../core/models/leave-status-enum';
 })
 export class Dashboard  implements OnInit {
   employeeLeaves: LeaveModel[] = [];
-  private leaveService: LeaveService = inject(LeaveService)
+  
   private route : ActivatedRoute = inject(ActivatedRoute)
   leaveBalance = 0;
   usedDays = 0;

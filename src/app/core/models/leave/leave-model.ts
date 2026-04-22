@@ -1,6 +1,6 @@
 
-import { LeaveTypeEnum } from "./leave-type-enum";
-import { LeaveStatusEnum } from "./leave-status-enum";
+import { LeaveTypeEnum } from "../../types-enums/leave-type-enum";
+import { LeaveStatusEnum } from "../../types-enums/leave-status-enum";
 
  export interface LeaveModel {
   id: number;

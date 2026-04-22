@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { UserModel } from '../../core/models/user.model';
+import { UserModel } from '../../core/models/user/user.model';
 
 
 @Injectable({ providedIn: 'root' })
@@ -11,7 +11,6 @@ export class AuthStore {
   user$ = this.userSubject.asObservable();
 
   setUser(user: UserModel | null) {
-    console.log('[STORE] setUser:', user);
     this.userSubject.next(user);
   }
 

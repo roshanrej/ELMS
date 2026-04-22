@@ -1,32 +1,33 @@
 import { Component, inject } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
-import { Auth } from '../services/auth';
-import { RoleTypeEnum } from '../../core/models/role.model';
+import { AuthService } from '../services/auth';
+import { RoleTypeEnum } from '../../core/types-enums/role-type.enum';
+import { LoginRequest } from '../../core/models/auth/login-request.model';
+import { UserModel } from '../../core/models/user/user.model';
+
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, CommonModule , RouterLink],
+  standalone: true,
+  imports: [ReactiveFormsModule, CommonModule, RouterLink],
   templateUrl: './login.html',
   styleUrl: './login.scss',
 })
 export class Login {
-  submitted : boolean = false;
-  loading : boolean = false;
-  serverError : string = '';
-  passwordVisible :boolean = false;
-  
-  private fb : FormBuilder= inject(FormBuilder);
-  private auth : Auth= inject(Auth);
-  private router : Router = inject(Router)
-  
+  submitted = false;
+  loading = false;
+  serverError = '';
+  passwordVisible = false;
 
-  loginForm : FormGroup = this.fb.group({
+  private fb = inject(FormBuilder);
+  private authService = inject(AuthService);
+  private router = inject(Router);
+
+  loginForm: FormGroup = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(8)]]
+    password: ['', [Validators.required, Validators.minLength(8)]],
   });
-  
-  
 
   get f() {
     return this.loginForm.controls;
@@ -37,40 +38,58 @@ export class Login {
   }
 
   async login() {
-  this.submitted = true;
-  if (this.loginForm.invalid) return;
+    this.submitted = true;
+    this.serverError = '';
 
-  const email: string = this.loginForm.controls['email'].value;
-  const password: string = this.loginForm.controls['password'].value;
+    if (this.loginForm.invalid) return;
 
-  if (!email || !password) {
-    this.loading = false;
-    return;
+    const request: LoginRequest = this.loginForm.value;
+
+    try {
+      this.loading = true;
+
+      const user = await this.authService.loginUser(request);
+
+      if (!user) {
+        console.error('User is null after login');
+        return;
+      }
+      console.log(user)
+      this.navigateByRole(user);
+
+    } catch (error: any) {
+      this.serverError = this.extractErrorMessage(error);
+      this.loginForm.reset();
+
+    } finally {
+      this.loading = false;
+    }
   }
 
-  this.loading = true;
-  // wait for login to complete
-  const user = await this.auth.login(email, password);
+  private navigateByRole(user: UserModel): void {
+    switch (user.role) {
+      case RoleTypeEnum.Admin:
+        this.router.navigate(['/admin/dashboard']);
+        break;
 
-  this.loading = false;
+      case RoleTypeEnum.Employee:
+        this.router.navigate(['/employee/dashboard']).then(res => {
+  console.log('Navigation success:', res);
+});
+        break;
 
-  if (!user) {
-    this.router.navigate(['/login']);
-    console.error("error validating user");
-    return;
+      case RoleTypeEnum.Manager:
+        this.router.navigate(['/manager/dashboard']);
+        break;
+
+      default:
+        this.router.navigate(['/login']);
+    }
   }
 
-  // 
-  console.log(user.role)
-  if (user.role === RoleTypeEnum.Admin) {
-    this.router.navigate(['/admin/dashboard']);
+  private extractErrorMessage(error: any): string {
+    if (error?.error?.message) return error.error.message;
+    if (error?.message) return error.message;
+    return 'Something went wrong. Please try again.';
   }
-  else if(user.role === RoleTypeEnum.Employee){
-    this.router.navigate(['/employee/dashboard'])
-  }
-  else {
-    this.router.navigate(['/manager/dashboard'])
-  }
-}
-
 }

@@ -1,62 +1,60 @@
 import { inject, Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { UserModel } from '../../core/models/user.model';
+import { UserModel } from '../../core/models/user/user.model';
 import { AuthStore } from '../store/auth.store';
 import { AuthApi } from '../../core/http/auth/api';
-
- export enum Role {
-    Admin="ADMIN",
-    Manager = "Manager",
-    Employee = "EMPLOYEE"
-}
-export enum Department{
-    IT="IT"
-}
+import { LoginRequest } from '../../core/models/auth/login-request.model';
+import { firstValueFrom } from 'rxjs';
+import { ApiResponse } from '../../core/models/api/api-reponse.model';
+import { Router } from '@angular/router';
+import { catchError, throwError } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
 })
-export class Auth {
+export class AuthService {
 
-  private authStore : AuthStore = inject (AuthStore)
-  private api : AuthApi = inject (AuthApi)
-  
+  private authStore: AuthStore = inject(AuthStore)
+  private authApi: AuthApi = inject(AuthApi)
+  private router: Router = inject(Router)
 
-  
 
-async login(email: string, password: string): Promise<UserModel | null> {
 
-  if (!email || !password) {
-    console.log("Error on data validation");
-    return null;
-  }
-  const requestData = { email, password };
 
+ async loginUser(request: LoginRequest): Promise<UserModel> {
   try {
-    const user = await this.api.loginUser(requestData)
-    if (user) {
-      this.authStore.setUser(user);
+    const res = await firstValueFrom(
+      this.authApi.loginUser(request) // ✅ already returns Observable<ApiResponse<UserModel>>
+    );
+
+    if (!res.success || !res.data) {
+      throw new Error('Invalid login response');
     }
 
-    return user;
+    localStorage.setItem('token', res.token!);
 
-  } catch (error) {
-    console.log('[SERVICE] login failed', error);
-    return null;
+    return res.data;
+
+  } catch (err: any) {
+    if (err.status === 401) {
+      throw new Error('Invalid email or password');
+    }
+
+    throw new Error('Server error. Please try again.');
   }
 }
-  register(newUser : Omit<UserModel,"id">) : UserModel | null {
-    //api service
-   //this.http.post('api/register',newUser) // action returning an observable
-   return null
-  }
- 
+
+
+
+
 
   logout() {
     //api call
-  
-  this.authStore.setUser(null); //ui reflection
-   
+
+    localStorage.removeItem('token')
+    this.authStore.setUser(null)
+    this.router.navigate(['/login'])//ui reflection
+
   }
 }
 

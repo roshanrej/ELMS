@@ -1,11 +1,12 @@
 import { Component, inject, signal } from '@angular/core';
 import { LeaveService } from '../../../../core/services/leave/leave';
-import { LeaveModel} from '../../../../core/models/leave-model';
-import { LeaveStatusEnum } from '../../../../core/models/leave-status-enum';
+import { LeaveModel} from '../../../../core/models/leave/leave-model';
+import { LeaveStatusEnum } from '../../../../core/types-enums/leave-status-enum';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { LeaveTypeEnum } from '../../../../core/models/leave-type-enum';
-
+import { LeaveTypeEnum } from '../../../../core/types-enums/leave-type-enum';
+import { ActivatedRoute } from '@angular/router';
+import { LeaveActionEnum } from '../../../../core/types-enums/leave-action.enum';
 @Component({
   selector: 'app-my-leaves',
   imports: [CommonModule, FormsModule],
@@ -13,11 +14,12 @@ import { LeaveTypeEnum } from '../../../../core/models/leave-type-enum';
   styleUrl: './my-leaves.scss',
 })
 export class MyLeaves {
+  LeaveActionEnum = LeaveActionEnum
   LeaveTypeEnum = LeaveTypeEnum
   selectedType : LeaveTypeEnum|'ALL' = 'ALL';
   LeaveStatusEnum = LeaveStatusEnum
   selectedStatus: LeaveStatusEnum | 'ALL' = 'ALL';
-  
+  private route : ActivatedRoute = inject(ActivatedRoute)
   years: number[] = [];
   selectedYear: number | 'ALL' = 'ALL';
   employeeLeaves: LeaveModel[] = [] //leaves fetched from API
@@ -56,21 +58,23 @@ export class MyLeaves {
       yearSet.add(year);
     });
     this.years = Array.from(yearSet).sort((a, b) => b - a); // latest first
-    console.log(this.years)
   }
+ngOnInit() {
+  const mode = this.route.snapshot.data['mode'];
 
-  ngOnInit() {
-    this.leaveService.getEmployeeLeaves().subscribe(data => {
-    this.employeeLeaves = data || [];
-    
-    // ✅ NOW data exists
+  this.leaveService.getEmployeeLeaves().subscribe(data => {
+    const leaves = mode === 'draft'
+      ? data.filter(d => d.status === LeaveStatusEnum.Draft)
+      : data.filter(d=>d.status!== LeaveStatusEnum.Draft) ?? [];
+
+    this.employeeLeaves = leaves;
+
     this.extractYears();
     this.applyFilters();
-  
+
     this.isLoading.set(false);
   });
-   
-  }
+}
 
   getLeaveDays(leave: LeaveModel): number {
     const start = new Date(leave.startDate).getTime();
@@ -78,23 +82,31 @@ export class MyLeaves {
     return (end - start) / (1000 * 60 * 60 * 24) + 1;
   }
 
-  statusClassMap: Record<string, string> = {
-    APPROVED: 'badge-soft-green',
-    PENDING: 'badge-soft-yellow',
-    REJECTED: 'badge-soft-red',
-    CANCELLED: 'badge-soft-gray'
-  };
+  statusClassMap: Record<LeaveStatusEnum, string> = {
+  [LeaveStatusEnum.Approved]: 'badge-soft-green',
+  [LeaveStatusEnum.Pending]: 'badge-soft-yellow',
+  [LeaveStatusEnum.Rejected]: 'badge-soft-red',
+  [LeaveStatusEnum.Cancelled]: 'badge-soft-gray',
+  [LeaveStatusEnum.Draft]: 'badge-soft-gray'
+};
 
-  getAvailableActions(status: string): string[] {
-    switch (status) {
-      case 'PENDING':
-        return ['EDIT', 'CANCEL'];
+ getAvailableActions(status: LeaveStatusEnum): LeaveActionEnum[] {
+  switch (status) {
+    case LeaveStatusEnum.Approved:
+      return [LeaveActionEnum.Cancel]
 
-      case 'APPROVED':
-        return ['CANCEL']; // optional based on policy
+    case LeaveStatusEnum.Draft:
+      return [
+        LeaveActionEnum.Edit,
+        LeaveActionEnum.Delete,
+        LeaveActionEnum.Submit
+      ];
 
-      default:
-        return [];
-    }
+    case LeaveStatusEnum.Pending:
+      return [LeaveActionEnum.Cancel];
+
+    default:
+      return [];
   }
+}
 } 

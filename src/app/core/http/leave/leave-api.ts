@@ -1,42 +1,35 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { LeaveRequestModel } from '../../models/leave-request.model';
+import { LeaveRequestModel } from '../../models/leave/leave-request.model';
+import { environment } from '../../../../environments/environment';
+import { ApiResponse } from '../../models/api/api-reponse.model';
+import { LeaveDto } from '../../mappers/leave/leave.mapper';
+import { LeaveModel } from '../../models/leave/leave-model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LeaveApi {
   private http: HttpClient = inject(HttpClient);
-  private baseURL: string = 'http://localhost:3000/';
+  private baseURL: string = environment.apiBaseUrl;
 
   getEmployeeLeaves(): Observable<unknown[]> {
-    return this.http.get<unknown[] | null>(this.baseURL + 'api/leaves', {
-      headers: {
-        userId: '1',
-      },
+    return this.http.get<unknown[] | null>(`${this.baseURL}/api/leaves`, {
     }).pipe(
       map(data => data ?? [])
     );
   }
 
-  requestLeave(requestData: LeaveRequestModel): Observable<unknown | null> {
-    return this.http.post<unknown>(this.baseURL + 'api/request-leave',
+  requestLeave(requestData: LeaveRequestModel): Observable<ApiResponse<LeaveDto>> {
+    return this.http.post<ApiResponse<LeaveDto>>(`${this.baseURL}/api/request-leave`,
       requestData,
-      {
-        headers: {
-          userId: '1',
-        },
-      });
+     );
   }
 
-  saveDraft(requestData: LeaveRequestModel): Observable<unknown | null> {
-    return this.http.post<unknown>(this.baseURL + 'api/save-draft',
+  saveDraft(requestData: LeaveRequestModel): Observable<ApiResponse<LeaveDto>> {
+    return this.http.post<ApiResponse<LeaveDto>>(`${this.baseURL}/api/save-draft`,
       requestData,
-      {
-        headers: {
-          userId: '1',
-        },
-      });
+);
   }
 }

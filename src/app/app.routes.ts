@@ -1,8 +1,10 @@
 
 import { Route } from '@angular/router';
 import { authGuard } from './auth/guards/auth-guard';
-import { adminGuard, employeeGuard, managerGuard } from './auth/guards/role-guard';
+import { roleGuard } from './auth/guards/role-guard';
 import { MainShell } from './shared/components/main-shell/main-shell';
+import { RoleTypeEnum } from './core/types-enums/role-type.enum';
+
 export const routes : Route[]=[
     
 {
@@ -12,14 +14,16 @@ export const routes : Route[]=[
 },
 {
   path: 'admin',
-  canActivate: [authGuard, adminGuard],
+  canActivate: [authGuard, roleGuard],
+  data: { role: RoleTypeEnum.Admin },
   component: MainShell,
   loadChildren: () => import('./features/admin/admin.routes').then(m => m.adminRoutes)
 }
 ,
 {
   path: 'employee',
-  canActivate: [authGuard, employeeGuard],
+  canActivate: [authGuard, roleGuard],
+  data: { role: RoleTypeEnum.Employee },
   component: MainShell,
   loadChildren: () => import('./features/employee/employee.routes').then(m => m.employeeRoutes)
 }
@@ -27,9 +31,10 @@ export const routes : Route[]=[
 
 {
   path: 'manager',
-  canActivate: [authGuard, managerGuard],
+  canActivate: [authGuard, roleGuard],
+  data: { role: RoleTypeEnum.Manager },
   component: MainShell,
-  loadChildren: () => import('./features/manager/manager.routes').then(m => m.employeeRoutes)
+  loadChildren: () => import('./features/manager/manager.routes').then(m => m.managerRoutes)
 }
 
 ]

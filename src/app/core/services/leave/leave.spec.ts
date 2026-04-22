@@ -2,8 +2,8 @@ import { TestBed } from '@angular/core/testing';
 import { firstValueFrom, of } from 'rxjs';
 
 import { LeaveApi } from '../../http/leave/leave-api';
-import { LeaveStatusEnum } from '../../models/leave-status-enum';
-import { LeaveTypeEnum } from '../../models/leave-type-enum';
+import { LeaveStatusEnum } from '../../types-enums/leave-status-enum';
+import { LeaveTypeEnum } from '../../types-enums/leave-type-enum';
 import { LeaveService } from './leave';
 
 describe('LeaveService', () => {

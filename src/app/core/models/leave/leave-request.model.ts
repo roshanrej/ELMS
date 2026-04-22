@@ -1,4 +1,4 @@
-import { LeaveTypeEnum } from "./leave-type-enum";
+import { LeaveTypeEnum } from "../../types-enums/leave-type-enum";
 
 
 export interface  LeaveRequestModel  {

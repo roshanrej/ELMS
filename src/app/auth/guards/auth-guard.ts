@@ -6,15 +6,14 @@ export const authGuard: CanActivateFn = () => {
   const authStore = inject(AuthStore);
   const router = inject(Router);
 
+  const token = localStorage.getItem('token');
   const user = authStore.currentUser;
 
-  if (!user) {
+  if (!token) {
     router.navigate(['/login']);
     return false;
   }
-  else{
-    // check for valid session and reroute based on role
-  }
 
+  // Optional: if token exists but store is empty → allow (rehydration will fix)
   return true;
 };

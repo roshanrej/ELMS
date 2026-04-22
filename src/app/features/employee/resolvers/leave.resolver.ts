@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { ResolveFn } from '@angular/router';
 import { LeaveService } from '../../../core/services/leave/leave';
-import { LeaveModel } from '../../../core/models/leave-model';
+import { LeaveModel } from '../../../core/models/leave/leave-model';
 import { map } from 'rxjs/operators';
 
 export const leavesResolver: ResolveFn<LeaveModel[]> = () => {

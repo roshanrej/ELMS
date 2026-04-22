@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthStore } from '../../../auth/store/auth.store';
-import { RoleTypeEnum } from '../../../core/models/role.model';
-import { UserModel } from '../../../core/models/user.model';
+import { RoleTypeEnum } from '../../../core/types-enums/role-type.enum';
+import { UserModel } from '../../../core/models/user/user.model';
 
 @Component({
   selector: 'app-sidebar',
@@ -30,12 +30,14 @@ export class Sidebar implements OnInit {
       { label: 'Request Leave', route: '/employee/request-leave' },
       { label: 'View Leaves', route: '/employee/leaves' },
       { label: 'View Leave Balance', route: '/employee/leave-balance' },
+      { label: 'View Drafts', route: '/employee/drafts' }
     ],
     MANAGER: [
       { label: 'Dashboard', route: '/manager/dashboard' },
       { label: 'Approvals', route: '/manager/approvals' },
       { label: 'View Leaves', route: '/manager/view-leaves' },
       { label: 'Leave Analytics', route: '/manager/leave-analytics' },
+      
     ],
   };
 

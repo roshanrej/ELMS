@@ -38,15 +38,10 @@
 }
 /* 2. The Action Grid: Fixes "Jank" and Handles Wrapping */
 .action-grid {
-  display: grid;
-  /* Automatically fits 1 or 2 buttons, centers them, and wraps if space is tight */
-  grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+  display: flex;
   gap: 8px;
   justify-content: center;
-  align-items: center;
-  width: 100%;
-  max-width: 160px; /* Prevents the column from getting too wide */
-  margin: 0 auto;   /* Centers the grid within the cell */
+  flex-wrap: wrap;
 }
 
 /* 3. Badge & Button Internal Centering */
@@ -69,7 +64,50 @@
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
+.btn-submit {
+  background-color: #28a745; /* green */
+  color: #fff;
+  border: 1px solid #28a745;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
 
+.btn-submit:hover {
+  background-color: #218838;
+  border-color: #1e7e34;
+}
+
+.btn-submit:active {
+  background-color: #1e7e34;
+}
+
+.btn-submit:disabled {
+  background-color: #a5d6a7;
+  border-color: #a5d6a7;
+  cursor: not-allowed;
+}
+.btn-delete {
+  background-color: #dc3545; /* red */
+  color: #fff;
+  border: 1px solid #dc3545;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn-delete:hover {
+  background-color: #c82333;
+  border-color: #bd2130;
+}
+
+.btn-delete:active {
+  background-color: #bd2130;
+}
+
+.btn-delete:disabled {
+  background-color: #f5b5bb;
+  border-color: #f5b5bb;
+  cursor: not-allowed;
+}
 /* CANCEL: Soft Red/Gray (Semantic & Subtle) */
 .btn-cancel {
   background: #fef2f2; /* A very pale red-gray */

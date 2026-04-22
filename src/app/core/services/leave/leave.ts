@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { LeaveApi } from '../../http/leave/leave-api';
-import { LeaveModel } from '../../models/leave-model';
-import { LeaveRequestModel } from '../../models/leave-request.model';
+import { LeaveModel } from '../../models/leave/leave-model';
+import { LeaveRequestModel } from '../../models/leave/leave-request.model';
 import { mapLeaveDtoToModel } from '../../mappers/leave/leave.mapper';
 
 @Injectable({
@@ -18,14 +18,20 @@ export class LeaveService {
   }
 
   requestLeave(leaveRequest: LeaveRequestModel): Observable<LeaveModel | null> {
-    return this.leaveApi.requestLeave(leaveRequest).pipe(
-      map(leave => leave ? mapLeaveDtoToModel(leave) : null)
-    );
-  }
+  return this.leaveApi.requestLeave(leaveRequest).pipe(
+    map( res => {
+      if (!res.success || !res.data) return null;
+      return mapLeaveDtoToModel(res.data);
+    })
+  );
+}
 
   saveDraft(leaveDraft: LeaveRequestModel): Observable<LeaveModel | null> {
     return this.leaveApi.saveDraft(leaveDraft).pipe(
-      map(leave => leave ? mapLeaveDtoToModel(leave) : null)
+       map( res => {
+      if (!res.success || !res.data) return null;
+      return mapLeaveDtoToModel(res.data);
+    })
     );
   }
 }

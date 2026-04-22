@@ -1,0 +1,8 @@
+export enum DepartmentEnum {
+  HR = 'HR',
+  ENGINEERING = 'ENGINEERING',
+  FINANCE = 'FINANCE',
+  SALES = 'SALES',
+  MARKETING = 'MARKETING',
+  OPERATIONS = 'OPERATIONS'
+}

@@ -1,11 +1,8 @@
 <section class="app-page">
-
   <header class="app-page__hero">
     <span class="app-eyebrow">My Leaves</span>
     <h2 class="display-6 fw-bold mb-3">Leave Request history</h2>
-    <p class="text-app-muted mb-0">
-      A table for tracking submitted leave requests and statuses.
-    </p>
+    <p class="text-app-muted mb-0">A table for tracking submitted leave requests and statuses.</p>
   </header>
 
   <!-- 🔥 Filter Bar -->
@@ -30,7 +27,6 @@
           <option [ngValue]="LeaveStatusEnum.Approved">Approved</option>
           <option [ngValue]="LeaveStatusEnum.Rejected">Rejected</option>
           <option [ngValue]="LeaveStatusEnum.Cancelled">Cancelled</option>
-
         </select>
       </div>
       <div class="d-flex align-items-center gap-2">
@@ -46,7 +42,6 @@
         </select>
       </div>
     </div>
-
   </section>
 
   <!-- 🔥 Loading -->
@@ -72,16 +67,18 @@
 
         <tbody>
           <tr *ngFor="let leave of filteredLeaves">
-
             <td class="fw-bold text-nowrap">{{ leave.leaveType }}</td>
 
-            <td>{{ leave.startDate | date:'MMM d, yyyy' }}</td>
-            <td>{{ leave.endDate | date:'MMM d, yyyy' }}</td>
+            <td>{{ leave.startDate | date: 'MMM d, yyyy' }}</td>
+            <td>{{ leave.endDate | date: 'MMM d, yyyy' }}</td>
 
             <td class="text-center">{{ getLeaveDays(leave) }}</td>
 
             <td>
-              <span class="badge-soft rounded-pill px-2 py-1" [ngClass]="statusClassMap[leave.status]">
+              <span
+                class="badge-soft rounded-pill px-2 py-1"
+                [ngClass]="statusClassMap[leave.status]"
+              >
                 {{ leave.status }}
               </span>
             </td>
@@ -90,18 +87,36 @@
 
             <td>
               <div class="action-grid">
-                <button *ngIf="getAvailableActions(leave.status).includes('CANCEL')"
-                  class="btn btn-sm btn-action btn-cancel">
-                  Cancel
+                 <button
+                  *ngIf="getAvailableActions(leave.status).includes(LeaveActionEnum.Submit)"
+                  class="btn btn-sm btn-action btn-submit"
+                >
+                  Submit
                 </button>
-                <button *ngIf="getAvailableActions(leave.status).includes('EDIT')"
-                  class="btn btn-sm btn-action btn-edit">
+                <button
+                  *ngIf="getAvailableActions(leave.status).includes(LeaveActionEnum.Edit)"
+                  class="btn btn-sm btn-action btn-edit"
+                >
                   Edit
                 </button>
+                <button
+                  *ngIf="getAvailableActions(leave.status).includes(LeaveActionEnum.Cancel)"
+                  class="btn btn-sm btn-action btn-cancel"
+                >
+                  Cancel
+                </button>
+                
+                
+                <button
+                  *ngIf="getAvailableActions(leave.status).includes(LeaveActionEnum.Delete)"
+                  class="btn btn-sm btn-action btn-delete"
+                >
+                  Delete
+                </button>
 
+               
               </div>
             </td>
-
           </tr>
         </tbody>
       </table>
@@ -112,5 +127,4 @@
   <section *ngIf="!isLoading() && filteredLeaves.length === 0" class="app-card p-3 text-app-muted">
     No leave requests found.
   </section>
-
 </section>
