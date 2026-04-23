@@ -93,7 +93,7 @@ ngOnInit() {
  getAvailableActions(status: LeaveStatusEnum): LeaveActionEnum[] {
   switch (status) {
     case LeaveStatusEnum.Approved:
-      return [LeaveActionEnum.Cancel]
+      return [LeaveActionEnum.CancelLeave]
 
     case LeaveStatusEnum.Draft:
       return [
@@ -103,10 +103,13 @@ ngOnInit() {
       ];
 
     case LeaveStatusEnum.Pending:
-      return [LeaveActionEnum.Cancel];
+      return [LeaveActionEnum.CancelRequest,LeaveActionEnum.Edit];
 
     default:
       return [];
   }
+}
+onActionClick(action :LeaveActionEnum,leaveId:number){
+  console.log('ACTION ON LEAVE ID=>',leaveId)
 }
 } 

@@ -1,10 +1,11 @@
 <section class="app-page">
 
+  <!-- 🔥 HERO -->
   <header class="app-page__hero">
     <span class="app-eyebrow">Employee Dashboard</span>
-    <h2 class="display-6 fw-bold mb-3">Your leave workspace</h2>
+    <h2 class="display-6 fw-bold mb-2">Good to see you.</h2>
     <p class="text-app-muted mb-0">
-      A clean overview for balances, upcoming time away, and recent request activity.
+      Here's a snapshot of your leave balance, pending requests, and what's coming up.
     </p>
   </header>
 
@@ -15,7 +16,7 @@
       <article class="app-card app-stat p-4">
         <span class="app-eyebrow">Annual Balance</span>
         <div class="app-stat__value my-3">{{ leaveBalance }}</div>
-        <p class="text-app-muted mb-0">Days remaining in the current cycle.</p>
+        <p class="text-app-muted mb-0">Days remaining this cycle.</p>
       </article>
     </div>
 
@@ -23,7 +24,7 @@
       <article class="app-card app-stat p-4">
         <span class="app-eyebrow">Pending</span>
         <div class="app-stat__value my-3">{{ pendingCount }}</div>
-        <p class="text-app-muted mb-0">Requests waiting for manager approval.</p>
+        <p class="text-app-muted mb-0">Awaiting manager approval.</p>
       </article>
     </div>
 
@@ -31,7 +32,7 @@
       <article class="app-card app-stat p-4">
         <span class="app-eyebrow">Used</span>
         <div class="app-stat__value my-3">{{ usedDays }}</div>
-        <p class="text-app-muted mb-0">Leave days used this year.</p>
+        <p class="text-app-muted mb-0">Leave days taken this year.</p>
       </article>
     </div>
 
@@ -40,50 +41,104 @@
   <!-- 🔥 CONTENT -->
   <div class="row g-3">
 
-    <!-- Upcoming -->
+    <!-- Upcoming Leave -->
     <div class="col-lg-7">
       <section class="app-card p-4 h-100">
-        <h3 class="h5 fw-bold mb-3">Upcoming leave</h3>
 
-        <div *ngIf="upcomingLeaves.length > 0; else noUpcoming" class="list-group list-group-flush">
-
-          <div *ngFor="let leave of upcomingLeaves"
-               class="list-group-item bg-transparent px-0 d-flex justify-content-between">
-
-            <span>{{ leave.leaveType }}</span>
-
-            <span class="badge rounded-pill" [ngClass]="statusClassMap[leave.status]">
-              {{ leave.startDate | date:'MMM d' }}
-              <span *ngIf="leave.startDate !== leave.endDate">
-                - {{ leave.endDate | date:'MMM d' }}
-              </span>
-            </span>
-
-          </div>
-
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <h3 class="h6 fw-bold text-uppercase mb-0" style="letter-spacing: 0.05em; color: var(--app-ink);">
+            Upcoming Leave
+          </h3>
+          <a routerLink="/employee/leaves" class="btn btn-cream btn-sm">
+            View all
+          </a>
         </div>
 
+        <!-- Has upcoming -->
+        <div *ngIf="upcomingLeaves.length > 0; else noUpcoming">
+          <div
+            *ngFor="let leave of upcomingLeaves"
+            class="d-flex align-items-center justify-content-between py-2 border-bottom"
+          >
+            <div class="d-flex flex-column">
+              <span class="fw-semibold" style="font-size: 0.9rem; color: var(--app-ink);">
+                {{ leave.leaveType }}
+              </span>
+              <span class="text-app-muted" style="font-size: 0.8rem;">
+                {{ leave.startDate | date:'MMM d, yyyy' }}
+                <ng-container *ngIf="leave.startDate !== leave.endDate">
+                  &ndash; {{ leave.endDate | date:'MMM d, yyyy' }}
+                </ng-container>
+                &middot; {{ getLeaveDays(leave) }} {{ getLeaveDays(leave) === 1 ? 'day' : 'days' }}
+              </span>
+            </div>
+
+            <span
+              class="badge-soft rounded-pill px-2 py-1"
+              [ngClass]="statusClassMap[leave.status]"
+              style="font-size: 0.72rem;"
+            >
+              {{ leave.status }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Empty -->
         <ng-template #noUpcoming>
-          <p class="text-app-muted">No upcoming leave scheduled.</p>
+          <div class="d-flex flex-column align-items-center justify-content-center py-5 text-center">
+            <i class="bi bi-calendar2-check mb-3" style="font-size: 2rem; color: var(--app-muted);"></i>
+            <p class="text-app-muted mb-0" style="font-size: 0.9rem;">No upcoming leave scheduled.</p>
+          </div>
         </ng-template>
 
       </section>
     </div>
 
-    <!-- Quick Actions -->
-    <div class="col-lg-5">
-      <section class="app-card p-4 h-100">
-        <h3 class="h5 fw-bold mb-3">Quick action</h3>
+    <!-- Right Column -->
+    <div class="col-lg-5 d-flex flex-column gap-3">
 
-        <p class="text-app-muted">
-          Submit a request using the quick action.
+      <!-- Quick Action -->
+      <section class="app-card p-4">
+        <span class="app-eyebrow">Quick Action</span>
+        <h3 class="h6 fw-bold mt-1 mb-2" style="color: var(--app-ink);">
+          Need time off?
+        </h3>
+        <p class="text-app-muted mb-3" style="font-size: 0.875rem;">
+          Submit a new leave request in just a few steps.
         </p>
-
-        <a routerLink="/employee/request-leave" class="btn btn-app">
-          Request Leave
+        <a routerLink="/employee/request-leave" class="btn btn-app btn-sm">
+          <i class="bi bi-plus-lg me-1"></i> Request Leave
         </a>
-
       </section>
+
+      <!-- Balance Progress -->
+      <section class="app-card p-4 flex-grow-1">
+        <span class="app-eyebrow">Balance Overview</span>
+        <h3 class="h6 fw-bold mt-1 mb-3" style="color: var(--app-ink);">
+          Annual leave used
+        </h3>
+
+        <div class="d-flex justify-content-between mb-1" style="font-size: 0.82rem;">
+          <span class="text-app-muted">{{ usedDays }} used</span>
+          <span class="text-app-muted">{{ leaveBalance }} remaining</span>
+        </div>
+
+        <div class="progress" style="height: 8px; border-radius: 99px;">
+          <div
+            class="progress-bar"
+            role="progressbar"
+            [style.width.%]="(usedDays / 24) * 100"
+            [attr.aria-valuenow]="usedDays"
+            aria-valuemin="0"
+            aria-valuemax="24"
+          ></div>
+        </div>
+
+        <p class="text-app-muted mt-2 mb-0" style="font-size: 0.78rem;">
+          Out of 24 days allocated this year.
+        </p>
+      </section>
+
     </div>
 
   </div>

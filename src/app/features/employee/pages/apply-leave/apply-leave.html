@@ -1,36 +1,29 @@
 <section class="app-page">
-
   <header class="app-page__hero">
     <span class="app-eyebrow">Request Leave</span>
     <h2 class="display-6 fw-bold mb-3">Apply for time away</h2>
   </header>
 
   <div class="row g-3">
-
     <!-- 🔵 FORM -->
     <div class="col-lg-8">
       <section class="app-card p-4">
-
         <form (ngSubmit)="submitRequest()" [formGroup]="leaveForm">
-
           <div class="row g-3">
-
             <!-- Leave Type -->
             <div class="col-md-6">
               <label class="form-label fw-semibold">Leave type</label>
 
-              <select 
+              <select
                 class="form-select"
                 name="leaveType"
-                formControlName ="leaveType">
-
-                <option [ngValue]="null" disabled>Select Leave Type</option>
-
-                <option *ngFor="let type of leaveTypeOptions" 
-                        [ngValue]="type.value">
+                formControlName="leaveType"
+                aria-placeholder="Select leave type"
+              >
+              <option [ngValue]="null" disabled>Select Leave Type</option>
+                <option *ngFor="let type of leaveTypeOptions" [ngValue]="type.value">
                   {{ type.label }}
                 </option>
-
               </select>
             </div>
 
@@ -38,84 +31,63 @@
             <div class="col-md-3">
               <label class="form-label fw-semibold">Start date</label>
 
-              <input 
+              <input
                 class="form-control"
                 type="date"
                 name="startDate"
-                formControlName="startDate" />
+                formControlName="startDate"
+              />
             </div>
 
             <!-- End Date -->
             <div class="col-md-3">
               <label class="form-label fw-semibold">End date</label>
 
-              <input 
-                class="form-control"
-                type="date"
-                name="endDate"
-                formControlName="endDate" />
+              <input class="form-control" type="date" name="endDate" formControlName="endDate" />
             </div>
 
             <!-- Reason -->
             <div class="col-12">
               <label class="form-label fw-semibold">Reason</label>
 
-              <textarea 
+              <textarea
                 class="form-control"
                 rows="5"
                 name="reason"
                 formControlName="reason"
                 placeholder="Add a short reason"
-                >
+              >
               </textarea>
             </div>
 
             <!-- Actions -->
             <div class="col-12 d-flex gap-2">
-
-              <button 
-                type="submit" 
-                class="btn btn-app"
-                [disabled]="leaveForm.invalid">
+              <button type="submit" class="btn btn-app" [disabled]="leaveForm.invalid">
                 Submit Request
               </button>
 
-              <button 
-                type="button" 
-                class="btn btn-cream"
-                (click)="saveDraft()">
-                Save Draft
-              </button>
-
+              <button type="button" class="btn btn-cream" (click)="saveDraft()">Save Draft</button>
             </div>
-
           </div>
-
         </form>
-
       </section>
     </div>
 
     <!-- 🔵 SIDEBAR -->
     <div class="col-lg-4">
       <aside class="app-card p-4 h-100">
-
         <span class="app-eyebrow">Balance</span>
 
         <div class="app-stat__value my-3">
           {{ leaveBalance }}
         </div>
 
-        <p class="text-app-muted mb-4">
-          Annual leave days available before this request.
-        </p>
+        <p class="text-app-muted mb-4">Annual leave days available before this request.</p>
 
         <div class="progress">
           <div class="progress-bar" [style.width.%]="balancePercent"></div>
         </div>
-
       </aside>
     </div>
-
   </div>
 </section>

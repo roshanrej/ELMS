@@ -5,7 +5,8 @@ import { LeaveRequestModel } from '../../models/leave/leave-request.model';
 import { environment } from '../../../../environments/environment';
 import { ApiResponse } from '../../models/api/api-reponse.model';
 import { LeaveDto } from '../../mappers/leave/leave.mapper';
-import { LeaveModel } from '../../models/leave/leave-model';
+
+import { LeaveBalanceModel } from '../../models/leave/leave-balance.model';
 
 @Injectable({
   providedIn: 'root',
@@ -31,5 +32,8 @@ export class LeaveApi {
     return this.http.post<ApiResponse<LeaveDto>>(`${this.baseURL}/api/save-draft`,
       requestData,
 );
+  }
+  getMyBalances(): Observable<LeaveBalanceModel[]> {
+    return this.http.get<LeaveBalanceModel[]>(`${this.baseURL}/leave/balances/me`);
   }
 }

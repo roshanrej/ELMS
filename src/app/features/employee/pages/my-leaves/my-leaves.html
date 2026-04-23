@@ -6,40 +6,50 @@
   </header>
 
   <!-- 🔥 Filter Bar -->
-  <section class="app-card p-3 d-flex justify-content-between align-items-center">
-    <span class="text-app-muted fw-semibold">
-      Showing: {{ selectedYear === 'ALL' ? 'All Years' : selectedYear }}
-    </span>
-    <div class="d-flex align-items-center gap-3">
-      <div class="d-flex align-items-center gap-2">
-        <label class="text-app-muted fw-semibold text-nowrap mb-0">Filter by year:</label>
-        <select class="form-select w-auto" [(ngModel)]="selectedYear" (change)="applyFilters()">
-          <option [ngValue]="'ALL'">All</option>
-          <option *ngFor="let year of years" [ngValue]="year">{{ year }}</option>
-        </select>
-      </div>
+  <section class="card border rounded-3 px-3 py-2 mb-3">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
 
-      <div class="d-flex align-items-center gap-2">
-        <label class="text-app-muted fw-semibold text-nowrap mb-0">Filter by status:</label>
-        <select class="form-select w-auto" [(ngModel)]="selectedStatus" (change)="applyFilters()">
-          <option [ngValue]="'ALL'">All</option>
-          <option [ngValue]="LeaveStatusEnum.Pending">Pending</option>
-          <option [ngValue]="LeaveStatusEnum.Approved">Approved</option>
-          <option [ngValue]="LeaveStatusEnum.Rejected">Rejected</option>
-          <option [ngValue]="LeaveStatusEnum.Cancelled">Cancelled</option>
-        </select>
-      </div>
-      <div class="d-flex align-items-center gap-2">
-        <label class="text-app-muted fw-semibold text-nowrap mb-0">Filter by type:</label>
-        <select class="form-select w-auto" [(ngModel)]="selectedType" (change)="applyFilters()">
-          <option [ngValue]="'ALL'">All</option>
-          <option [ngValue]="LeaveTypeEnum.Annual">Annual Leave</option>
-          <option [ngValue]="LeaveTypeEnum.Sick">Sick Leave</option>
-          <option [ngValue]="LeaveTypeEnum.Casual">Casual Leave</option>
-          <option [ngValue]="LeaveTypeEnum.Unpaid">Unpaid Leave</option>
-          <option [ngValue]="LeaveTypeEnum.Maternity">Maternity Leave</option>
-          <option [ngValue]="LeaveTypeEnum.Paternity">Paternity Leave</option>
-        </select>
+      <span class="text-muted fw-semibold small">
+        Showing: {{ selectedYear === 'ALL' ? 'All Years' : selectedYear }}
+      </span>
+
+      <div class="d-flex align-items-center flex-wrap gap-3">
+
+        <div class="d-flex align-items-center gap-2">
+          <label class="text-muted fw-semibold small text-nowrap mb-0">Year:</label>
+          <select class="form-select form-select-sm" style="min-width: 100px"
+            [(ngModel)]="selectedYear" (change)="applyFilters()">
+            <option [ngValue]="'ALL'">All</option>
+            <option *ngFor="let year of years" [ngValue]="year">{{ year }}</option>
+          </select>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+          <label class="text-muted fw-semibold small text-nowrap mb-0">Status:</label>
+          <select class="form-select form-select-sm" style="min-width: 110px"
+            [(ngModel)]="selectedStatus" (change)="applyFilters()">
+            <option [ngValue]="'ALL'">All</option>
+            <option [ngValue]="LeaveStatusEnum.Pending">Pending</option>
+            <option [ngValue]="LeaveStatusEnum.Approved">Approved</option>
+            <option [ngValue]="LeaveStatusEnum.Rejected">Rejected</option>
+            <option [ngValue]="LeaveStatusEnum.Cancelled">Cancelled</option>
+          </select>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+          <label class="text-muted fw-semibold small text-nowrap mb-0">Type:</label>
+          <select class="form-select form-select-sm" style="min-width: 120px"
+            [(ngModel)]="selectedType" (change)="applyFilters()">
+            <option [ngValue]="'ALL'">All</option>
+            <option [ngValue]="LeaveTypeEnum.Annual">Annual</option>
+            <option [ngValue]="LeaveTypeEnum.Sick">Sick</option>
+            <option [ngValue]="LeaveTypeEnum.Casual">Casual</option>
+            <option [ngValue]="LeaveTypeEnum.Unpaid">Unpaid</option>
+            <option [ngValue]="LeaveTypeEnum.Maternity">Maternity</option>
+            <option [ngValue]="LeaveTypeEnum.Paternity">Paternity</option>
+          </select>
+        </div>
+
       </div>
     </div>
   </section>
@@ -52,29 +62,37 @@
   <!-- 🔥 Data -->
   <section *ngIf="!isLoading() && filteredLeaves.length > 0" class="app-card overflow-hidden">
     <div class="table-responsive">
-      <table class="table app-table alLign-middle">
+      <table class="table app-table align-middle mb-0">
+        <colgroup>
+          <col style="width: 15%"> <!-- Type -->
+          <col style="width: 15%"> <!-- Start Date -->
+          <col style="width: 15%"> <!-- End Date -->
+          <col style="width: 8%">  <!-- Days -->
+          <col style="width: 20%"> <!-- Approver -->
+          <col style="width: 14%"> <!-- Status -->
+          <col style="width: 13%"> <!-- Action -->
+        </colgroup>
+
         <thead>
           <tr>
             <th>Type</th>
             <th>Start Date</th>
             <th>End Date</th>
-            <th>Days</th>
-            <th>Status</th>
-            <th>Approver</th>
-            <th>Action</th>
+            <th class="cell-days">Days</th>
+            <th class="cell-approver">Approver</th>
+            <th class="cell-status">Status</th>
+            <th class="cell-action">Action</th>
           </tr>
         </thead>
 
         <tbody>
           <tr *ngFor="let leave of filteredLeaves">
             <td class="fw-bold text-nowrap">{{ leave.leaveType }}</td>
-
             <td>{{ leave.startDate | date: 'MMM d, yyyy' }}</td>
             <td>{{ leave.endDate | date: 'MMM d, yyyy' }}</td>
-
-            <td class="text-center">{{ getLeaveDays(leave) }}</td>
-
-            <td>
+            <td class="cell-days">{{ getLeaveDays(leave) }}</td>
+            <td>{{ leave.approverName || '-' }}</td>
+            <td class="cell-status">
               <span
                 class="badge-soft rounded-pill px-2 py-1"
                 [ngClass]="statusClassMap[leave.status]"
@@ -82,39 +100,51 @@
                 {{ leave.status }}
               </span>
             </td>
-
-            <td>{{ leave.approverName || '-' }}</td>
-
-            <td>
+            <td class="cell-action">
               <div class="action-grid">
-                 <button
-                  *ngIf="getAvailableActions(leave.status).includes(LeaveActionEnum.Submit)"
-                  class="btn btn-sm btn-action btn-submit"
-                >
-                  Submit
-                </button>
+                <!-- Edit Request (Pending) -->
                 <button
                   *ngIf="getAvailableActions(leave.status).includes(LeaveActionEnum.Edit)"
-                  class="btn btn-sm btn-action btn-edit"
+                  class="btn-icon"
+                  title="Edit Request"
+                  (click)="onActionClick(LeaveActionEnum.Edit, leave.id)"
+                  aria-label="Edit Request"
                 >
-                  Edit
-                </button>
-                <button
-                  *ngIf="getAvailableActions(leave.status).includes(LeaveActionEnum.Cancel)"
-                  class="btn btn-sm btn-action btn-cancel"
-                >
-                  Cancel
-                </button>
-                
-                
-                <button
-                  *ngIf="getAvailableActions(leave.status).includes(LeaveActionEnum.Delete)"
-                  class="btn btn-sm btn-action btn-delete"
-                >
-                  Delete
+                  <i class="bi bi-pencil"></i>
                 </button>
 
-               
+                <!-- Cancel Request (Pending) -->
+                <button
+                  *ngIf="getAvailableActions(leave.status).includes(LeaveActionEnum.CancelRequest)"
+                  class="btn-icon text-danger"
+                  title="Cancel Request"
+                  (click)="onActionClick(LeaveActionEnum.CancelRequest, leave.id)"
+                  aria-label="Cancel Request"
+                >
+                  <i class="bi bi-x-circle"></i>
+                </button>
+
+                <!-- Cancel Leave (Approved) -->
+                <button
+                  *ngIf="getAvailableActions(leave.status).includes(LeaveActionEnum.CancelLeave)"
+                  class="btn-icon text-danger"
+                  title="Cancel Leave"
+                  (click)="onActionClick(LeaveActionEnum.CancelLeave, leave.id)"
+                  aria-label="Cancel Leave"
+                >
+                  <i class="bi bi-calendar-x"></i>
+                </button>
+
+                <!-- Delete (Rejected) -->
+                <button
+                  *ngIf="getAvailableActions(leave.status).includes(LeaveActionEnum.Delete)"
+                  class="btn-icon text-muted"
+                  title="Delete"
+                  (click)="onActionClick(LeaveActionEnum.Delete, leave.id)"
+                  aria-label="Delete Request"
+                >
+                  <i class="bi bi-trash2"></i>
+                </button>
               </div>
             </td>
           </tr>
@@ -123,7 +153,7 @@
     </div>
   </section>
 
-  <!-- 🔥 Empty State -->
+  <!-- 🔥 Empty -->
   <section *ngIf="!isLoading() && filteredLeaves.length === 0" class="app-card p-3 text-app-muted">
     No leave requests found.
   </section>

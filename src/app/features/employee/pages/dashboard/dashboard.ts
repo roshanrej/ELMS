@@ -35,7 +35,7 @@ export class Dashboard  implements OnInit {
     const thisYearLeaves = this.employeeLeaves.filter(l =>
       new Date(l.startDate).getFullYear() === currentYear
     )
-   
+   console.log(thisYearLeaves)
 
     // 🔥 Used days (approved only)
     this.usedDays = thisYearLeaves
@@ -61,7 +61,7 @@ export class Dashboard  implements OnInit {
       .sort((a, b) =>
         new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
       )
-      .slice(0, 3);
+      .slice(0, 5);
   }
 
   getLeaveDays(leave: LeaveModel): number {

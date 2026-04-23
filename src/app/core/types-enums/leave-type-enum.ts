@@ -4,5 +4,5 @@ export enum LeaveTypeEnum {
   Casual = 'CASUAL',
   Maternity = 'MATERNITY',
   Paternity = 'PATERNITY',
-  Unpaid = 'UNPAID'
+  Unpaid = 'UNPAID',
 }

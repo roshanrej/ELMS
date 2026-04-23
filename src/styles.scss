@@ -1,6 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import 'bootstrap-icons/font/bootstrap-icons.css';
 
 :root {
+  --bs-body-font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
   /* Primary */
   --app-red: #ef4444;
   --app-red-dark: #b91c1c;
@@ -18,7 +21,7 @@
   /* Border */
   --app-border: #e5e7eb;
 
-  /* Status (more muted, integrated) */
+  /* Status */
   --app-green-soft: #f0fdf4;
   --app-green-dark: #166534;
 
@@ -27,9 +30,10 @@
 
   --app-gray-soft: #f9fafb;
   --app-gray-dark: #374151;
-   --bg-page: #fdfaf6;          /* main background */
-  --bg-section: #f7efe5;       /* subtle separation */
-  --bg-card: #ffffff;          /* main content */
+
+  --bg-page: #fdfaf6;
+  --bg-section: #f7efe5;
+  --bg-card: #ffffff;
 
   /* Hover / interaction */
   --bg-hover: #fafafa;
@@ -53,8 +57,7 @@ video {
 html, body {
   height: 100%;
   margin: 0;
-  /* REMOVED: overflow: hidden - This was causing responsiveness jank */
-  overflow-x: hidden; 
+  overflow-x: hidden;
   background-color: var(--app-cream);
 }
 
@@ -153,7 +156,7 @@ app-root {
   line-height: 1;
 }
 
-/* Table Container for Responsiveness */
+/* Table Container */
 .table-responsive {
   width: 100%;
   overflow-x: auto;
@@ -165,7 +168,7 @@ app-root {
 
 .app-table {
   width: 100%;
-  border-collapse: separate; /* Changed from collapse for rounded corners */
+  border-collapse: separate;
   border-spacing: 0;
   margin-bottom: 0;
 }
@@ -190,8 +193,7 @@ app-root {
   font-size: 0.9rem;
 }
 
-/* Badges Refinement */
-// In parent scss - add to .badge-soft
+/* Badges */
 .badge-soft {
   display: inline-flex;
   align-items: center;
@@ -202,13 +204,14 @@ app-root {
   font-weight: 700;
   text-transform: uppercase;
   border: 1px solid transparent;
-  min-width: 90px; // 👈 add this
+  min-width: 90px;
 }
 
-.badge-soft-red { background: var(--app-red-soft); color: var(--app-red-dark); border-color: rgba(248, 113, 113, 0.2); }
-.badge-soft-green { background: var(--app-green-soft); color: var(--app-green-dark); border-color: rgba(52, 211, 153, 0.2); }
-.badge-soft-yellow { background: var(--app-yellow-soft); color: var(--app-yellow-dark); border-color: rgba(251, 191, 36, 0.2); }
-.badge-soft-gray{background: var(--app-gray-soft); color: var(--app-gray-dark); border-color: rgba(167, 164, 159, 0.2);}
+.badge-soft-red     { background: var(--app-red-soft);    color: var(--app-red-dark);    border-color: rgba(248, 113, 113, 0.2); }
+.badge-soft-green   { background: var(--app-green-soft);  color: var(--app-green-dark);  border-color: rgba(52, 211, 153, 0.2); }
+.badge-soft-yellow  { background: var(--app-yellow-soft); color: var(--app-yellow-dark); border-color: rgba(251, 191, 36, 0.2); }
+.badge-soft-gray    { background: var(--app-gray-soft);   color: var(--app-gray-dark);   border-color: rgba(167, 164, 159, 0.2); }
+
 .progress {
   --bs-progress-bg: var(--app-cream-strong);
   --bs-progress-bar-bg: var(--app-red);

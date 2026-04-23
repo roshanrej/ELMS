@@ -4,7 +4,7 @@ import { LeaveApi } from '../../http/leave/leave-api';
 import { LeaveModel } from '../../models/leave/leave-model';
 import { LeaveRequestModel } from '../../models/leave/leave-request.model';
 import { mapLeaveDtoToModel } from '../../mappers/leave/leave.mapper';
-
+import { LeaveBalanceModel } from '../../models/leave/leave-balance.model';
 @Injectable({
   providedIn: 'root',
 })
@@ -34,4 +34,7 @@ export class LeaveService {
     })
     );
   }
+   getMyBalances():Observable<LeaveBalanceModel[]>{
+    return this.leaveApi.getMyBalances()
+   }
 }

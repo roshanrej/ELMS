@@ -1,46 +1,42 @@
 <section class="app-page">
+
   <header class="app-page__hero">
     <span class="app-eyebrow">Leave Balance</span>
     <h2 class="display-6 fw-bold mb-3">Available time off</h2>
-    <p class="text-app-muted mb-0">A simple balance overview using cards and Bootstrap progress bars.</p>
+    <p class="text-app-muted mb-0">A live overview of your remaining leave across all categories.</p>
   </header>
 
-  <div class="row g-3">
-    <div class="col-md-6 col-xl-3">
+  <!-- 🔥 Empty -->
+  <section *ngIf="balances.length === 0" class="app-card p-4 text-app-muted">
+    No balance data available.
+  </section>
+
+  <!-- 🔥 Balance Cards -->
+  <div *ngIf="balances.length > 0" class="row g-3">
+    <div *ngFor="let balance of balances" class="col-md-6 col-xl-3">
       <article class="app-card p-4 h-100">
-        <span class="app-eyebrow">Annual</span>
-        <div class="app-stat__value my-3">14</div>
-        <div class="progress" role="progressbar" aria-label="Annual leave">
-          <div class="progress-bar" style="width: 58%;"></div>
+
+        <span class="app-eyebrow">{{ balance.leaveType }}</span>
+
+        <div class="app-stat__value my-3">{{ formatValue(balance.remaining) }}</div>
+
+        <div
+          class="progress"
+          role="progressbar"
+          [attr.aria-label]="balance.leaveType + ' leave'"
+          [attr.aria-valuenow]="getPercent(balance)"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        >
+          <div
+            class="progress-bar"
+            [ngClass]="getProgressClass(getPercent(balance))"
+            [style.width.%]="getPercent(balance)"
+          ></div>
         </div>
-      </article>
-    </div>
-    <div class="col-md-6 col-xl-3">
-      <article class="app-card p-4 h-100">
-        <span class="app-eyebrow">Sick</span>
-        <div class="app-stat__value my-3">09</div>
-        <div class="progress" role="progressbar" aria-label="Sick leave">
-          <div class="progress-bar" style="width: 75%;"></div>
-        </div>
-      </article>
-    </div>
-    <div class="col-md-6 col-xl-3">
-      <article class="app-card p-4 h-100">
-        <span class="app-eyebrow">Casual</span>
-        <div class="app-stat__value my-3">06</div>
-        <div class="progress" role="progressbar" aria-label="Casual leave">
-          <div class="progress-bar" style="width: 75%;"></div>
-        </div>
-      </article>
-    </div>
-    <div class="col-md-6 col-xl-3">
-      <article class="app-card p-4 h-100">
-        <span class="app-eyebrow">WFH</span>
-        <div class="app-stat__value my-3">11</div>
-        <div class="progress" role="progressbar" aria-label="Work from home">
-          <div class="progress-bar" style="width: 61%;"></div>
-        </div>
+
       </article>
     </div>
   </div>
+
 </section>

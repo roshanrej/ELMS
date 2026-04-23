@@ -2,5 +2,6 @@ export enum LeaveActionEnum {
   Edit = 'EDIT',
   Delete = 'DELETE',
   Submit = 'SUBMIT',
-  Cancel = 'CANCEL'
+  CancelLeave = 'CANCEL_LEAVE',
+  CancelRequest = 'CANCEL_REQUEST'
 }

@@ -20,7 +20,7 @@ export class ApplyLeave {
 
   // 🔥 form model
   leaveForm = this.fb.nonNullable.group({
-    leaveType: [LeaveTypeEnum.Annual, Validators.required],
+    leaveType: [null, Validators.required],
     startDate: ['', Validators.required],
     endDate: ['', Validators.required],
     reason: ['', Validators.required],
@@ -32,7 +32,7 @@ export class ApplyLeave {
     { label: 'Casual Leave', value: LeaveTypeEnum.Casual },
     { label: 'Paternity Leave', value: LeaveTypeEnum.Paternity },
     { label: 'Maternity Leave', value: LeaveTypeEnum.Maternity },
-    { label: 'Unpaid Leave', value: LeaveTypeEnum.Unpaid },
+    { label: 'Unpaid Leave', value: LeaveTypeEnum.Unpaid }
   ];
 
   // 🔥 dummy balance
