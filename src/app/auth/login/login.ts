@@ -49,7 +49,7 @@ export class Login {
       this.loading = true;
 
       const user = await this.authService.loginUser(request);
-
+    
       if (!user) {
         console.error('User is null after login');
         return;

@@ -8,6 +8,6 @@ export const leavesResolver: ResolveFn<LeaveModel[]> = () => {
   const service = inject(LeaveService);
 
   return service.getEmployeeLeaves().pipe(
-    map(data => data ?? [])
+    map(data => console.log(data) ?? [])
   );
 };

@@ -3,6 +3,7 @@ import { CanActivateFn, Router } from '@angular/router';
 import { AuthStore } from '../store/auth.store';
 
 export const authGuard: CanActivateFn = () => {
+   console.log('AUTH GUARD HIT');
   const authStore = inject(AuthStore);
   const router = inject(Router);
 

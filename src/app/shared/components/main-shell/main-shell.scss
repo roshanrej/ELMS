@@ -44,6 +44,9 @@
 @media (max-width: 768px) {
   .app-shell {
     flex-direction: column;
+    height: auto;
+    min-height: 100dvh;
+    overflow: visible;
   }
 
   .shell-sidebar {
@@ -56,10 +59,22 @@
   }
 
   .main-area {
-    min-height: 0;
+    min-height: 0 !important;
+    overflow: visible;
   }
 
   .page-content {
+    overflow-y: visible;
     padding: 1rem;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .shell-topbar {
+    padding: 0.85rem 1rem;
+  }
+
+  .page-content {
+    padding: 0.75rem;
   }
 }

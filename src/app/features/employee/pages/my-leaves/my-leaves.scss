@@ -44,6 +44,10 @@
   flex-wrap: wrap;
 }
 
+section.app-card.d-flex {
+  min-width: 0;
+}
+
 /* 3. Badge & Button Internal Centering */
 .rounded-pill {
   display: inline-flex;
@@ -148,4 +152,36 @@
 .app-table tbody tr:hover {
   background-color: var(--app-red-soft);
   transition: background 0.2s ease-in-out;
+}
+
+@media (max-width: 768px) {
+  section.app-card.d-flex {
+    align-items: stretch !important;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  section.app-card.d-flex > .d-flex {
+    align-items: stretch !important;
+    flex-wrap: wrap;
+    gap: 0.75rem !important;
+  }
+
+  section.app-card.d-flex > .d-flex > .d-flex {
+    align-items: stretch !important;
+    flex: 1 1 12rem;
+    flex-direction: column;
+    gap: 0.35rem !important;
+    min-width: 0;
+  }
+
+  section.app-card.d-flex .form-select {
+    width: 100% !important;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .btn-action {
+    min-width: 5rem;
+  }
 }

@@ -4,10 +4,8 @@ import { AuthStore } from '../store/auth.store';
 import { AuthApi } from '../../core/http/auth/api';
 import { LoginRequest } from '../../core/models/auth/login-request.model';
 import { firstValueFrom } from 'rxjs';
-import { ApiResponse } from '../../core/models/api/api-reponse.model';
 import { Router } from '@angular/router';
-import { catchError, throwError } from 'rxjs';
-import { HttpErrorResponse } from '@angular/common/http';
+
 
 @Injectable({
   providedIn: 'root',
@@ -30,7 +28,7 @@ export class AuthService {
     if (!res.success || !res.data) {
       throw new Error('Invalid login response');
     }
-
+    this.authStore.setUser(res.data)
     localStorage.setItem('token', res.token!);
 
     return res.data;
