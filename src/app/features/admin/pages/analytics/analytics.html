@@ -3,13 +3,13 @@
     <div class="row g-4 align-items-center">
       <div class="col-lg-8">
         <span class="app-eyebrow">Admin Analytics</span>
-        <h2 class="display-6 fw-bold mb-3">Request and leave balance summary</h2>
-        <p class="text-app-muted mb-0">A Bootstrap analytics skeleton for request counts, department totals, and balance summaries.</p>
+        <h1 class="app-title mb-3">Request and leave balance summary</h1>
+        <p class="app-body mb-0">A Bootstrap analytics skeleton for request counts, department totals, and balance summaries.</p>
       </div>
       <div class="col-lg-4">
         <div class="app-card p-3">
           <span class="small text-app-muted">Status</span>
-          <div class="h5 fw-bold mb-1">Ready for service integration</div>
+          <div class="app-subtitle mb-1">Ready for service integration</div>
           <span class="badge badge-soft-red rounded-pill">Skeleton</span>
         </div>
       </div>
@@ -30,17 +30,18 @@
     <div class="col-lg-7">
       <section class="app-card overflow-hidden h-100">
         <div class="p-4 border-bottom">
-          <h3 class="h5 fw-bold mb-1">Department Request Snapshot</h3>
-          <p class="text-app-muted mb-0">Counts that can later map to API or store data.</p>
+          <h2 class="app-subtitle mb-1">Department Request Snapshot</h2>
+          <p class="app-body mb-0">Counts that can later map to API or store data.</p>
         </div>
         <div class="table-responsive">
           <table class="table app-table align-middle">
+            <caption class="visually-hidden">Department request snapshot with total requests, pending requests, and average balance.</caption>
             <thead>
               <tr>
-                <th>Department</th>
-                <th>Requests</th>
-                <th>Pending</th>
-                <th>Avg Balance</th>
+                <th scope="col">Department</th>
+                <th scope="col">Requests</th>
+                <th scope="col">Pending</th>
+                <th scope="col">Avg Balance</th>
               </tr>
             </thead>
             <tbody>
@@ -58,7 +59,7 @@
 
     <div class="col-lg-5">
       <section class="app-card p-4 h-100">
-        <h3 class="h5 fw-bold mb-3">Implementation Notes</h3>
+        <h2 class="app-subtitle">Implementation Notes</h2>
         <div class="list-group list-group-flush">
           <div class="list-group-item bg-transparent px-0 d-flex gap-3" *ngFor="let note of balanceNotes">
             <span class="badge badge-soft-red rounded-pill align-self-start">Note</span>

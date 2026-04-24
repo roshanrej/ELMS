@@ -4,6 +4,10 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { LeaveModel } from '../../../../core/models/leave/leave-model';
 
 import { LeaveStatusEnum } from '../../../../core/types-enums/leave-status-enum';
+import { AnnualLeavePolicy } from '../../../../../environments/environment.development';
+import { LeaveTypeEnum } from '../../../../core/types-enums/leave-type-enum';
+
+type UpcomingLeaveView = LeaveModel & { leaveDays: number };
 
 @Component({
   selector: 'app-dashboard',
@@ -13,12 +17,13 @@ import { LeaveStatusEnum } from '../../../../core/types-enums/leave-status-enum'
 })
 export class Dashboard  implements OnInit {
   employeeLeaves: LeaveModel[] = [];
-  
+  AnnualLeavePolicy = AnnualLeavePolicy
   private route : ActivatedRoute = inject(ActivatedRoute)
   leaveBalance = 0;
   usedDays = 0;
   pendingCount = 0;
-  upcomingLeaves: LeaveModel[] = [];
+  upcomingLeaves: UpcomingLeaveView[] = [];
+  usedPercent = 0;
 
  ngOnInit() {
   const data = this.route.snapshot.data['leaves'];
@@ -35,8 +40,6 @@ export class Dashboard  implements OnInit {
     const thisYearLeaves = this.employeeLeaves.filter(l =>
       new Date(l.startDate).getFullYear() === currentYear
     )
-   console.log(thisYearLeaves)
-
     // 🔥 Used days (approved only)
     this.usedDays = thisYearLeaves
       .filter(l => l.status === LeaveStatusEnum.Approved)
@@ -46,12 +49,23 @@ export class Dashboard  implements OnInit {
 
     
     this.pendingCount = this.employeeLeaves
-      .filter(l => l.status === LeaveStatusEnum.Pending)
+      .filter(l => l.status === LeaveStatusEnum.Pending )
       .length;
 
     // 🔥 Example balance (assume 24/year)
-    this.leaveBalance = 24 - this.usedDays;
+    this.leaveBalance =  AnnualLeavePolicy.Total - this.usedDays;
+    this.usedPercent = AnnualLeavePolicy.Total > 0
+      ? Math.min(100, Math.round((this.usedDays / AnnualLeavePolicy.Total) * 100))
+      : 0;
   }
+ typeMap: Record<LeaveTypeEnum,string> = {
+  [LeaveTypeEnum.Annual]: 'Annual',
+  [LeaveTypeEnum.Sick]: 'Sick',
+  [LeaveTypeEnum.Maternity]: 'Maternity',
+  [LeaveTypeEnum.Paternity]: 'Paternity',
+  [LeaveTypeEnum.Unpaid]: 'Unpaid',
+  [LeaveTypeEnum.Casual]:'Casual'
+};
 
   extractUpcoming() {
     const today = new Date();
@@ -61,7 +75,8 @@ export class Dashboard  implements OnInit {
       .sort((a, b) =>
         new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
       )
-      .slice(0, 5);
+      .slice(0, 5)
+      .map(leave => ({ ...leave, leaveDays: this.getLeaveDays(leave) }));
   }
 
   getLeaveDays(leave: LeaveModel): number {

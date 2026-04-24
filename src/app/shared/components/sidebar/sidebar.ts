@@ -4,6 +4,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthStore } from '../../../auth/store/auth.store';
 import { RoleTypeEnum } from '../../../core/types-enums/role-type.enum';
 import { UserModel } from '../../../core/models/user/user.model';
+import { AuthService } from '../../../auth/services/auth';
 
 @Component({
   selector: 'app-sidebar',
@@ -13,6 +14,7 @@ import { UserModel } from '../../../core/models/user/user.model';
 })
 export class Sidebar implements OnInit {
   private authStore = inject(AuthStore);
+  private authService: AuthService = inject(AuthService)
   user : UserModel| null = this.authStore.currentUser
   
   navLinks: { label: string; route: string }[] = [];
@@ -56,4 +58,8 @@ export class Sidebar implements OnInit {
 
     this.navLinks = this.navLinksMap.MANAGER;
   }
+  logout(){
+this.authService.logout()
+  }
+  
 }

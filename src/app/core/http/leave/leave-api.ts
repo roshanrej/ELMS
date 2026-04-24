@@ -34,6 +34,8 @@ export class LeaveApi {
 );
   }
   getMyBalances(): Observable<LeaveBalanceModel[]> {
-    return this.http.get<LeaveBalanceModel[]>(`${this.baseURL}/leave/balances/me`);
+
+   
+    return this.http.get<LeaveBalanceModel[]>(`${this.baseURL}/api/leaves/balance/me`);
   }
 }

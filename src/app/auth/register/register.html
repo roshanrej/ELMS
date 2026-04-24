@@ -1,7 +1,7 @@
 <div class="auth-page">
   <aside class="auth-panel">
     <div class="auth-brand">
-      <span class="auth-brand__mark">E</span>
+      <span class="auth-brand__mark" aria-hidden="true"><i class="bi bi-calendar2-check"></i></span>
       <div>
         <div class="h4 mb-0 fw-bold">ELMS</div>
         <div class="small opacity-75">Leave Management System</div>
@@ -10,8 +10,8 @@
 
     <div class="mt-5">
       <span class="badge rounded-pill bg-white text-app-red mb-3">New profile</span>
-      <h1 class="display-6 fw-bold mb-3">Create a clean employee record.</h1>
-      <p class="mb-0 opacity-75">Register once, then manage leave balances and approvals from a single workspace.</p>
+      <h2 class="app-subtitle text-white mb-3">Create a clean employee record.</h2>
+      <p class="app-body text-white-50 mb-0">Register once, then manage leave balances and approvals from a single workspace.</p>
     </div>
 
     <div class="small opacity-75 mt-5">&copy; 2026 ELMS</div>
@@ -20,13 +20,13 @@
   <main class="auth-form-wrap">
     <section class="auth-form-card">
       <span class="app-eyebrow">Get started</span>
-      <h2 class="fw-bold mb-2">Create an account</h2>
-      <p class="text-app-muted mb-4">Enter your credentials below to register.</p>
+      <h1 class="app-title mb-2">Create an account</h1>
+      <p class="app-body mb-4">Enter your credentials below to register.</p>
 
-      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" novalidate>
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" novalidate aria-label="Create account form">
         <div class="row g-3">
           <div class="col-12">
-            <label class="form-label fw-semibold" for="username">Username</label>
+            <label class="app-label" for="username">Username</label>
             <input
               id="username"
               type="text"
@@ -40,7 +40,7 @@
           </div>
 
           <div class="col-12">
-            <label class="form-label fw-semibold" for="email">Email</label>
+            <label class="app-label" for="email">Email</label>
             <input
               id="email"
               type="email"
@@ -55,7 +55,7 @@
           </div>
 
           <div class="col-12">
-            <label class="form-label fw-semibold" for="department">Department</label>
+            <label class="app-label" for="department">Department</label>
             <select
               id="department"
               formControlName="department"
@@ -69,7 +69,7 @@
           </div>
 
           <div class="col-12 col-lg-6">
-            <label class="form-label fw-semibold" for="password">Password</label>
+            <label class="app-label" for="password">Password</label>
             <div class="password-field">
               <input
                 id="password"
@@ -92,7 +92,7 @@
           </div>
 
           <div class="col-12 col-lg-6">
-            <label class="form-label fw-semibold" for="confirm-password">Confirm Password</label>
+            <label class="app-label" for="confirm-password">Confirm Password</label>
             <div class="password-field">
               <input
                 id="confirm-password"

@@ -5,15 +5,21 @@ import { LeaveStatusEnum } from '../../../../core/types-enums/leave-status-enum'
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LeaveTypeEnum } from '../../../../core/types-enums/leave-type-enum';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { LeaveActionEnum } from '../../../../core/types-enums/leave-action.enum';
+
+type LeaveRowView = LeaveModel & {
+  leaveDays: number;
+  availableActions: LeaveActionEnum[];
+};
 @Component({
   selector: 'app-my-leaves',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './my-leaves.html',
   styleUrl: './my-leaves.scss',
 })
 export class MyLeaves {
+  mode : string = ''
   LeaveActionEnum = LeaveActionEnum
   LeaveTypeEnum = LeaveTypeEnum
   selectedType : LeaveTypeEnum|'ALL' = 'ALL';
@@ -24,7 +30,7 @@ export class MyLeaves {
   selectedYear: number | 'ALL' = 'ALL';
   employeeLeaves: LeaveModel[] = [] //leaves fetched from API
   isLoading = signal(true);
-  filteredLeaves :LeaveModel[] = [];
+  filteredLeaves: LeaveRowView[] = [];
   private leaveService: LeaveService = inject(LeaveService)
   
   
@@ -49,7 +55,11 @@ export class MyLeaves {
     );
   }
 
-  this.filteredLeaves = filtered;
+  this.filteredLeaves = filtered.map(leave => ({
+    ...leave,
+    leaveDays: this.getLeaveDays(leave),
+    availableActions: this.getAvailableActions(leave.status),
+  }));
 }
   extractYears() {
     const yearSet = new Set<number>();
@@ -60,12 +70,13 @@ export class MyLeaves {
     this.years = Array.from(yearSet).sort((a, b) => b - a); // latest first
   }
 ngOnInit() {
-  const mode = this.route.snapshot.data['mode'];
-
+  this.mode = this.route.snapshot.data['mode'];
+  
   this.leaveService.getEmployeeLeaves().subscribe(data => {
-    const leaves = mode === 'draft'
+    const leaves = this.mode === 'draft'
       ? data.filter(d => d.status === LeaveStatusEnum.Draft)
       : data.filter(d=>d.status!== LeaveStatusEnum.Draft) ?? [];
+      
 
     this.employeeLeaves = leaves;
 
@@ -88,6 +99,14 @@ ngOnInit() {
   [LeaveStatusEnum.Rejected]: 'badge-soft-red',
   [LeaveStatusEnum.Cancelled]: 'badge-soft-gray',
   [LeaveStatusEnum.Draft]: 'badge-soft-gray'
+};
+  typeMap: Record<LeaveTypeEnum,string> = {
+  [LeaveTypeEnum.Annual]: 'Annual',
+  [LeaveTypeEnum.Sick]: 'Sick',
+  [LeaveTypeEnum.Maternity]: 'Maternity',
+  [LeaveTypeEnum.Paternity]: 'Paternity',
+  [LeaveTypeEnum.Unpaid]: 'Unpaid',
+  [LeaveTypeEnum.Casual]:'Casual'
 };
 
  getAvailableActions(status: LeaveStatusEnum): LeaveActionEnum[] {

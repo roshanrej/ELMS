@@ -1,7 +1,7 @@
 <div class="auth-page">
   <aside class="auth-panel">
     <div class="auth-brand">
-      <span class="auth-brand__mark">E</span>
+      <span class="auth-brand__mark" aria-hidden="true"><i class="bi bi-calendar2-check"></i></span>
       <div>
         <div class="h4 mb-0 fw-bold">ELMS</div>
         <div class="small opacity-75">Leave Management System</div>
@@ -9,8 +9,8 @@
     </div>
 
     <div class="mt-5">
-      <h1 class="display-6 fw-bold mb-3">Plan time away with a cleaner workflow.</h1>
-      <p class="mb-0 opacity-75">A simple workspace for leave requests, balances, approvals, and department visibility.</p>
+      <h2 class="app-subtitle text-white mb-3">Plan time away with a cleaner workflow.</h2>
+      <p class="app-body text-white-50 mb-0">A simple workspace for leave requests, balances, approvals, and department visibility.</p>
     </div>
 
     <div class="small opacity-75 mt-5">&copy; 2026 ELMS</div>
@@ -19,12 +19,12 @@
   <main class="auth-form-wrap">
     <section class="auth-form-card">
       <span class="app-eyebrow">Welcome back</span>
-      <h2 class="fw-bold mb-2">Sign in</h2>
-      <p class="text-app-muted mb-4">Enter your credentials to continue.</p>
+      <h1 class="app-title mb-2">Sign in</h1>
+      <p class="app-body mb-4">Enter your credentials to continue.</p>
 
-      <form [formGroup]="loginForm" (ngSubmit)="login()" novalidate>
+      <form [formGroup]="loginForm" (ngSubmit)="login()" novalidate aria-label="Sign in form">
         <div class="mb-3">
-          <label class="form-label fw-semibold" for="email">Email</label>
+          <label class="app-label" for="email">Email</label>
           <input
             id="email"
             type="email"
@@ -40,7 +40,7 @@
 
         <div class="mb-3">
           <div class="d-flex justify-content-between align-items-center">
-            <label class="form-label fw-semibold" for="password">Password</label>
+            <label class="app-label mb-0" for="password">Password</label>
             <a class="small text-decoration-none text-app-red" routerLink="/forgot-password">Forgot password?</a>
           </div>
 

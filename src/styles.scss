@@ -1,48 +1,98 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 @import 'bootstrap-icons/font/bootstrap-icons.css';
 
+/*
+ * ─────────────────────────────────────────────
+ *  SERENE LIGHT THEME
+ *  Soft desaturated rose-red accent · Airy whites
+ * ─────────────────────────────────────────────
+ */
+
+/*
+ * ─────────────────────────────────────────────
+ *  SERENE LIGHT THEME
+ *  Anchor: #FB4B4E — vivid coral-red
+ *  Divergence: warm blush neutrals · airy whites
+ *  Palette family: coral-red → dusty rose → blush → pearl white
+ * ─────────────────────────────────────────────
+ *
+ *  COLOR MAP
+ *  #FB4B4E  →  accent (vivid coral-red, anchor)
+ *  #D93B3E  →  accent dark (deeper coral, not pure crimson)
+ *  #FFF0F0  →  accent soft (pearl blush, near-white)
+ *  #FDFBFA  →  page bg (luminous warm white)
+ *  #F7EEEC  →  section bg (soft blush separation)
+ *  #FFFFFF  →  card bg (pure white for contrast lift)
+ *  #2A2122  →  ink (warm near-black, rose undertone)
+ *  #8C7F80  →  muted (desaturated rose-gray)
+ *  #EDE5E6  →  border (warm whisper border)
+ * ─────────────────────────────────────────────
+ */
+
 :root {
   --bs-body-font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
-  /* Primary */
-  --app-red: #ef4444;
-  --app-red-dark: #b91c1c;
-  --app-red-soft: #fef2f2;
+  /* Font weights */
+  --fw-normal:   400;
+  --fw-medium:   500;
+  --fw-semibold: 600;
+  --fw-bold:     700;
 
-  /* Background */
-  --app-cream: #fdfaf6;
-  --app-cream-strong: #f7efe5;
-  --app-white: #ffffff;
+  /* ── Primary accent ── */
+  --app-red:        #FB4B4E;   /* vivid coral-red — the anchor */
+  --app-red-dark:   #D93B3E;   /* deeper coral — hover, active states */
+  --app-red-soft:   #FFF0F0;   /* pearl blush — backgrounds, badges */
+  --app-brand-gradient: linear-gradient(140deg, #fb4b4e 0%, #d93b3e 100%);
 
-  /* Text */
-  --app-ink: #1f1f1f;
-  --app-muted: #6b7280;
+  /* ── Backgrounds ── */
+  --app-cream:        #FDFBFA;   /* luminous warm white — page bg */
+  --app-cream-strong: #F7EEEC;   /* soft blush — section separation */
+  --app-white:        #FFFFFF;   /* pure white — cards */
 
-  /* Border */
-  --app-border: #e5e7eb;
+  /* ── Text ── */
+  --app-ink:    #2A2122;   /* warm near-black with rose undertone */
+  --app-muted:  #8C7F80;   /* desaturated rose-gray */
 
-  /* Status */
-  --app-green-soft: #f0fdf4;
-  --app-green-dark: #166534;
+  /* ── Border ── */
+  --app-border: #EDE5E6;   /* warm whisper — barely-there dividers */
 
-  --app-yellow-soft: #fefce8;
-  --app-yellow-dark: #854d0e;
+  /* ── Status — desaturated to not compete with coral accent ── */
+  --app-green-soft: #F2FAF5;
+  --app-green-dark: #2D6A4F;
 
-  --app-gray-soft: #f9fafb;
-  --app-gray-dark: #374151;
+  --app-yellow-soft: #FEFAF0;
+  --app-yellow-dark: #92600A;
 
-  --bg-page: #fdfaf6;
-  --bg-section: #f7efe5;
-  --bg-card: #ffffff;
+  --app-gray-soft: #F8F6F6;
+  --app-gray-dark: #4A4547;
 
-  /* Hover / interaction */
-  --bg-hover: #fafafa;
+  /* ── Page structure ── */
+  --bg-page:    #FDFBFA;
+  --bg-section: #F7EEEC;
+  --bg-card:    #FFFFFF;
 
-  /* Table specific */
-  --bg-table-header: #fafafa;
-  --bg-table-row-hover: #fafafa;
+  /* ── Interaction ── */
+  --bg-hover: #FFF5F5;   /* coral blush hover — warm, barely visible */
+
+  /* ── Table ── */
+  --bg-table-header:    #FFF5F5;   /* coral pearl header */
+  --bg-table-row-hover: #FFF5F5;
+
+  /* Semantic text */
+  --text-primary: var(--app-ink);
+  --text-secondary: #453a3c;
+  --text-muted: var(--app-muted);
+
+  /* Semantic status */
+  --status-success-bg: var(--app-green-soft);
+  --status-success-fg: var(--app-green-dark);
+  --status-warning-bg: var(--app-yellow-soft);
+  --status-warning-fg: var(--app-yellow-dark);
+  --status-danger-bg: var(--app-red-soft);
+  --status-danger-fg: var(--app-red-dark);
+  --status-neutral-bg: var(--app-gray-soft);
+  --status-neutral-fg: var(--app-gray-dark);
 }
-
 * {
   box-sizing: border-box;
 }
@@ -52,6 +102,17 @@ svg,
 canvas,
 video {
   max-width: 100%;
+}
+.bg-success {
+  background-color: #22c55e !important; /* green */
+}
+
+.bg-warning {
+  background-color: #f59e0b !important; /* amber */
+}
+
+.bg-danger {
+  background-color: #ef4444 !important; /* red */
 }
 
 html, body {
@@ -106,6 +167,50 @@ app-root {
   color: var(--app-red-dark) !important;
 }
 
+.app-title {
+  color: var(--text-primary);
+  font-size: clamp(1.25rem, 2.2vw, 1.75rem);
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0 0 0.25rem;
+}
+
+.app-subtitle {
+  color: var(--text-primary);
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  margin: 0 0 0.75rem;
+}
+
+.app-body {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.app-label {
+  color: var(--text-muted);
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.35rem;
+  text-transform: uppercase;
+}
+
+.text-primary {
+  color: var(--text-primary) !important;
+}
+
+.text-secondary {
+  color: var(--text-secondary) !important;
+}
+
+.text-muted {
+  color: var(--text-muted) !important;
+}
+
 .bg-app-cream {
   background: var(--app-cream) !important;
 }
@@ -124,12 +229,51 @@ app-root {
   min-width: 0;
 }
 
+/* ✅ Page hero hierarchy */
+.app-page__hero .app-eyebrow {
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+}
+
+.app-page__hero h1,
+.app-page__hero h2,
+.app-page__hero h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 0.25rem;
+}
+
+.app-page__hero p {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--app-muted);
+  margin-bottom: 0;
+  line-height: 1.5;
+}
+
 .app-page__hero,
 .app-card {
   background: var(--app-white);
   border: 1px solid var(--app-border);
   border-radius: var(--bs-border-radius);
+  box-shadow: 0 1px 2px rgba(42, 33, 34, 0.03);
   min-width: 0;
+}
+
+.app-card--success {
+  background: var(--status-success-bg);
+  border-color: color-mix(in srgb, var(--status-success-fg) 25%, white);
+}
+
+.app-card--warning {
+  background: var(--status-warning-bg);
+  border-color: color-mix(in srgb, var(--status-warning-fg) 25%, white);
+}
+
+.app-card--danger {
+  background: var(--status-danger-bg);
+  border-color: color-mix(in srgb, var(--status-danger-fg) 25%, white);
 }
 
 .app-page__hero {
@@ -142,6 +286,48 @@ app-root {
   font-size: 1rem;
   font-weight: 700;
   margin-bottom: 0.35rem;
+  text-transform: uppercase;
+}
+
+.app-brand {
+  align-items: center;
+  display: inline-flex;
+  gap: 0.65rem;
+}
+
+.app-brand__mark {
+  align-items: center;
+  background: var(--app-brand-gradient);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 10px;
+  box-shadow: 0 6px 16px rgba(217, 59, 62, 0.22);
+  color: #fff;
+  display: inline-flex;
+  height: 42px;
+  justify-content: center;
+  width: 42px;
+}
+
+.app-brand__icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.app-brand__name {
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  margin: 0;
+}
+
+.app-brand__tag {
+  color: var(--text-muted);
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  margin: 0;
   text-transform: uppercase;
 }
 
@@ -191,6 +377,7 @@ app-root {
   border-bottom: 1px solid var(--app-border);
   color: var(--app-ink);
   font-size: 0.9rem;
+   font-weight: 500; 
 }
 
 /* Badges */
@@ -211,6 +398,27 @@ app-root {
 .badge-soft-green   { background: var(--app-green-soft);  color: var(--app-green-dark);  border-color: rgba(52, 211, 153, 0.2); }
 .badge-soft-yellow  { background: var(--app-yellow-soft); color: var(--app-yellow-dark); border-color: rgba(251, 191, 36, 0.2); }
 .badge-soft-gray    { background: var(--app-gray-soft);   color: var(--app-gray-dark);   border-color: rgba(167, 164, 159, 0.2); }
+
+.app-empty-state {
+  align-items: center;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  justify-content: center;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.app-empty-state__icon {
+  color: var(--text-muted);
+  font-size: 1.75rem;
+}
+
+.app-space-1 { gap: 4px; }
+.app-space-2 { gap: 8px; }
+.app-space-3 { gap: 16px; }
+.app-space-4 { gap: 24px; }
 
 .progress {
   --bs-progress-bg: var(--app-cream-strong);
@@ -253,9 +461,10 @@ app-root {
 
 .auth-brand__mark {
   align-items: center;
-  background: rgba(255, 255, 255, 0.18);
-  border: 1px solid rgba(255, 255, 255, 0.38);
+  background: rgba(255, 255, 255, 0.24);
+  border: 1px solid rgba(255, 255, 255, 0.42);
   border-radius: var(--bs-border-radius);
+  box-shadow: 0 10px 24px rgba(130, 27, 29, 0.25);
   display: inline-flex;
   font-weight: 700;
   height: 44px;

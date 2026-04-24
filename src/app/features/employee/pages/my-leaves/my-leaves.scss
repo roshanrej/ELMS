@@ -8,17 +8,35 @@
   width: 100%;
 }
 
-/* ✅ Global left alignment */
-.app-table td,
-.app-table th {
+/* ✅ Global alignment */
+.app-table :is(th, td) {
   text-align: left;
-  white-space: nowrap;
+  white-space: normal;
 }
 
-/* ✅ Single source of truth for all cell padding */
-.app-table > :not(caption) > * > * {
-  padding: 0.75rem 1rem;
+/* ✅ Parent-child spacing rhythm for headers and cells */
+.app-table > thead > tr > th,
+.app-table > tbody > tr > td {
+  padding: 0.875rem 1rem;
   vertical-align: middle;
+}
+
+.app-table > thead > tr > th {
+  font-size: 0.76rem;
+  letter-spacing: 0.05em;
+}
+
+.app-table > tbody > tr > td {
+  line-height: 1.35;
+}
+
+/* Give breathing room at table edges without changing structure */
+.app-table > :is(thead, tbody) > tr > :first-child {
+  padding-left: 1.25rem;
+}
+
+.app-table > :is(thead, tbody) > tr > :last-child {
+  padding-right: 1.25rem;
 }
 
 /* ✅ Centered columns — padding matches rest of table */
@@ -28,6 +46,32 @@
   padding-inline: 1rem;
   text-align: center !important;
   white-space: nowrap;
+}
+
+/* Fine-grained spacing between adjacent columns */
+.app-table > :is(thead, tbody) > tr > .cell-days {
+  padding-right: 0.75rem;
+}
+
+.app-table > :is(thead, tbody) > tr > .cell-approver {
+  padding-left: 1.15rem;
+  padding-right: 0.85rem;
+}
+
+.app-table > :is(thead, tbody) > tr > .cell-status {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+.app-table > :is(thead, tbody) > tr > .cell-action {
+  padding-left: 0.75rem;
+}
+
+.table-responsive {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  overflow: visible;
 }
 
 /* Badge sizing */
@@ -44,8 +88,8 @@
   display: flex;
   gap: 8px;
   justify-content: center;
-  flex-wrap: wrap;
   align-items: center;
+  flex-wrap: nowrap; // ← was wrap
 }
 
 /* ✅ Icon button styles */
@@ -96,4 +140,64 @@
 /* Row hover */
 .app-table tbody tr:hover {
   background-color: var(--app-red-soft);
+}
+
+.app-table > tbody > tr:last-child > td {
+  border-bottom: 0;
+}
+
+.app-filter-control {
+  min-width: 100px;
+}
+
+.app-filter-control--wide {
+  min-width: 120px;
+}
+
+.col-type,
+.col-start,
+.col-end {
+  width: 15%;
+}
+
+.col-days {
+  width: 10%;
+}
+
+.col-approver {
+  width: 18%;
+}
+
+.col-status {
+  width: 13%;
+}
+
+.col-action {
+  width: 14%;
+}
+
+/* Draft-only table balance: less approver space, better status/action spacing */
+.is-draft-mode {
+  .col-approver {
+    width: 12%;
+  }
+
+  .col-status {
+    width: 16%;
+  }
+
+  .col-action {
+    width: 17%;
+  }
+
+  .app-table > :is(thead, tbody) > tr > .cell-approver {
+    padding-left: 0.85rem;
+    padding-right: 0.65rem;
+  }
+
+  .app-table > :is(thead, tbody) > tr > .cell-status,
+  .app-table > :is(thead, tbody) > tr > .cell-action {
+    padding-left: 0.9rem;
+    padding-right: 0.9rem;
+  }
 }

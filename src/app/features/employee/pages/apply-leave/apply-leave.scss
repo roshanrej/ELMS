@@ -2,11 +2,78 @@
   display: block;
 }
 
-@media (max-width: 575.98px) {
-  .col-12.d-flex {
-    flex-wrap: wrap;
+.form-select,
+.form-control {
+  font-size: 0.875rem;
+  background-color: transparent;
+  border-color: var(--app-border);
+  border-radius: 6px;
+  color: var(--app-ink);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:focus {
+    background-color: transparent;
+    border-color: var(--app-red);
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.08);
   }
 
+  &::placeholder {
+    color: var(--app-muted);
+    opacity: 0.6;
+    font-size: 0.85rem;
+  }
+}
+
+.app-divider {
+  border-color: var(--app-border);
+}
+
+textarea.form-control {
+  resize: vertical;
+  min-height: 100px;
+}
+.btn-app:disabled {
+  background-color: var(--app-border);
+  border-color: var(--app-border);
+  color: var(--app-muted);
+  opacity: 1;
+  cursor: not-allowed;
+}
+/* ✅ Progress track */
+.progress {
+  height: 5px;
+  background-color: var(--app-border);
+  border-radius: 999px;
+}
+
+.progress-bar {
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.progress-bar.bg-success {
+  background: linear-gradient(90deg, #34d399, #10b981);
+}
+
+.progress-bar.bg-warning {
+  background: linear-gradient(90deg, #fbbf24, #f59e0b);
+}
+
+.progress-bar.bg-danger {
+  background: linear-gradient(90deg, #f87171, #ef4444);
+}
+
+/* ✅ Stat value */
+.app-stat__value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--app-ink);
+}
+
+/* ✅ Mobile actions */
+@media (max-width: 575.98px) {
   .col-12.d-flex .btn {
     flex: 1 1 10rem;
   }

@@ -1,26 +1,28 @@
 .sidebar {
-  background: var(--app-red);
+  background: var(--app-brand-gradient);
   color: #fff;
   gap: 1rem;
   padding: 1rem;
 }
-
 .sidebar-header {
-  align-items: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.22);
   display: flex;
+  align-items: center;
   gap: 0.75rem;
-  min-width: 0;
   padding-bottom: 1rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .brand-mark {
-  background: rgba(255, 255, 255, 0.16);
-  border: 1px solid rgba(255, 255, 255, 0.38);
+  background: rgba(255, 255, 255, 0.24);
+  border: 1px solid rgba(255, 255, 255, 0.46);
   border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(117, 24, 26, 0.25);
   color: #fff;
   flex: 0 0 42px;
   height: 42px;
+  min-width: 42px;
+  font-size: 1rem;
   width: 42px;
 }
 
@@ -49,16 +51,27 @@
   color: var(--app-red-dark) !important;
 }
 
-.sidebar-note {
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.24);
-  border-radius: 8px;
-  padding: 0.75rem;
+.text-sidebar-muted {
+  color: rgba(255, 255, 255, 0.65) !important;
 }
- .btn-sm{
-    color: white;
+.btn-sidebar {
+  color: #fff;
+  background: transparent;
+  border: 1.5px solid rgba(255, 255, 255, 0.45);
+  border-radius: 6px;
+  font-weight: 600;
+  transition: background 0.2s ease, border-color 0.2s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.75);
+    color: #fff;
   }
 
+  &:active {
+    background: rgba(255, 255, 255, 0.25);
+  }
+}
 @media (max-width: 768px) {
   .sidebar {
     padding: 0.75rem;

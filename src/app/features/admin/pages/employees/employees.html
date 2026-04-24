@@ -3,8 +3,8 @@
     <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
       <div>
         <span class="app-eyebrow">Employees</span>
-        <h2 class="display-6 fw-bold mb-3">Employee roster</h2>
-        <p class="text-app-muted mb-0">A cream workspace for employee records, leave balances, and profile status.</p>
+        <h1 class="app-title mb-3">Employee roster</h1>
+        <p class="app-body mb-0">A cream workspace for employee records, leave balances, and profile status.</p>
       </div>
       <button type="button" class="btn btn-app align-self-start">Add Employee</button>
     </div>
@@ -22,18 +22,19 @@
 
   <section class="app-card overflow-hidden">
     <div class="p-4 border-bottom">
-      <h3 class="h5 fw-bold mb-1">Directory</h3>
-      <p class="text-app-muted mb-0">Bootstrap table skeleton for the current employee model.</p>
+      <h2 class="app-subtitle mb-1">Directory</h2>
+      <p class="app-body mb-0">Bootstrap table skeleton for the current employee model.</p>
     </div>
     <div class="table-responsive">
       <table class="table app-table align-middle">
+        <caption class="visually-hidden">Employee directory with role, department, status, and leave balance.</caption>
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Role</th>
-            <th>Department</th>
-            <th>Status</th>
-            <th>Balance</th>
+            <th scope="col">Name</th>
+            <th scope="col">Role</th>
+            <th scope="col">Department</th>
+            <th scope="col">Status</th>
+            <th scope="col">Balance</th>
           </tr>
         </thead>
         <tbody>

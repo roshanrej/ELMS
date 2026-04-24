@@ -2,37 +2,56 @@
 
   <header class="app-page__hero">
     <span class="app-eyebrow">Leave Balance</span>
-    <h2 class="display-6 fw-bold mb-3">Available time off</h2>
-    <p class="text-app-muted mb-0">A live overview of your remaining leave across all categories.</p>
+    <h1 class="app-title">Available time off for this year.</h1>
+    <p class="app-body mb-0">
+      A live overview of your remaining leave across all categories.
+    </p>
   </header>
 
   <!-- 🔥 Empty -->
-  <section *ngIf="balances.length === 0" class="app-card p-4 text-app-muted">
-    No balance data available.
+  <section *ngIf="balances.length === 0" class="app-card p-4">
+    <div class="app-empty-state">
+      <i class="bi bi-pie-chart app-empty-state__icon" aria-hidden="true"></i>
+      <p class="mb-0">Your leave balances are not available yet.</p>
+      <p class="mb-0 small">Please check again after your profile is fully provisioned.</p>
+    </div>
   </section>
 
   <!-- 🔥 Balance Cards -->
   <div *ngIf="balances.length > 0" class="row g-3">
-    <div *ngFor="let balance of balances" class="col-md-6 col-xl-3">
-      <article class="app-card p-4 h-100">
-
+    <div *ngFor="let balance of balanceViews" class="col-md-6 col-xl-3">
+      <article
+        class="app-card p-4 h-100"
+        [ngClass]="balance.severityClass"
+      >
         <span class="app-eyebrow">{{ balance.leaveType }}</span>
 
-        <div class="app-stat__value my-3">{{ formatValue(balance.remaining) }}</div>
+        <div class="app-stat__value my-3">
+          {{ formatValue(balance.remaining) }}
+        </div>
 
         <div
-          class="progress"
+          class="progress mb-2"
           role="progressbar"
           [attr.aria-label]="balance.leaveType + ' leave'"
-          [attr.aria-valuenow]="getPercent(balance)"
+          [attr.aria-valuenow]="balance.remainingPercent"
           aria-valuemin="0"
           aria-valuemax="100"
         >
           <div
             class="progress-bar"
-            [ngClass]="getProgressClass(getPercent(balance))"
-            [style.width.%]="getPercent(balance)"
+            [ngClass]="balance.progressClass"
+            [style.width.%]="balance.remainingPercent"
           ></div>
+        </div>
+
+        <div class="d-flex justify-content-between small">
+          <span class="text-muted">
+            {{ balance.remaining }} of {{ balance.allocated }} remaining
+          </span>
+          <span class="fw-semibold">
+            {{ balance.remainingPercent }}%
+          </span>
         </div>
 
       </article>

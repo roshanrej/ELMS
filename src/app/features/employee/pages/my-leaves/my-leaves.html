@@ -1,33 +1,45 @@
 <section class="app-page">
   <header class="app-page__hero">
-    <span class="app-eyebrow">My Leaves</span>
-    <h2 class="display-6 fw-bold mb-3">Leave Request history</h2>
-    <p class="text-app-muted mb-0">A table for tracking submitted leave requests and statuses.</p>
+    <span class="app-eyebrow">{{ mode === 'draft' ? 'My Drafts' : 'My Leaves' }}</span>
+    <h1 class="app-title">
+      {{ mode === 'draft' ? 'Draft Leave Requests' : 'Leave Request History' }}
+    </h1>
+    <p class="app-body mb-0">
+      {{
+        mode === 'draft'
+          ? 'A table for tracking created drafts.'
+          : 'A table for tracking submitted leave requests and statuses.'
+      }}
+    </p>
   </header>
 
   <!-- 🔥 Filter Bar -->
-  <section class="card border rounded-3 px-3 py-2 mb-3">
+  <section class="app-card px-3 py-2 mb-3">
     <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
-
       <span class="text-muted fw-semibold small">
         Showing: {{ selectedYear === 'ALL' ? 'All Years' : selectedYear }}
       </span>
 
       <div class="d-flex align-items-center flex-wrap gap-3">
-
         <div class="d-flex align-items-center gap-2">
-          <label class="text-muted fw-semibold small text-nowrap mb-0">Year:</label>
-          <select class="form-select form-select-sm" style="min-width: 100px"
-            [(ngModel)]="selectedYear" (change)="applyFilters()">
+          <label class="app-label text-nowrap mb-0">Year:</label>
+          <select
+            class="form-select form-select-sm app-filter-control"
+            [(ngModel)]="selectedYear"
+            (change)="applyFilters()"
+          >
             <option [ngValue]="'ALL'">All</option>
             <option *ngFor="let year of years" [ngValue]="year">{{ year }}</option>
           </select>
         </div>
 
-        <div class="d-flex align-items-center gap-2">
-          <label class="text-muted fw-semibold small text-nowrap mb-0">Status:</label>
-          <select class="form-select form-select-sm" style="min-width: 110px"
-            [(ngModel)]="selectedStatus" (change)="applyFilters()">
+        <div class="d-flex align-items-center gap-2" *ngIf="mode !== 'draft'">
+          <label class="app-label text-nowrap mb-0">Status:</label>
+          <select
+            class="form-select form-select-sm app-filter-control"
+            [(ngModel)]="selectedStatus"
+            (change)="applyFilters()"
+          >
             <option [ngValue]="'ALL'">All</option>
             <option [ngValue]="LeaveStatusEnum.Pending">Pending</option>
             <option [ngValue]="LeaveStatusEnum.Approved">Approved</option>
@@ -37,9 +49,12 @@
         </div>
 
         <div class="d-flex align-items-center gap-2">
-          <label class="text-muted fw-semibold small text-nowrap mb-0">Type:</label>
-          <select class="form-select form-select-sm" style="min-width: 120px"
-            [(ngModel)]="selectedType" (change)="applyFilters()">
+          <label class="app-label text-nowrap mb-0">Type:</label>
+          <select
+            class="form-select form-select-sm app-filter-control app-filter-control--wide"
+            [(ngModel)]="selectedType"
+            (change)="applyFilters()"
+          >
             <option [ngValue]="'ALL'">All</option>
             <option [ngValue]="LeaveTypeEnum.Annual">Annual</option>
             <option [ngValue]="LeaveTypeEnum.Sick">Sick</option>
@@ -49,7 +64,6 @@
             <option [ngValue]="LeaveTypeEnum.Paternity">Paternity</option>
           </select>
         </div>
-
       </div>
     </div>
   </section>
@@ -60,37 +74,55 @@
   </section>
 
   <!-- 🔥 Data -->
-  <section *ngIf="!isLoading() && filteredLeaves.length > 0" class="app-card overflow-hidden">
+  <section
+    *ngIf="!isLoading() && filteredLeaves.length > 0"
+    class="app-card overflow-hidden"
+    [class.is-draft-mode]="mode === 'draft'"
+  >
     <div class="table-responsive">
       <table class="table app-table align-middle mb-0">
+        <caption class="visually-hidden">
+          {{
+            mode === 'draft'
+              ? 'Draft leave requests with type, date range, status, and available actions'
+              : 'Leave request history with type, date range, status, and available actions'
+          }}
+        </caption>
         <colgroup>
-          <col style="width: 15%"> <!-- Type -->
-          <col style="width: 15%"> <!-- Start Date -->
-          <col style="width: 15%"> <!-- End Date -->
-          <col style="width: 8%">  <!-- Days -->
-          <col style="width: 20%"> <!-- Approver -->
-          <col style="width: 14%"> <!-- Status -->
-          <col style="width: 13%"> <!-- Action -->
+          <col class="col-type" />
+          <!-- Type -->
+          <col class="col-start" />
+          <!-- Start Date -->
+          <col class="col-end" />
+          <!-- End Date -->
+          <col class="col-days" />
+          <!-- Days -->
+          <col class="col-approver" />
+          <!-- Approver -->
+          <col class="col-status" />
+          <!-- Status -->
+          <col class="col-action" />
+          <!-- Action -->
         </colgroup>
 
         <thead>
           <tr>
-            <th>Type</th>
-            <th>Start Date</th>
-            <th>End Date</th>
-            <th class="cell-days">Days</th>
-            <th class="cell-approver">Approver</th>
-            <th class="cell-status">Status</th>
-            <th class="cell-action">Action</th>
+            <th scope="col">Type</th>
+            <th scope="col">Start Date</th>
+            <th scope="col">End Date</th>
+            <th scope="col" class="cell-days">Days</th>
+            <th scope="col" class="cell-approver">Approver</th>
+            <th scope="col" class="cell-status">Status</th>
+            <th scope="col" class="cell-action">Action</th>
           </tr>
         </thead>
 
         <tbody>
           <tr *ngFor="let leave of filteredLeaves">
-            <td class="fw-bold text-nowrap">{{ leave.leaveType }}</td>
+            <td class="fw-bold text-nowrap">{{ typeMap[leave.leaveType] }}</td>
             <td>{{ leave.startDate | date: 'MMM d, yyyy' }}</td>
             <td>{{ leave.endDate | date: 'MMM d, yyyy' }}</td>
-            <td class="cell-days">{{ getLeaveDays(leave) }}</td>
+            <td class="cell-days">{{ leave.leaveDays }}</td>
             <td>{{ leave.approverName || '-' }}</td>
             <td class="cell-status">
               <span
@@ -103,47 +135,66 @@
             <td class="cell-action">
               <div class="action-grid">
                 <!-- Edit Request (Pending) -->
+                <!-- Submit (Draft) -->
+                <!-- Submit (Draft) -->
                 <button
-                  *ngIf="getAvailableActions(leave.status).includes(LeaveActionEnum.Edit)"
+                  *ngIf="leave.reason"
+                  class="btn-icon"
+                  [title]="leave.reason"
+                  [attr.aria-label]="'View reason for ' + typeMap[leave.leaveType] + ' leave request'"
+                >
+                  <i class="bi bi-chat-left-text"></i>
+                </button>
+                <button
+                  *ngIf="leave.availableActions.includes(LeaveActionEnum.Submit)"
+                  class="btn-icon"
+                  title="Submit Request"
+                  (click)="onActionClick(LeaveActionEnum.Submit, leave.id)"
+                  [attr.aria-label]="'Submit ' + typeMap[leave.leaveType] + ' leave request'"
+                >
+                  <i class="bi bi-send-check" aria-hidden="true"></i>
+                </button>
+                <button
+                  *ngIf="leave.availableActions.includes(LeaveActionEnum.Edit)"
                   class="btn-icon"
                   title="Edit Request"
                   (click)="onActionClick(LeaveActionEnum.Edit, leave.id)"
-                  aria-label="Edit Request"
+                  [attr.aria-label]="'Edit ' + typeMap[leave.leaveType] + ' leave request'"
                 >
                   <i class="bi bi-pencil"></i>
                 </button>
 
                 <!-- Cancel Request (Pending) -->
                 <button
-                  *ngIf="getAvailableActions(leave.status).includes(LeaveActionEnum.CancelRequest)"
+                  *ngIf="leave.availableActions.includes(LeaveActionEnum.CancelRequest)"
                   class="btn-icon text-danger"
                   title="Cancel Request"
                   (click)="onActionClick(LeaveActionEnum.CancelRequest, leave.id)"
-                  aria-label="Cancel Request"
+                  [attr.aria-label]="'Cancel pending ' + typeMap[leave.leaveType] + ' leave request'"
                 >
                   <i class="bi bi-x-circle"></i>
                 </button>
 
                 <!-- Cancel Leave (Approved) -->
                 <button
-                  *ngIf="getAvailableActions(leave.status).includes(LeaveActionEnum.CancelLeave)"
+                  *ngIf="leave.availableActions.includes(LeaveActionEnum.CancelLeave)"
                   class="btn-icon text-danger"
                   title="Cancel Leave"
                   (click)="onActionClick(LeaveActionEnum.CancelLeave, leave.id)"
-                  aria-label="Cancel Leave"
+                  [attr.aria-label]="'Cancel approved ' + typeMap[leave.leaveType] + ' leave'"
                 >
                   <i class="bi bi-calendar-x"></i>
                 </button>
 
                 <!-- Delete (Rejected) -->
                 <button
-                  *ngIf="getAvailableActions(leave.status).includes(LeaveActionEnum.Delete)"
-                  class="btn-icon text-muted"
-                  title="Delete"
+                  *ngIf="leave.availableActions.includes(LeaveActionEnum.Delete)"
+                  class="btn-icon text-danger"
+                  title="Delete Draft"
                   (click)="onActionClick(LeaveActionEnum.Delete, leave.id)"
-                  aria-label="Delete Request"
+                  [attr.aria-label]="'Delete ' + typeMap[leave.leaveType] + ' draft request'"
                 >
-                  <i class="bi bi-trash2"></i>
+                  <i class="bi bi-trash3"></i>
                 </button>
               </div>
             </td>
@@ -154,7 +205,17 @@
   </section>
 
   <!-- 🔥 Empty -->
-  <section *ngIf="!isLoading() && filteredLeaves.length === 0" class="app-card p-3 text-app-muted">
-    No leave requests found.
+  <section *ngIf="!isLoading() && filteredLeaves.length === 0" class="app-card p-3">
+    <div class="app-empty-state">
+      <i class="bi bi-journal-text app-empty-state__icon" aria-hidden="true"></i>
+      <p class="mb-0">
+        {{
+          mode === 'draft'
+            ? "You don't have any saved drafts yet."
+            : "You haven't applied for any leave this year."
+        }}
+      </p>
+      <a routerLink="/employee/request-leave" class="btn btn-cream btn-sm">Request Leave</a>
+    </div>
   </section>
 </section>

@@ -1,26 +1,22 @@
 <section class="app-page">
   <header class="app-page__hero">
     <span class="app-eyebrow">Request Leave</span>
-    <h2 class="display-6 fw-bold mb-3">Apply for time away</h2>
+    <h1 class="app-title">Apply for time away</h1>
+    <p class="app-body mb-0">Fill in the details below to submit or save a leave request.</p>
   </header>
 
-  <div class="row g-3">
+  <div class="row g-3 align-items-start">
     <!-- 🔵 FORM -->
     <div class="col-lg-8">
       <section class="app-card p-4">
         <form (ngSubmit)="submitRequest()" [formGroup]="leaveForm">
           <div class="row g-3">
             <!-- Leave Type -->
-            <div class="col-md-6">
-              <label class="form-label fw-semibold">Leave type</label>
-
-              <select
-                class="form-select"
-                name="leaveType"
-                formControlName="leaveType"
-                aria-placeholder="Select leave type"
-              >
-              <option [ngValue]="null" disabled>Select Leave Type</option>
+            <div class="col-12">
+              <label class="app-label">Leave type</label>
+              <select class="form-select form-select-sm" formControlName="leaveType"
+              [class.text-muted]="leaveForm.get('leaveType')?.value === null">
+                <option [ngValue]="null" class="text-muted">Select leave type</option>
                 <option *ngFor="let type of leaveTypeOptions" [ngValue]="type.value">
                   {{ type.label }}
                 </option>
@@ -28,45 +24,41 @@
             </div>
 
             <!-- Start Date -->
-            <div class="col-md-3">
-              <label class="form-label fw-semibold">Start date</label>
-
-              <input
-                class="form-control"
-                type="date"
-                name="startDate"
-                formControlName="startDate"
-              />
+            <div class="col-md-6">
+              <label class="app-label">Start date</label>
+              <input class="form-control form-control-sm" type="date" formControlName="startDate" />
             </div>
 
             <!-- End Date -->
-            <div class="col-md-3">
-              <label class="form-label fw-semibold">End date</label>
-
-              <input class="form-control" type="date" name="endDate" formControlName="endDate" />
+            <div class="col-md-6">
+              <label class="app-label">End date</label>
+              <input class="form-control form-control-sm" type="date" formControlName="endDate" />
             </div>
 
             <!-- Reason -->
             <div class="col-12">
-              <label class="form-label fw-semibold">Reason</label>
-
+              <label class="app-label">Reason</label>
               <textarea
-                class="form-control"
-                rows="5"
-                name="reason"
+                class="form-control form-control-sm"
+                rows="4"
                 formControlName="reason"
-                placeholder="Add a short reason"
-              >
-              </textarea>
+                placeholder="Add a short reason for your request"
+              ></textarea>
+            </div>
+
+            <!-- Divider -->
+            <div class="col-12">
+              <hr class="my-0 app-divider" />
             </div>
 
             <!-- Actions -->
-            <div class="col-12 d-flex gap-2">
-              <button type="submit" class="btn btn-app" [disabled]="leaveForm.invalid">
+            <div class="col-12 d-flex align-items-center gap-2 flex-wrap">
+              <button type="submit" class="btn btn-app btn-sm" [disabled]="leaveForm.invalid">
                 Submit Request
               </button>
-
-              <button type="button" class="btn btn-cream" (click)="saveDraft()">Save Draft</button>
+              <button type="button" class="btn btn-cream btn-sm" (click)="saveDraft()">
+                Save Draft
+              </button>
             </div>
           </div>
         </form>
@@ -75,18 +67,43 @@
 
     <!-- 🔵 SIDEBAR -->
     <div class="col-lg-4">
-      <aside class="app-card p-4 h-100">
-        <span class="app-eyebrow">Balance</span>
+      <aside class="app-card p-4">
+        <span class="app-eyebrow">
+          {{ selectedLeaveType ? selectedLeaveType + ' Balance' : 'Balance' }}
+        </span>
 
-        <div class="app-stat__value my-3">
-          {{ leaveBalance }}
+        <div class="app-stat__value my-2">
+          {{ leaveBalance !== null ? leaveBalance : '—' }}
         </div>
 
-        <p class="text-app-muted mb-4">Annual leave days available before this request.</p>
+        <p class="text-muted mb-3 small">
+          {{
+            selectedLeaveType
+              ? 'Days remaining for ' + selectedLeaveType + ' leave.'
+              : 'Select a leave type to see your balance.'
+          }}
+        </p>
 
-        <div class="progress">
-          <div class="progress-bar" [style.width.%]="balancePercent"></div>
-        </div>
+        <ng-container *ngIf="leaveBalance !== null">
+          <div
+            class="progress mb-2"
+            role="progressbar"
+            [attr.aria-label]="(selectedLeaveType || 'Leave') + ' balance'"
+            [attr.aria-valuenow]="balancePercent"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          >
+            <div
+              class="progress-bar"
+              [ngClass]="getProgressClass(balancePercent)"
+              [style.width.%]="balancePercent"
+            ></div>
+          </div>
+          <div class="d-flex justify-content-between small">
+            <span class="text-muted">{{ leaveBalance }} remaining</span>
+            <span class="fw-semibold text-muted">{{ balancePercent }}%</span>
+          </div>
+        </ng-container>
       </aside>
     </div>
   </div>

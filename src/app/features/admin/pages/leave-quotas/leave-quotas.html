@@ -3,8 +3,8 @@
     <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
       <div>
         <span class="app-eyebrow">Leave Quotas</span>
-        <h2 class="display-6 fw-bold mb-3">Quota planning skeleton</h2>
-        <p class="text-app-muted mb-0">Set the visual structure for allocation, usage, and remaining leave balances.</p>
+        <h1 class="app-title mb-3">Quota planning skeleton</h1>
+        <p class="app-body mb-0">Set the visual structure for allocation, usage, and remaining leave balances.</p>
       </div>
       <button type="button" class="btn btn-app align-self-start">Update Cycle</button>
     </div>
@@ -13,13 +13,14 @@
   <section class="app-card overflow-hidden">
     <div class="table-responsive">
       <table class="table app-table align-middle">
+        <caption class="visually-hidden">Leave quotas with total allocation, used days, remaining days, and usage progress.</caption>
         <thead>
           <tr>
-            <th>Leave Type</th>
-            <th>Total</th>
-            <th>Used</th>
-            <th>Remaining</th>
-            <th>Usage</th>
+            <th scope="col">Leave Type</th>
+            <th scope="col">Total</th>
+            <th scope="col">Used</th>
+            <th scope="col">Remaining</th>
+            <th scope="col">Usage</th>
           </tr>
         </thead>
         <tbody>

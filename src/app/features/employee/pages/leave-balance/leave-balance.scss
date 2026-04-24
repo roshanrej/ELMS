@@ -1,3 +1,37 @@
 :host {
   display: block;
 }
+
+/* ✅ Stat value */
+.app-stat__value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--app-ink);
+}
+
+/* ✅ Progress track */
+.progress {
+  height: 6px;
+  background-color: var(--app-border);
+  border-radius: 999px;
+}
+
+/* ✅ Progress bar variants */
+.progress-bar {
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.progress-bar.bg-success {
+  background: linear-gradient(90deg, #43b581, #2d6a4f);
+}
+
+.progress-bar.bg-warning {
+  background: linear-gradient(90deg, #d0a64b, #92600a);
+}
+
+.progress-bar.bg-danger {
+  background: linear-gradient(90deg, #f06a6c, #d93b3e);
+}
