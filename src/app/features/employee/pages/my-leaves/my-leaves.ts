@@ -109,6 +109,11 @@ ngOnInit() {
   [LeaveTypeEnum.Casual]:'Casual'
 };
 
+  getTypeLabel(type: LeaveTypeEnum | null | undefined): string {
+    if (!type) return '-';
+    return this.typeMap[type] ?? '-';
+  }
+
  getAvailableActions(status: LeaveStatusEnum): LeaveActionEnum[] {
   switch (status) {
     case LeaveStatusEnum.Approved:

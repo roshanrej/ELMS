@@ -62,7 +62,7 @@
           >
             <div class="d-flex flex-column">
               <span class="fw-semibold text-primary">
-                {{ typeMap[leave.leaveType] }}
+                {{ getTypeLabel(leave.leaveType) }}
               </span>
               <span class="text-muted small">
                 {{ leave.startDate | date:'MMM d, yyyy' }}

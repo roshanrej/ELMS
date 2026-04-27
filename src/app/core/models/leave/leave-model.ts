@@ -5,15 +5,22 @@ import { LeaveStatusEnum } from "../../types-enums/leave-status-enum";
  export interface LeaveModel {
   id: number;
   userId: number;
-  leaveType: LeaveTypeEnum;
+
+  leaveType: LeaveTypeEnum | null;
+
   startDate: Date;
   endDate: Date;
+
   reason: string;
+
   status: LeaveStatusEnum;
-  appliedAt: Date;
-  // 🔥 NEW (decision layer)
+
+  createdAt: Date; // when draft or record was created
+
+  // submission metadata
   approverId?: number;        // who approved/rejected
   approverName?: string;      // UI-friendly
-  decisionAt?: Date;          // when decision happened
-  comments?: string;          // manager/admin remarks
+  submittedAt?: Date;         // submission timestamp
+  decisionAt?: Date;          // approval/rejection timestamp (if any)
+  comments?: string;            // manager/admin remarks
 }

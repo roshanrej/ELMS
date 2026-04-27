@@ -1,5 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { LeaveTypeEnum } from '../../../../core/types-enums/leave-type-enum';
+import { LeaveStatusEnum } from '../../../../core/types-enums/leave-status-enum';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators ,AbstractControl,ValidationErrors} from '@angular/forms';
 import { LeaveService } from '../../../../core/services/leave/leave';
@@ -15,7 +16,7 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class ApplyLeave implements OnInit {
   LeaveTypeEnum = LeaveTypeEnum;
-
+   
   private leaveService = inject(LeaveService);
   private fb = inject(FormBuilder);
   private route = inject(ActivatedRoute);
@@ -31,12 +32,15 @@ export class ApplyLeave implements OnInit {
   private employeeLeaves: LeaveModel[] = [];
 
   // 🔥 Form
-  leaveForm = this.fb.nonNullable.group({
+ leaveForm = this.fb.nonNullable.group(
+  {
     leaveType: [null as LeaveTypeEnum | null, Validators.required],
-    startDate: ['', Validators.required,],
+    startDate: ['', Validators.required],
     endDate:   ['', Validators.required],
     reason:    ['', Validators.required],
-  },{validators: !this.isDraft ? this.leaveDateValidator:null});
+  },
+  { validators: this.leaveDateValidator.bind(this) }
+);
 
   // 🔥 Dropdown options
   leaveTypeOptions = [
@@ -114,7 +118,7 @@ private resetForm() {
     return this.employeeLeaves
       .filter(l =>
         l.leaveType === type &&
-        l.status === 'APPROVED' &&
+        l.status === LeaveStatusEnum.Approved &&
         new Date(l.startDate).getFullYear() === currentYear
       )
       .reduce((sum, l) => sum + this.calcDays(l.startDate, l.endDate), 0);
@@ -126,17 +130,23 @@ private resetForm() {
     return Math.round((e - s) / (1000 * 60 * 60 * 24)) + 1;
   }
 
-  private formatType(type: string): string {
+  private formatType(type: LeaveTypeEnum): string {
     return type.charAt(0) + type.slice(1).toLowerCase();
   }
 
   // 🔥 Submit
  submitRequest() {
+  this.isDraft = false;
+  this.leaveForm.updateValueAndValidity();
+
   if (this.leaveForm.invalid) {
+    this.leaveForm.markAllAsTouched();
     alert('Please fill in all required fields.');
     return;
   }
+
   const leave = this.buildPayload();
+
   this.leaveService.requestLeave(leave).subscribe(data => {
     this.appliedLeave = data;
     alert('Leave request submitted.');
@@ -145,15 +155,19 @@ private resetForm() {
 }
 
 saveDraft() {
-   const leaveType = this.leaveForm.controls['leaveType']
-    
-  if (!leaveType?.value) {
-    leaveType.setErrors({leaveType:false})
-    return;
-  }
+  this.isDraft = true;
+
+  this.leaveForm.updateValueAndValidity(); // 🔥 IMPORTANT
+
   const leave = this.buildPayload();
+
   this.leaveService.saveDraft(leave).subscribe(data => {
     this.appliedLeave = data;
+    console.log(data)
+    this.isDraft = false;
+
+    this.leaveForm.updateValueAndValidity(); // 🔥 restore validation
+
     alert('Draft saved.');
     this.resetForm();
   });
@@ -161,20 +175,31 @@ saveDraft() {
 
   private buildPayload(): LeaveRequestModel {
     const raw = this.leaveForm.getRawValue();
+
+    const toDateOrNull = (value: string): Date | null => {
+      if (!value) return null;
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? null : date;
+    };
+
     return {
       leaveType:  raw.leaveType,
-      startDate:  new Date(raw.startDate),
-      endDate:    new Date(raw.endDate),
+      startDate:  toDateOrNull(raw.startDate),
+      endDate:    toDateOrNull(raw.endDate),
       reason:     raw.reason,
     };
   }
 
   leaveDateValidator(control: AbstractControl): ValidationErrors | null {
   
-  const start = control.get('startDate')?.value;
-  const end = control.get('endDate')?.value;
-  
-  
+  if (this.isDraft) return null; // 🔥 allow drafts
+
+  const startControl = control.get('startDate');
+  const endControl = control.get('endDate');
+
+  const start = startControl?.value;
+  const end = endControl?.value;
+
   if (!start || !end) return null;
 
   const today = new Date();
@@ -183,18 +208,20 @@ saveDraft() {
   const startDate = new Date(start);
   const endDate = new Date(end);
 
-  // normalize time
   startDate.setHours(0, 0, 0, 0);
   endDate.setHours(0, 0, 0, 0);
 
-  // ❌ startDate < today
- if (startDate < today) {
-  start?.setErrors({ startBeforeToday: true });
-}
+  // clear previous errors
+  startControl?.setErrors(null);
+  endControl?.setErrors(null);
 
-if (startDate > endDate) {
-  end?.setErrors({ invalidRange: true });
-}
+  if (startDate < today) {
+    startControl?.setErrors({ startBeforeToday: true });
+  }
+
+  if (startDate > endDate) {
+    endControl?.setErrors({ invalidRange: true });
+  }
 
   return null;
 }

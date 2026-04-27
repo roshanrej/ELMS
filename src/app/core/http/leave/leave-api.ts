@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { LeaveRequestModel } from '../../models/leave/leave-request.model';
 import { environment } from '../../../../environments/environment';
 import { ApiResponse } from '../../models/api/api-reponse.model';
-import { LeaveDto } from '../../mappers/leave/leave.mapper';
+import { LeaveBalanceDto, LeaveDto, LeaveRequestDto, mapLeaveRequestModelToDto } from '../../mappers/leave/leave.mapper';
 
 import { LeaveBalanceModel } from '../../models/leave/leave-balance.model';
 
@@ -15,27 +15,27 @@ export class LeaveApi {
   private http: HttpClient = inject(HttpClient);
   private baseURL: string = environment.apiBaseUrl;
 
-  getEmployeeLeaves(): Observable<unknown[]> {
-    return this.http.get<unknown[] | null>(`${this.baseURL}/api/leaves`, {
+  getEmployeeLeaves(): Observable<LeaveDto[]> {
+    return this.http.get<LeaveDto[] | null>(`${this.baseURL}/api/leaves`, {
     }).pipe(
       map(data => data ?? [])
     );
   }
 
   requestLeave(requestData: LeaveRequestModel): Observable<ApiResponse<LeaveDto>> {
+    const dto: LeaveRequestDto = mapLeaveRequestModelToDto(requestData);
     return this.http.post<ApiResponse<LeaveDto>>(`${this.baseURL}/api/request-leave`,
-      requestData,
+      dto,
      );
   }
 
   saveDraft(requestData: LeaveRequestModel): Observable<ApiResponse<LeaveDto>> {
+    const dto: LeaveRequestDto = mapLeaveRequestModelToDto(requestData);
     return this.http.post<ApiResponse<LeaveDto>>(`${this.baseURL}/api/save-draft`,
-      requestData,
+      dto,
 );
   }
-  getMyBalances(): Observable<LeaveBalanceModel[]> {
-
-   
-    return this.http.get<LeaveBalanceModel[]>(`${this.baseURL}/api/leaves/balance/me`);
+  getMyBalances(): Observable<LeaveBalanceDto[]> {
+    return this.http.get<LeaveBalanceDto[]>(`${this.baseURL}/api/leaves/balance/me`);
   }
 }

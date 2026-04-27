@@ -67,6 +67,11 @@ export class Dashboard  implements OnInit {
   [LeaveTypeEnum.Casual]:'Casual'
 };
 
+  getTypeLabel(type: LeaveTypeEnum | null | undefined): string {
+    if (!type) return '-';
+    return this.typeMap[type] ?? '-';
+  }
+
   extractUpcoming() {
     const today = new Date();
 

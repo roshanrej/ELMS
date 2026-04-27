@@ -119,7 +119,7 @@
 
         <tbody>
           <tr *ngFor="let leave of filteredLeaves">
-            <td class="fw-bold text-nowrap">{{ typeMap[leave.leaveType] }}</td>
+            <td class="fw-bold text-nowrap">{{ getTypeLabel(leave.leaveType) }}</td>
             <td>{{ leave.startDate | date: 'MMM d, yyyy' }}</td>
             <td>{{ leave.endDate | date: 'MMM d, yyyy' }}</td>
             <td class="cell-days">{{ leave.leaveDays }}</td>
@@ -141,7 +141,7 @@
                   *ngIf="leave.reason"
                   class="btn-icon"
                   [title]="leave.reason"
-                  [attr.aria-label]="'View reason for ' + typeMap[leave.leaveType] + ' leave request'"
+                  [attr.aria-label]="'View reason for ' + getTypeLabel(leave.leaveType) + ' leave request'"
                 >
                   <i class="bi bi-chat-left-text"></i>
                 </button>
@@ -150,7 +150,7 @@
                   class="btn-icon"
                   title="Submit Request"
                   (click)="onActionClick(LeaveActionEnum.Submit, leave.id)"
-                  [attr.aria-label]="'Submit ' + typeMap[leave.leaveType] + ' leave request'"
+                  [attr.aria-label]="'Submit ' + getTypeLabel(leave.leaveType) + ' leave request'"
                 >
                   <i class="bi bi-send-check" aria-hidden="true"></i>
                 </button>
@@ -159,7 +159,7 @@
                   class="btn-icon"
                   title="Edit Request"
                   (click)="onActionClick(LeaveActionEnum.Edit, leave.id)"
-                  [attr.aria-label]="'Edit ' + typeMap[leave.leaveType] + ' leave request'"
+                  [attr.aria-label]="'Edit ' + getTypeLabel(leave.leaveType) + ' leave request'"
                 >
                   <i class="bi bi-pencil"></i>
                 </button>
@@ -170,7 +170,7 @@
                   class="btn-icon text-danger"
                   title="Cancel Request"
                   (click)="onActionClick(LeaveActionEnum.CancelRequest, leave.id)"
-                  [attr.aria-label]="'Cancel pending ' + typeMap[leave.leaveType] + ' leave request'"
+                  [attr.aria-label]="'Cancel pending ' + getTypeLabel(leave.leaveType) + ' leave request'"
                 >
                   <i class="bi bi-x-circle"></i>
                 </button>
@@ -181,7 +181,7 @@
                   class="btn-icon text-danger"
                   title="Cancel Leave"
                   (click)="onActionClick(LeaveActionEnum.CancelLeave, leave.id)"
-                  [attr.aria-label]="'Cancel approved ' + typeMap[leave.leaveType] + ' leave'"
+                  [attr.aria-label]="'Cancel approved ' + getTypeLabel(leave.leaveType) + ' leave'"
                 >
                   <i class="bi bi-calendar-x"></i>
                 </button>
@@ -192,7 +192,7 @@
                   class="btn-icon text-danger"
                   title="Delete Draft"
                   (click)="onActionClick(LeaveActionEnum.Delete, leave.id)"
-                  [attr.aria-label]="'Delete ' + typeMap[leave.leaveType] + ' draft request'"
+                  [attr.aria-label]="'Delete ' + getTypeLabel(leave.leaveType) + ' draft request'"
                 >
                   <i class="bi bi-trash3"></i>
                 </button>

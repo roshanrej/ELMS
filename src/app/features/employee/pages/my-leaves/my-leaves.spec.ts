@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
 
 import { MyLeaves } from './my-leaves';
@@ -12,6 +13,10 @@ describe('MyLeaves', () => {
     await TestBed.configureTestingModule({
       imports: [MyLeaves],
       providers: [
+        {
+          provide: ActivatedRoute,
+          useValue: { snapshot: { data: { mode: '' } } },
+        },
         {
           provide: LeaveService,
           useValue: {
