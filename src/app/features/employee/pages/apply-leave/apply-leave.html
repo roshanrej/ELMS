@@ -14,8 +14,11 @@
             <!-- Leave Type -->
             <div class="col-12">
               <label class="app-label">Leave type</label>
-              <select class="form-select form-select-sm" formControlName="leaveType"
-              [class.text-muted]="leaveForm.get('leaveType')?.value === null">
+              <select
+                class="form-select form-select-sm"
+                formControlName="leaveType"
+                [class.text-muted]="leaveForm.get('leaveType')?.value === null"
+              >
                 <option [ngValue]="null" class="text-muted">Select leave type</option>
                 <option *ngFor="let type of leaveTypeOptions" [ngValue]="type.value">
                   {{ type.label }}

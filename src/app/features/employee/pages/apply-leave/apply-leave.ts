@@ -1,13 +1,12 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { LeaveTypeEnum } from '../../../../core/types-enums/leave-type-enum';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators ,AbstractControl,ValidationErrors} from '@angular/forms';
 import { LeaveService } from '../../../../core/services/leave/leave';
 import { LeaveRequestModel } from '../../../../core/models/leave/leave-request.model';
 import { LeaveModel } from '../../../../core/models/leave/leave-model';
 import { AnnualLeavePolicy } from '../../../../../environments/environment.development';
 import { ActivatedRoute } from '@angular/router';
-
 @Component({
   selector: 'app-apply-leave',
   imports: [CommonModule, ReactiveFormsModule],
@@ -22,22 +21,22 @@ export class ApplyLeave implements OnInit {
   private route = inject(ActivatedRoute);
 
   appliedLeave: LeaveModel | null = null;
-
+  
   // 🔥 Sidebar state
   selectedLeaveType: string | null = null;
   leaveBalance: number | null = null;
   balancePercent: number = 0;
-
+  isDraft: boolean = false
   // 🔥 Resolved leaves for used-days calculation
   private employeeLeaves: LeaveModel[] = [];
 
   // 🔥 Form
   leaveForm = this.fb.nonNullable.group({
     leaveType: [null as LeaveTypeEnum | null, Validators.required],
-    startDate: ['', Validators.required],
+    startDate: ['', Validators.required,],
     endDate:   ['', Validators.required],
     reason:    ['', Validators.required],
-  });
+  },{validators: !this.isDraft ? this.leaveDateValidator:null});
 
   // 🔥 Dropdown options
   leaveTypeOptions = [
@@ -146,10 +145,10 @@ private resetForm() {
 }
 
 saveDraft() {
-   const leaveTypeValue = this.leaveForm.get('leaveType')?.value;
-
-  if (!leaveTypeValue) {
-    alert('Please select a leave type to save a draft.');
+   const leaveType = this.leaveForm.controls['leaveType']
+    
+  if (!leaveType?.value) {
+    leaveType.setErrors({leaveType:false})
     return;
   }
   const leave = this.buildPayload();
@@ -169,4 +168,34 @@ saveDraft() {
       reason:     raw.reason,
     };
   }
+
+  leaveDateValidator(control: AbstractControl): ValidationErrors | null {
+  
+  const start = control.get('startDate')?.value;
+  const end = control.get('endDate')?.value;
+  
+  
+  if (!start || !end) return null;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const startDate = new Date(start);
+  const endDate = new Date(end);
+
+  // normalize time
+  startDate.setHours(0, 0, 0, 0);
+  endDate.setHours(0, 0, 0, 0);
+
+  // ❌ startDate < today
+ if (startDate < today) {
+  start?.setErrors({ startBeforeToday: true });
+}
+
+if (startDate > endDate) {
+  end?.setErrors({ invalidRange: true });
+}
+
+  return null;
+}
 }
