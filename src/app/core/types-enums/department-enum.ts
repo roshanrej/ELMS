@@ -1,4 +1,4 @@
-export enum DepartmentEnum {
+export enum DepartmentTypeEnum {
   HR = 'HR',
   ENGINEERING = 'ENGINEERING',
   FINANCE = 'FINANCE',

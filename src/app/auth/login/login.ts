@@ -15,10 +15,10 @@ import { UserModel } from '../../core/models/user/user.model';
   styleUrl: './login.scss',
 })
 export class Login {
-  submitted = false;
-  loading = false;
-  serverError = '';
-  passwordVisible = false;
+  submitted : boolean = false;
+  loading : boolean = false;
+  serverError : string = '';
+  passwordVisible  : boolean = false;
 
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
@@ -40,33 +40,26 @@ export class Login {
 
   
   async login() {
-    this.submitted = true;
-    this.serverError = '';
+  this.submitted = true;
+  this.serverError = '';
 
-    if (this.loginForm.invalid) return;
+  if (this.loginForm.invalid) return;
 
-    const request: LoginRequest = this.loginForm.value;
-
-    try {
-      this.loading = true;
-
-      const user = await this.authService.loginUser(request);
+  try {
+    this.loading = true;
+    const user = await this.authService.loginUser(this.loginForm.value);
+    this.navigateByRole(user);
+  } catch (error: any) {
+    // Extract the message you 'threw' in the service
+    this.serverError = error.message || 'Server error';
     
-      if (!user) {
-        console.error('User is null after login');
-        return;
-      }
-      console.log(user)
-      this.navigateByRole(user);
-
-    } catch (error: any) {
-      this.serverError = this.extractErrorMessage(error);
-      this.loginForm.reset();
-
-    } finally {
-      this.loading = false;
-    }
+    // Better UX: keep email, clear password
+    this.loginForm.get('password')?.reset();
+  } finally {
+    this.loading = false;
   }
+}
+
 
   private navigateByRole(user: UserModel): void {
     switch (user.role) {
