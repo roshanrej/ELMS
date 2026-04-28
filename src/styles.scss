@@ -30,53 +30,54 @@
  */
 
 :root {
-  --bs-body-font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --bs-body-font-family:
+    'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
   /* Font weights */
-  --fw-normal:   400;
-  --fw-medium:   500;
+  --fw-normal: 400;
+  --fw-medium: 500;
   --fw-semibold: 600;
-  --fw-bold:     700;
+  --fw-bold: 700;
 
   /* ── Primary accent ── */
-  --app-red:        #FB4B4E;   /* vivid coral-red — the anchor */
-  --app-red-dark:   #D93B3E;   /* deeper coral — hover, active states */
-  --app-red-soft:   #FFF0F0;   /* pearl blush — backgrounds, badges */
+  --app-red: #fb4b4e; /* vivid coral-red — the anchor */
+  --app-red-dark: #d93b3e; /* deeper coral — hover, active states */
+  --app-red-soft: #fff0f0; /* pearl blush — backgrounds, badges */
   --app-brand-gradient: linear-gradient(140deg, #fb4b4e 0%, #d93b3e 100%);
 
   /* ── Backgrounds ── */
-  --app-cream:        #FDFBFA;   /* luminous warm white — page bg */
-  --app-cream-strong: #F7EEEC;   /* soft blush — section separation */
-  --app-white:        #FFFFFF;   /* pure white — cards */
+  --app-cream: #fdfbfa; /* luminous warm white — page bg */
+  --app-cream-strong: #f7eeec; /* soft blush — section separation */
+  --app-white: #ffffff; /* pure white — cards */
 
   /* ── Text ── */
-  --app-ink:    #2A2122;   /* warm near-black with rose undertone */
-  --app-muted:  #8C7F80;   /* desaturated rose-gray */
+  --app-ink: #2a2122; /* warm near-black with rose undertone */
+  --app-muted: #8c7f80; /* desaturated rose-gray */
 
   /* ── Border ── */
-  --app-border: #EDE5E6;   /* warm whisper — barely-there dividers */
+  --app-border: #ede5e6; /* warm whisper — barely-there dividers */
 
   /* ── Status — desaturated to not compete with coral accent ── */
-  --app-green-soft: #F2FAF5;
-  --app-green-dark: #2D6A4F;
+  --app-green-soft: #f2faf5;
+  --app-green-dark: #2d6a4f;
 
-  --app-yellow-soft: #FEFAF0;
-  --app-yellow-dark: #92600A;
+  --app-yellow-soft: #fefaf0;
+  --app-yellow-dark: #92600a;
 
-  --app-gray-soft: #F8F6F6;
-  --app-gray-dark: #4A4547;
+  --app-gray-soft: #f8f6f6;
+  --app-gray-dark: #4a4547;
 
   /* ── Page structure ── */
-  --bg-page:    #FDFBFA;
-  --bg-section: #F7EEEC;
-  --bg-card:    #FFFFFF;
+  --bg-page: #fdfbfa;
+  --bg-section: #f7eeec;
+  --bg-card: #ffffff;
 
   /* ── Interaction ── */
-  --bg-hover: #FFF5F5;   /* coral blush hover — warm, barely visible */
+  --bg-hover: #fff5f5; /* coral blush hover — warm, barely visible */
 
   /* ── Table ── */
-  --bg-table-header:    #FFF5F5;   /* coral pearl header */
-  --bg-table-row-hover: #FFF5F5;
+  --bg-table-header: #fff5f5; /* coral pearl header */
+  --bg-table-row-hover: #fff5f5;
 
   /* Semantic text */
   --text-primary: var(--app-ink);
@@ -115,7 +116,8 @@ video {
   background-color: #ef4444 !important; /* red */
 }
 
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
   overflow-x: hidden;
@@ -377,7 +379,7 @@ app-root {
   border-bottom: 1px solid var(--app-border);
   color: var(--app-ink);
   font-size: 0.9rem;
-   font-weight: 500; 
+  font-weight: 500;
 }
 
 /* Badges */
@@ -394,11 +396,31 @@ app-root {
   min-width: 90px;
 }
 
-.badge-soft-red     { background: var(--app-red-soft);    color: var(--app-red-dark);    border-color: rgba(248, 113, 113, 0.2); }
-.badge-soft-green   { background: var(--app-green-soft);  color: var(--app-green-dark);  border-color: rgba(52, 211, 153, 0.2); }
-.badge-soft-yellow  { background: var(--app-yellow-soft); color: var(--app-yellow-dark); border-color: rgba(251, 191, 36, 0.2); }
-.badge-soft-gray    { background: var(--app-gray-soft);   color: var(--app-gray-dark);   border-color: rgba(167, 164, 159, 0.2); }
-
+.badge-soft-red {
+  background: var(--app-red-soft);
+  color: var(--app-red-dark);
+  border-color: rgba(248, 113, 113, 0.2);
+}
+.badge-soft-green {
+  background: var(--app-green-soft);
+  color: var(--app-green-dark);
+  border-color: rgba(52, 211, 153, 0.2);
+}
+.badge-soft-yellow {
+  background: var(--app-yellow-soft);
+  color: var(--app-yellow-dark);
+  border-color: rgba(251, 191, 36, 0.2);
+}
+.badge-soft-gray {
+  background: var(--app-gray-soft);
+  color: var(--app-gray-dark);
+  border-color: rgba(167, 164, 159, 0.2);
+}
+.badge-soft-orange {
+  background: #fff7ed; /* very soft amber */
+  color: #9a3412; /* deep warm orange */
+  border-color: rgba(234, 88, 12, 0.2);
+}
 .app-empty-state {
   align-items: center;
   color: var(--text-muted);
@@ -415,10 +437,18 @@ app-root {
   font-size: 1.75rem;
 }
 
-.app-space-1 { gap: 4px; }
-.app-space-2 { gap: 8px; }
-.app-space-3 { gap: 16px; }
-.app-space-4 { gap: 24px; }
+.app-space-1 {
+  gap: 4px;
+}
+.app-space-2 {
+  gap: 8px;
+}
+.app-space-3 {
+  gap: 16px;
+}
+.app-space-4 {
+  gap: 24px;
+}
 
 .progress {
   --bs-progress-bg: var(--app-cream-strong);

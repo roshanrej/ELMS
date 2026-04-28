@@ -3,5 +3,6 @@ export enum LeaveStatusEnum {
   Rejected = "REJECTED",
   Cancelled = "CANCELLED",
   Pending = "PENDING",
-  Draft = "DRAFT"
+  Draft = "DRAFT",
+  Cancel_Requested = "CANCEL_REQUESTED"
 }

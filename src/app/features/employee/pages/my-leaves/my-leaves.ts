@@ -98,8 +98,20 @@ ngOnInit() {
   [LeaveStatusEnum.Pending]: 'badge-soft-yellow',
   [LeaveStatusEnum.Rejected]: 'badge-soft-red',
   [LeaveStatusEnum.Cancelled]: 'badge-soft-gray',
-  [LeaveStatusEnum.Draft]: 'badge-soft-gray'
+  [LeaveStatusEnum.Draft]: 'badge-soft-gray',
+  [LeaveStatusEnum.Cancel_Requested]: 'badge-soft-orange'
 };
+
+ statusMap: Record<LeaveStatusEnum, string> = {
+  [LeaveStatusEnum.Approved]: 'APPROVED',
+  [LeaveStatusEnum.Pending]: 'badge-soft-yellow',
+  [LeaveStatusEnum.Rejected]: 'badge-soft-red',
+  [LeaveStatusEnum.Cancelled]: 'badge-soft-gray',
+  [LeaveStatusEnum.Draft]: 'badge-soft-gray',
+  [LeaveStatusEnum.Cancel_Requested]: 'badge-soft-orange'
+};
+
+
   typeMap: Record<LeaveTypeEnum,string> = {
   [LeaveTypeEnum.Annual]: 'Annual',
   [LeaveTypeEnum.Sick]: 'Sick',
