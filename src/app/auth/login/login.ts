@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../services/auth';
 import { RoleTypeEnum } from '../../core/types-enums/role-type.enum';
-import { LoginRequest } from '../../core/models/auth/login-request.model';
 import { UserModel } from '../../core/models/user/user.model';
 
 @Component({
