@@ -186,4 +186,4 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
-./project_instructions.md
+.project_instructions.md
