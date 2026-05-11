@@ -30,12 +30,14 @@ export class MyLeaves {
   selectedYear: number | 'ALL' = 'ALL';
   employeeLeaves: LeaveModel[] = [] //leaves fetched from API
   isLoading = signal(true);
+  
   filteredLeaves: LeaveRowView[] = [];
   private leaveService: LeaveService = inject(LeaveService)
   
   
   applyFilters() {
   let filtered = this.employeeLeaves;
+ 
   // 🔹 Year filter
   if (this.selectedYear !== 'ALL') {
     filtered = filtered.filter(leave =>
