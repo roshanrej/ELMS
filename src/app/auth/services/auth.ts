@@ -6,6 +6,8 @@ import { LoginRequest } from '../../core/models/auth/login-request.model';
 import { firstValueFrom } from 'rxjs';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
+import { LoginResponse } from '../../core/models/auth/login-response.model';
+import { ApiResponse } from '../../core/models/api/api-reponse.model';
 
 @Injectable({
   providedIn: 'root',
@@ -15,25 +17,28 @@ export class AuthService {
   private authApi: AuthApi = inject(AuthApi);
   private router: Router = inject(Router);
 
-  async loginUser(request: LoginRequest): Promise<UserModel> {
+  async loginUser(request: LoginRequest): Promise<LoginResponse> {
     try {
-      const res = await firstValueFrom(this.authApi.loginUser(request));
+      const response = await firstValueFrom(this.authApi.loginUser(request));
 
-      if (!res.success || !res.data || !res.token) {
+      if (!response.success || !response.data ) {
         throw new Error('Invalid login response');
       }
 
-      if (!(res.data.id && res.data.email && res.data.role && res.data.name)) {
+      if (!( response.data.email && response.data.role && response.data.name && response.data.accessToken && response.data.refreshToken)) {
         throw new Error('Invalid user state.');
       }
 
       // commit auth state
-      localStorage.setItem('token', res.token);
-      this.authStore.setUser(res.data);
+      localStorage.setItem('accessToken', response.data.accessToken);
+      localStorage.setItem('refreshToken', response.data.refreshToken);
+      console.log(response)
+      this.authStore.setUser(response.data);
 
-      return res.data; // user
+      return response.data; // user
     } catch (err: any) {
       if (err instanceof HttpErrorResponse) {
+        console.log(err)
         if (err?.status === 401) {
           throw new Error('Invalid email or password');
         }

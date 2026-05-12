@@ -9,9 +9,7 @@ export const employeeRoutes: Route[] = [
   {
     path: 'dashboard',
     component: Dashboard,
-    resolve: {
-      leaves: leavesResolver,
-    },
+    
   },
   { path: 'request-leave', component: ApplyLeave, resolve: { leaves: leavesResolver } },
   { path: 'leaves', component: MyLeaves },

@@ -6,6 +6,7 @@ import { Observable} from 'rxjs';
 import { LoginRequest } from '../../models/auth/login-request.model';
 import { ApiResponse } from '../../models/api/api-reponse.model';
 import { environment } from '../../../../environments/environment';
+import { LoginResponse } from '../../models/auth/login-response.model';
 
 @Injectable({
   providedIn: 'root',
@@ -14,10 +15,10 @@ export class AuthApi {
   private http : HttpClient =  inject(HttpClient)
   
 
- loginUser(requestData: LoginRequest) : Observable<ApiResponse<UserModel>>{
+ loginUser(requestData: LoginRequest) : Observable<ApiResponse<LoginResponse>>{
   
-    return this.http.post<ApiResponse<UserModel>>(
-      `${environment.apiBaseUrl}/auth/login`,
+    return this.http.post<ApiResponse<LoginResponse>>(
+      `${environment.apiBaseUrl}/api/auth/login`,
       requestData
     )
 }

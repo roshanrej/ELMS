@@ -15,7 +15,7 @@ export const routes : Route[]=[
 {
   path: 'admin',
   canActivate: [authGuard, roleGuard],
-  data: { role: RoleTypeEnum.Admin },
+  data: { role: RoleTypeEnum.ADMIN },
   component: MainShell,
   loadChildren: () => import('./features/admin/admin.routes').then(m => m.adminRoutes)
 }
@@ -23,7 +23,7 @@ export const routes : Route[]=[
 {
   path: 'employee',
   canActivate: [authGuard, roleGuard],
-  data: { role: RoleTypeEnum.Employee },
+  data: { role: RoleTypeEnum.EMPLOYEE },
   component: MainShell,
   loadChildren: () => import('./features/employee/employee.routes').then(m => m.employeeRoutes)
 }
@@ -32,7 +32,7 @@ export const routes : Route[]=[
 {
   path: 'manager',
   canActivate: [authGuard, roleGuard],
-  data: { role: RoleTypeEnum.Manager },
+  data: { role: RoleTypeEnum.MANAGER },
   component: MainShell,
   loadChildren: () => import('./features/manager/manager.routes').then(m => m.managerRoutes)
 }

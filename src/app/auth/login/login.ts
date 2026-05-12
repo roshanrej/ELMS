@@ -47,7 +47,8 @@ export class Login {
   try {
     this.loading = true;
     const user = await this.authService.loginUser(this.loginForm.value);
-    this.navigateByRole(user);
+    
+    this.navigateByRole(user.role);
   } catch (error: any) {
     // Extract the message you 'threw' in the service
     this.serverError = error.message || 'Server error';
@@ -60,19 +61,17 @@ export class Login {
 }
 
 
-  private navigateByRole(user: UserModel): void {
-    switch (user.role) {
-      case RoleTypeEnum.Admin:
+  private navigateByRole( role: RoleTypeEnum): void {
+    switch (role) {
+      case RoleTypeEnum.ADMIN:
         this.router.navigate(['/admin/dashboard']);
         break;
 
-      case RoleTypeEnum.Employee:
-        this.router.navigate(['/employee/dashboard']).then(res => {
-  console.log('Navigation success:', res);
-});
+      case RoleTypeEnum.EMPLOYEE:
+        this.router.navigate(['/employee/dashboard']);
         break;
 
-      case RoleTypeEnum.Manager:
+      case RoleTypeEnum.MANAGER:
         this.router.navigate(['/manager/dashboard']);
         break;
 

@@ -5,6 +5,7 @@ import { AuthStore } from '../../../auth/store/auth.store';
 import { RoleTypeEnum } from '../../../core/types-enums/role-type.enum';
 import { UserModel } from '../../../core/models/user/user.model';
 import { AuthService } from '../../../auth/services/auth';
+import { LoginResponse } from '../../../core/models/auth/login-response.model';
 
 @Component({
   selector: 'app-sidebar',
@@ -15,7 +16,7 @@ import { AuthService } from '../../../auth/services/auth';
 export class Sidebar implements OnInit {
   private authStore = inject(AuthStore);
   private authService: AuthService = inject(AuthService)
-  user : UserModel| null = this.authStore.currentUser
+  user : LoginResponse| null = this.authStore.currentUser
   
   navLinks: { label: string; route: string }[] = [];
 
@@ -46,17 +47,20 @@ export class Sidebar implements OnInit {
   ngOnInit() {
     const userRole = this.authStore.currentUser?.role;
 
-    if (userRole === RoleTypeEnum.Admin) {
+    if (userRole === RoleTypeEnum.ADMIN) {
       this.navLinks = this.navLinksMap.ADMIN;
       return;
     }
 
-    if (userRole === RoleTypeEnum.Employee) {
+    if (userRole === RoleTypeEnum.EMPLOYEE) {
       this.navLinks = this.navLinksMap.EMPLOYEE;
       return;
     }
-
+ if (userRole === RoleTypeEnum.MANAGER) {
     this.navLinks = this.navLinksMap.MANAGER;
+      return;
+    }
+    
   }
   logout(){
 this.authService.logout()
