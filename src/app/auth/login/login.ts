@@ -1,10 +1,9 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../services/auth';
 import { RoleTypeEnum } from '../../core/types-enums/role-type.enum';
-import { UserModel } from '../../core/models/user/user.model';
 
 @Component({
   selector: 'app-login',
@@ -22,6 +21,7 @@ export class Login {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   loginForm: FormGroup = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -48,7 +48,7 @@ export class Login {
     this.loading = true;
     const user = await this.authService.loginUser(this.loginForm.value);
     
-    this.navigateByRole(user.role);
+    this.navigateAfterLogin(user.role);
   } catch (error: any) {
     // Extract the message you 'threw' in the service
     this.serverError = error.message || 'Server error';
@@ -60,6 +60,17 @@ export class Login {
   }
 }
 
+
+  private navigateAfterLogin(role: RoleTypeEnum): void {
+    const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+
+    if (returnUrl && this.canUseReturnUrl(returnUrl, role)) {
+      this.router.navigateByUrl(returnUrl);
+      return;
+    }
+
+    this.navigateByRole(role);
+  }
 
   private navigateByRole( role: RoleTypeEnum): void {
     switch (role) {
@@ -84,5 +95,17 @@ export class Login {
     if (error?.error?.message) return error.error.message;
     if (error?.message) return error.message;
     return 'Something went wrong. Please try again.';
+  }
+
+  private canUseReturnUrl(returnUrl: string, role: RoleTypeEnum): boolean {
+    if (!returnUrl.startsWith('/') || returnUrl.startsWith('//')) {
+      return false;
+    }
+
+    return (
+      (role === RoleTypeEnum.ADMIN && returnUrl.startsWith('/admin')) ||
+      (role === RoleTypeEnum.EMPLOYEE && returnUrl.startsWith('/employee')) ||
+      (role === RoleTypeEnum.MANAGER && returnUrl.startsWith('/manager'))
+    );
   }
 }

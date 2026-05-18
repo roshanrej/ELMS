@@ -1,20 +1,24 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
+import { AuthService } from '../services/auth';
 import { AuthStore } from '../store/auth.store';
 
-export const authGuard: CanActivateFn = () => {
-   console.log('AUTH GUARD HIT');
+export const authGuard: CanActivateFn = async (_route, state) => {
   const authStore = inject(AuthStore);
+  const authService = inject(AuthService);
   const router = inject(Router);
 
-  const token = localStorage.getItem('accessToken');
-  const user = authStore.currentUser;
-
-  if (!token) {
-    router.navigate(['/login']);
-    return false;
+  if (authStore.currentUser) {
+    return true;
   }
 
-  // Optional: if token exists but store is empty → allow (rehydration will fix)
-  return true;
+  const restoredUser = await authService.restoreSession();
+
+  if (restoredUser) {
+    return true;
+  }
+
+  return router.createUrlTree(['/login'], {
+    queryParams: { returnUrl: state.url },
+  });
 };

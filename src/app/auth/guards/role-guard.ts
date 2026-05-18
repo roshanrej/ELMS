@@ -1,32 +1,29 @@
 import { inject } from '@angular/core';
-import { CanActivateFn, Router, ActivatedRouteSnapshot } from '@angular/router';
-import { AuthStore } from '../store/auth.store';
+import { ActivatedRouteSnapshot, CanActivateFn, Router } from '@angular/router';
 import { RoleTypeEnum } from '../../core/types-enums/role-type.enum';
+import { AuthService } from '../services/auth';
+import { AuthStore } from '../store/auth.store';
 
-export const roleGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
-   console.log('Role GUARD HIT');
+export const roleGuard: CanActivateFn = async (
+  route: ActivatedRouteSnapshot,
+  state
+) => {
   const authStore = inject(AuthStore);
+  const authService = inject(AuthService);
   const router = inject(Router);
 
-  const user = authStore.currentUser;
+  const user = authStore.currentUser ?? await authService.restoreSession();
   const expectedRole = route.data['role'] as RoleTypeEnum;
-  console.log(user)
-  console.log(expectedRole)
-  // ❌ not logged in
+
   if (!user) {
-    router.navigate(['/login']);
-    return false;
+    return router.createUrlTree(['/login'], {
+      queryParams: { returnUrl: state.url },
+    });
   }
 
-  if (!expectedRole) {
+  if (!expectedRole || user.role === expectedRole) {
     return true;
   }
 
-  // ❌ wrong role
-  if (user.role !== expectedRole) {
-    router.navigate(['/']);
-    return false;
-  }
-
-  return true;
+  return router.createUrlTree(['/']);
 };

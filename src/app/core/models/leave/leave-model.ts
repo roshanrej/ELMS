@@ -4,7 +4,7 @@ import { LeaveStatusEnum } from "../../types-enums/leave-status-enum";
 
  export interface LeaveModel {
   id: number;
-  userId: number;
+
 
   leaveType: LeaveTypeEnum | null;
 
@@ -22,5 +22,5 @@ import { LeaveStatusEnum } from "../../types-enums/leave-status-enum";
   approverName?: string;      // UI-friendly
   submittedAt?: Date;         // submission timestamp
   decisionAt?: Date;          // approval/rejection timestamp (if any)
-  comments?: string;            // manager/admin remarks
+            // manager/admin remarks
 }

@@ -6,7 +6,6 @@ import { LeaveRequestModel } from '../../models/leave/leave-request.model';
 
 export type LeaveDto = {
   id: number;
-  userId: number;
   leaveType: string;
   startDate: string;
   endDate: string;
@@ -17,8 +16,7 @@ export type LeaveDto = {
   approverId?: number;
   approverName?: string;
   decisionAt?: string;
-  comments?: string;
-};
+}
 
 export type LeaveBalanceDto = {
   leaveType: string;
@@ -115,7 +113,6 @@ export function mapLeaveDtoToModel(rawLeave: unknown): LeaveModel {
 
   return {
     id: leave.id,
-    userId: leave.userId,
     leaveType: toLeaveType(leave.leaveType),
     startDate: toDate(leave.startDate, 'startDate'),
     endDate: toDate(leave.endDate, 'endDate'),
@@ -126,7 +123,7 @@ export function mapLeaveDtoToModel(rawLeave: unknown): LeaveModel {
     approverId: leave.approverId,
     approverName: leave.approverName,
     decisionAt: toOptionalDate(leave.decisionAt),
-    comments: leave.comments,
+   
   };
 }
 

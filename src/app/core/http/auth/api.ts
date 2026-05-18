@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { UserModel } from '../../models/user/user.model';
 import { Observable} from 'rxjs';
 import { LoginRequest } from '../../models/auth/login-request.model';
 import { ApiResponse } from '../../models/api/api-reponse.model';
@@ -21,6 +20,17 @@ export class AuthApi {
       `${environment.apiBaseUrl}/api/auth/login`,
       requestData
     )
+   
+}
+restoreSession(): Observable<ApiResponse<LoginResponse>>{
+  return this.http.get<ApiResponse<LoginResponse>>(`${environment.apiBaseUrl}/api/auth/me`)
+  }
+
+refreshSession(refreshToken: string): Observable<ApiResponse<string>> {
+  return this.http.post<ApiResponse<string>>(
+    `${environment.apiBaseUrl}/api/auth/refresh`,
+    { refreshToken }
+  );
 }
   
    

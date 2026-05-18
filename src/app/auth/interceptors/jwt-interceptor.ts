@@ -1,19 +1,25 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 
 export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
-  const token = localStorage.getItem('token');
+  if (isTokenlessAuthRequest(req.url)) {
+    return next(req);
+  }
 
-  // If no token → just pass request
+  const token = localStorage.getItem('accessToken');
+  console.log("ACCESS TOKEN", token)
+
   if (!token) {
     return next(req);
   }
 
-  // Clone request and attach Authorization header
   const authReq = req.clone({
     setHeaders: {
-      Authorization: `Bearer ${token}`
-    }
+      Authorization: `Bearer ${token}`,
+    },
   });
 
   return next(authReq);
 };
+
+const isTokenlessAuthRequest = (url: string): boolean =>
+  url.includes('/api/auth/login') || url.includes('/api/auth/refresh');

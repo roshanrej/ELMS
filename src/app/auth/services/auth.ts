@@ -1,13 +1,10 @@
 import { inject, Injectable } from '@angular/core';
-import { UserModel } from '../../core/models/user/user.model';
+import { HttpErrorResponse } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
 import { AuthStore } from '../store/auth.store';
 import { AuthApi } from '../../core/http/auth/api';
 import { LoginRequest } from '../../core/models/auth/login-request.model';
-import { firstValueFrom } from 'rxjs';
-import { Router } from '@angular/router';
-import { HttpErrorResponse } from '@angular/common/http';
 import { LoginResponse } from '../../core/models/auth/login-response.model';
-import { ApiResponse } from '../../core/models/api/api-reponse.model';
 
 @Injectable({
   providedIn: 'root',
@@ -15,48 +12,132 @@ import { ApiResponse } from '../../core/models/api/api-reponse.model';
 export class AuthService {
   private authStore: AuthStore = inject(AuthStore);
   private authApi: AuthApi = inject(AuthApi);
-  private router: Router = inject(Router);
+  private restorePromise: Promise<LoginResponse | null> | null = null;
 
   async loginUser(request: LoginRequest): Promise<LoginResponse> {
     try {
       const response = await firstValueFrom(this.authApi.loginUser(request));
 
-      if (!response.success || !response.data ) {
+      if (!response.success || !response.data) {
         throw new Error('Invalid login response');
       }
 
-      if (!( response.data.email && response.data.role && response.data.name && response.data.accessToken && response.data.refreshToken)) {
+      const user = response.data;
+
+      if (
+        !(
+          user.email &&
+          user.role &&
+          user.name &&
+          user.accessToken &&
+          user.refreshToken
+        )
+      ) {
         throw new Error('Invalid user state.');
       }
 
-      // commit auth state
-      localStorage.setItem('accessToken', response.data.accessToken);
-      localStorage.setItem('refreshToken', response.data.refreshToken);
-      console.log(response)
-      this.authStore.setUser(response.data);
-
-      return response.data; // user
-    } catch (err: any) {
+      localStorage.setItem('accessToken', user.accessToken);
+      localStorage.setItem('refreshToken', user.refreshToken);
+      this.authStore.setUser(user);
+      return user;
+    } catch (err: unknown) {
       if (err instanceof HttpErrorResponse) {
-        console.log(err)
-        if (err?.status === 401) {
+        if (err.status === 401) {
           throw new Error('Invalid email or password');
         }
-
-        if (err?.error?.message) {
+        if (err.error?.message) {
           throw new Error(err.error.message);
         }
+      }
+
+      if (err instanceof Error) {
+        throw err;
       }
 
       throw new Error('Server error. Please try again.');
     }
   }
 
-  logout() {
-    //api call
+  logout(): void {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    this.authStore.clearUser();
+  }
 
-    localStorage.removeItem('token');
-    this.authStore.setUser(null);
-    this.router.navigate(['/login']); //ui reflection
+  restoreSession(): Promise<LoginResponse | null> {
+    if (!this.restorePromise) {
+      this.restorePromise = this.restoreSessionInternal().finally(() => {
+        this.restorePromise = null;
+      });
+    }
+
+    return this.restorePromise;
+  }
+
+  private async restoreSessionInternal(): Promise<LoginResponse | null> {
+    const accessToken = localStorage.getItem('accessToken');
+    const refreshToken = localStorage.getItem('refreshToken');
+
+    if (!accessToken && !refreshToken) {
+      this.logout();
+      return null;
+    }
+
+    if (accessToken) {
+      const user = await this.restoreFromCurrentAccessToken();
+
+      if (user) {
+        console.log(user)
+        return user;
+      }
+    }
+
+    if (!refreshToken) {
+      this.logout();
+      return null;
+    }
+
+    try {
+      const response = await firstValueFrom(
+        this.authApi.refreshSession(refreshToken)
+      );
+
+      if (!response.success || !response.data) {
+        throw new Error('Invalid refresh response');
+      }
+
+      localStorage.setItem('accessToken', response.data);
+
+      const user = await this.restoreFromCurrentAccessToken();
+
+      if (!user) {
+        throw new Error('Unable to restore refreshed session');
+      }
+
+      return user;
+    } catch {
+      this.logout();
+      return null;
+    }
+  }
+
+  private async restoreFromCurrentAccessToken(): Promise<LoginResponse | null> {
+    try {
+      const response = await firstValueFrom(this.authApi.restoreSession());
+      const user = response.data;
+
+      if (!response.success || !this.hasUserContext(user)) {
+        return null;
+      }
+
+      this.authStore.setUser(user);
+      return user;
+    } catch {
+      return null;
+    }
+  }
+
+  private hasUserContext(user: LoginResponse | null): user is LoginResponse {
+    return !!(user?.email && user.role && user.name);
   }
 }

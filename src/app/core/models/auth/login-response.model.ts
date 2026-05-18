@@ -9,8 +9,8 @@ export class LoginResponse {
     readonly name: string,
     readonly role: RoleTypeEnum,
     readonly email: string,
-    readonly accessToken: string,
-    readonly refreshToken: string,
+    readonly accessToken ?: string,
+    readonly refreshToken ?: string,
     readonly department?: DepartmentTypeEnum
   ) {}
 
