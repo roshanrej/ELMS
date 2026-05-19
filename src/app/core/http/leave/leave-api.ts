@@ -3,10 +3,8 @@ import { Observable, map } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { LeaveRequestModel } from '../../models/leave/leave-request.model';
 import { environment } from '../../../../environments/environment';
-import { ApiResponse } from '../../models/api/api-reponse.model';
+import { ApiResponse } from '../../models/api/api-response.model';
 import { LeaveBalanceDto, LeaveDto, LeaveRequestDto, mapLeaveRequestModelToDto } from '../../mappers/leave/leave.mapper';
-
-import { LeaveBalanceModel } from '../../models/leave/leave-balance.model';
 
 @Injectable({
   providedIn: 'root',
@@ -24,14 +22,14 @@ export class LeaveApi {
 
   requestLeave(requestData: LeaveRequestModel): Observable<ApiResponse<LeaveDto>> {
     const dto: LeaveRequestDto = mapLeaveRequestModelToDto(requestData);
-    return this.http.post<ApiResponse<LeaveDto>>(`${this.baseURL}/api/request-leave`,
+    return this.http.post<ApiResponse<LeaveDto>>(`${this.baseURL}/api/leaves/submit`,
       dto,
      );
   }
 
   saveDraft(requestData: LeaveRequestModel): Observable<ApiResponse<LeaveDto>> {
     const dto: LeaveRequestDto = mapLeaveRequestModelToDto(requestData);
-    return this.http.post<ApiResponse<LeaveDto>>(`${this.baseURL}/api/save-draft`,
+    return this.http.post<ApiResponse<LeaveDto>>(`${this.baseURL}/api/leaves/draft`,
       dto,
 );
   }

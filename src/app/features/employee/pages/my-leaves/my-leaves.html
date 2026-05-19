@@ -56,12 +56,9 @@
             (change)="applyFilters()"
           >
             <option [ngValue]="'ALL'">All</option>
-            <option [ngValue]="LeaveTypeEnum.Annual">Annual</option>
-            <option [ngValue]="LeaveTypeEnum.Sick">Sick</option>
-            <option [ngValue]="LeaveTypeEnum.Casual">Casual</option>
-            <option [ngValue]="LeaveTypeEnum.Unpaid">Unpaid</option>
-            <option [ngValue]="LeaveTypeEnum.Maternity">Maternity</option>
-            <option [ngValue]="LeaveTypeEnum.Paternity">Paternity</option>
+            <option *ngFor="let type of leaveTypes" [ngValue]="type.name">
+              {{ formatType(type.name) }}
+            </option>
           </select>
         </div>
       </div>
@@ -215,7 +212,7 @@
             : "You haven't applied for any leave this year."
         }}
       </p>
-      <a routerLink="/employee/request-leave" class="btn btn-cream btn-sm">Request Leave</a>
+      <a routerLink="/employee/leaves/apply" class="btn btn-cream btn-sm">Request Leave</a>
     </div>
   </section>
 </section>

@@ -14,6 +14,7 @@
       *ngFor="let nav of navLinks"
       [routerLink]="nav.route"
       routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
       class="nav-link fw-medium"
     >
       {{ nav.label }}

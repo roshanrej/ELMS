@@ -2,16 +2,16 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 
-import { Dashboard } from './dashboard';
-import { LeaveService } from '../../../../core/services/leave/leave';
+import { EmployeeDashboardPage } from './dashboard';
+import { LeaveService } from '../../../../core/services/leave/leave.service';
 
-describe('Dashboard', () => {
-  let component: Dashboard;
-  let fixture: ComponentFixture<Dashboard>;
+describe('EmployeeDashboardPage', () => {
+  let component: EmployeeDashboardPage;
+  let fixture: ComponentFixture<EmployeeDashboardPage>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Dashboard],
+      imports: [EmployeeDashboardPage],
       providers: [
         provideRouter([]),
         {
@@ -33,7 +33,7 @@ describe('Dashboard', () => {
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(Dashboard);
+    fixture = TestBed.createComponent(EmployeeDashboardPage);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

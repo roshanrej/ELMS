@@ -1,12 +1,12 @@
 import { Component, inject, signal } from '@angular/core';
-import { LeaveService } from '../../../../core/services/leave/leave';
+import { LeaveService } from '../../../../core/services/leave/leave.service';
 import { LeaveModel} from '../../../../core/models/leave/leave-model';
 import { LeaveStatusEnum } from '../../../../core/types-enums/leave-status-enum';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { LeaveTypeEnum } from '../../../../core/types-enums/leave-type-enum';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { LeaveActionEnum } from '../../../../core/types-enums/leave-action.enum';
+import { LeaveTypeModel } from '../../../../core/models/leave/leave-type.model';
 
 type LeaveRowView = LeaveModel & {
   leaveDays: number;
@@ -18,22 +18,21 @@ type LeaveRowView = LeaveModel & {
   templateUrl: './my-leaves.html',
   styleUrl: './my-leaves.scss',
 })
-export class MyLeaves {
+export class MyLeavesPage {
   mode : string = ''
   LeaveActionEnum = LeaveActionEnum
-  LeaveTypeEnum = LeaveTypeEnum
-  selectedType : LeaveTypeEnum|'ALL' = 'ALL';
+ 
+  selectedType : string | 'ALL' = 'ALL';
   LeaveStatusEnum = LeaveStatusEnum
   selectedStatus: LeaveStatusEnum | 'ALL' = 'ALL';
   private route : ActivatedRoute = inject(ActivatedRoute)
   years: number[] = [];
   selectedYear: number | 'ALL' = 'ALL';
   employeeLeaves: LeaveModel[] = [] //leaves fetched from API
+  leaveTypes: LeaveTypeModel[] = [];
   isLoading = signal(true);
   
   filteredLeaves: LeaveRowView[] = [];
-  private leaveService: LeaveService = inject(LeaveService)
-  
   
   applyFilters() {
   let filtered = this.employeeLeaves;
@@ -73,20 +72,16 @@ export class MyLeaves {
   }
 ngOnInit() {
   this.mode = this.route.snapshot.data['mode'];
+  this.leaveTypes = this.route.snapshot.data['leaveTypes'] ?? [];
+ const leaves : LeaveModel[ ]= this.route.snapshot.data['leaves'] ?? []
+ const filteredLeaves : LeaveModel[] = this.mode === 'draft' ? 
+                                        leaves.filter(l=>l.status === LeaveStatusEnum.Draft)
+                                       :leaves.filter(d=>d.status!== LeaveStatusEnum.Draft) ?? [];
+  this.employeeLeaves = filteredLeaves;
+  this.extractYears();
+  this.applyFilters();
+  this.isLoading.set(false);
   
-  this.leaveService.getEmployeeLeaves().subscribe(data => {
-    const leaves = this.mode === 'draft'
-      ? data.filter(d => d.status === LeaveStatusEnum.Draft)
-      : data.filter(d=>d.status!== LeaveStatusEnum.Draft) ?? [];
-      
-
-    this.employeeLeaves = leaves;
-
-    this.extractYears();
-    this.applyFilters();
-
-    this.isLoading.set(false);
-  });
 }
 
   getLeaveDays(leave: LeaveModel): number {
@@ -114,18 +109,19 @@ ngOnInit() {
 };
 
 
-  typeMap: Record<LeaveTypeEnum,string> = {
-  [LeaveTypeEnum.Annual]: 'Annual',
-  [LeaveTypeEnum.Sick]: 'Sick',
-  [LeaveTypeEnum.Maternity]: 'Maternity',
-  [LeaveTypeEnum.Paternity]: 'Paternity',
-  [LeaveTypeEnum.Unpaid]: 'Unpaid',
-  [LeaveTypeEnum.Casual]:'Casual'
-};
-
-  getTypeLabel(type: LeaveTypeEnum | null | undefined): string {
+  getTypeLabel(type: string | null | undefined): string {
     if (!type) return '-';
-    return this.typeMap[type] ?? '-';
+    const resolvedType = this.leaveTypes.find(item => item.name === type);
+    return this.formatType(resolvedType?.name ?? type);
+  }
+
+  formatType(type: string): string {
+    return type
+      .toLowerCase()
+      .split(/[_\s-]+/)
+      .filter(Boolean)
+      .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(' ');
   }
 
  getAvailableActions(status: LeaveStatusEnum): LeaveActionEnum[] {

@@ -2,16 +2,16 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
 
-import { MyLeaves } from './my-leaves';
-import { LeaveService } from '../../../../core/services/leave/leave';
+import { MyLeavesPage } from './my-leaves';
+import { LeaveService } from '../../../../core/services/leave/leave.service';
 
-describe('MyLeaves', () => {
-  let component: MyLeaves;
-  let fixture: ComponentFixture<MyLeaves>;
+describe('MyLeavesPage', () => {
+  let component: MyLeavesPage;
+  let fixture: ComponentFixture<MyLeavesPage>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MyLeaves],
+      imports: [MyLeavesPage],
       providers: [
         {
           provide: ActivatedRoute,
@@ -26,7 +26,7 @@ describe('MyLeaves', () => {
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(MyLeaves);
+    fixture = TestBed.createComponent(MyLeavesPage);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

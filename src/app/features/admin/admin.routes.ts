@@ -1,16 +1,17 @@
 import { Route } from "@angular/router";
-import { Analytics } from "./pages/analytics/analytics";
-import { Dashboard } from "./pages/dashboard/dashboard";
-import { Departments } from "./pages/departments/departments";
-import { Employees } from "./pages/employees/employees";
-import { LeaveQuotas } from "./pages/leave-quotas/leave-quotas";
+import { AdminAnalyticsPage } from "./pages/analytics/analytics";
+import { AdminDashboardPage } from "./pages/dashboard/dashboard";
+import { DepartmentsPage } from "./pages/departments/departments";
+import { EmployeesPage } from "./pages/employees/employees";
+import { LeaveQuotasPage } from "./pages/leave-quotas/leave-quotas";
 
 
 
 export const adminRoutes : Route[]=[
-    {path: 'departments', component:Departments},
-    {path:'analytics', component:Analytics},
-    {path:'employees', component:Employees},
-    {path:'leave-quotas', component: LeaveQuotas},
-    {path:'dashboard', component:Dashboard}
+    {path: '', redirectTo: 'dashboard', pathMatch: 'full'},
+    {path: 'dashboard', component:AdminDashboardPage},
+    {path: 'employees', component:EmployeesPage},
+    {path: 'departments', component:DepartmentsPage},
+    {path: 'leave-quotas', component: LeaveQuotasPage},
+    {path: 'analytics', component:AdminAnalyticsPage},
 ]

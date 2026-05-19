@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { AuthStore } from '../store/auth.store';
-import { AuthApi } from '../../core/http/auth/api';
+import { AuthApi } from '../../core/http/auth/auth-api';
 import { LoginRequest } from '../../core/models/auth/login-request.model';
 import { LoginResponse } from '../../core/models/auth/login-response.model';
 
@@ -85,6 +85,7 @@ export class AuthService {
 
     if (accessToken) {
       const user = await this.restoreFromCurrentAccessToken();
+      
 
       if (user) {
         console.log(user)

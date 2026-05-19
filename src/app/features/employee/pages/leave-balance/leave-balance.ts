@@ -4,8 +4,8 @@ import { ActivatedRoute } from '@angular/router';
 import { LeaveBalanceModel } from '../../../../core/models/leave/leave-balance.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AnnualLeavePolicy } from '../../../../../environments/environment.development';
-import { LeaveTypeEnum } from '../../../../core/types-enums/leave-type-enum';
+
+
 
 type LeaveBalanceView = LeaveBalanceModel & {
   remainingPercent: number;
@@ -19,10 +19,10 @@ type LeaveBalanceView = LeaveBalanceModel & {
   templateUrl: './leave-balance.html',
   styleUrl: './leave-balance.scss',
 })
-export class LeaveBalance implements OnInit {
+export class LeaveBalancePage implements OnInit {
   private route = inject(ActivatedRoute);
 
-  AnnualLeavePolicy = AnnualLeavePolicy;
+
   balances: LeaveBalanceModel[] = [];
   balanceViews: LeaveBalanceView[] = [];
 
@@ -60,15 +60,7 @@ export class LeaveBalance implements OnInit {
     return value < 10 ? `0${value}` : `${value}`;
   }
 
-  getDefaultAllocation(type: LeaveTypeEnum): number {
-    switch (type) {
-      case LeaveTypeEnum.Annual:    return AnnualLeavePolicy.Annual;
-      case LeaveTypeEnum.Sick:      return AnnualLeavePolicy.Sick;
-      case LeaveTypeEnum.Casual:    return AnnualLeavePolicy.Casual;
-      case LeaveTypeEnum.Unpaid:    return AnnualLeavePolicy.Unpaid;
-      case LeaveTypeEnum.Maternity: return AnnualLeavePolicy.Maternity;
-      case LeaveTypeEnum.Paternity: return AnnualLeavePolicy.Paternity;
-      default: return 0;
-    }
+  getDefaultAllocation(type: string): number {
+    return this.balances.find(balance => balance.leaveType === type)?.allocated ?? 0;
   }
 }

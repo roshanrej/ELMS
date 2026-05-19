@@ -6,4 +6,4 @@ import { Component } from '@angular/core';
   templateUrl: './analytics.html',
   styleUrl: './analytics.scss',
 })
-export class Analytics {}
+export class ManagerAnalyticsPage {}

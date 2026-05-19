@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LeaveQuotas } from './leave-quotas';
+import { LeaveQuotasPage } from './leave-quotas';
 
-describe('LeaveQuotas', () => {
-  let component: LeaveQuotas;
-  let fixture: ComponentFixture<LeaveQuotas>;
+describe('LeaveQuotasPage', () => {
+  let component: LeaveQuotasPage;
+  let fixture: ComponentFixture<LeaveQuotasPage>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [LeaveQuotas],
+      imports: [LeaveQuotasPage],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(LeaveQuotas);
+    fixture = TestBed.createComponent(LeaveQuotasPage);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

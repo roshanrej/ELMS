@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivateFn, Router } from '@angular/router';
 import { RoleTypeEnum } from '../../core/types-enums/role-type.enum';
-import { AuthService } from '../services/auth';
+import { AuthService } from '../services/auth.service';
 import { AuthStore } from '../store/auth.store';
 
 export const roleGuard: CanActivateFn = async (

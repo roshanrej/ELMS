@@ -1,26 +1,28 @@
 import { Route } from '@angular/router';
-import { ApplyLeave } from './pages/apply-leave/apply-leave';
-import { Dashboard } from './pages/dashboard/dashboard';
-import { LeaveBalance } from './pages/leave-balance/leave-balance';
-import { MyLeaves } from './pages/my-leaves/my-leaves';
-import { leaveBalancesResolver, leavesResolver } from './resolvers/leave.resolver';
-
+import { ApplyLeavePage } from './pages/apply-leave/apply-leave';
+import { EmployeeDashboardPage } from './pages/dashboard/dashboard';
+import { LeaveBalancePage } from './pages/leave-balance/leave-balance';
+import { MyLeavesPage } from './pages/my-leaves/my-leaves';
+import { employeeLeavesResolver } from './resolvers/employee-leaves.resolver';
+import { leaveBalancesResolver } from './resolvers/leave-balances.resolver';
+import { leaveTypesResolver } from './resolvers/leave-types.resolver';
 export const employeeRoutes: Route[] = [
+  {path: '', redirectTo: 'dashboard', pathMatch: 'full'},
   {
     path: 'dashboard',
-    component: Dashboard,
-    
+    component: EmployeeDashboardPage,
   },
-  { path: 'request-leave', component: ApplyLeave, resolve: { leaves: leavesResolver } },
-  { path: 'leaves', component: MyLeaves },
+  {path: 'leaves', component: MyLeavesPage, resolve: { leaveTypes: leaveTypesResolver }},
+  {path: 'leaves/apply', component: ApplyLeavePage, resolve: { leaves: employeeLeavesResolver, leaveTypes: leaveTypesResolver, leaveBalances: leaveBalancesResolver}},
   {
-    path: 'leave-balance',
-    component: LeaveBalance,
+    path: 'leaves/balance',
+    component: LeaveBalancePage,
     resolve: { leaveBalances: leaveBalancesResolver },
   },
   {
-    path: 'drafts',
-    component: MyLeaves,
+    path: 'leaves/drafts',
+    component: MyLeavesPage,
+    resolve: { leaveTypes: leaveTypesResolver },
     data: { mode: 'draft' },
   },
 ];

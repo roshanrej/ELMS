@@ -3,8 +3,7 @@ import { firstValueFrom, of } from 'rxjs';
 
 import { LeaveApi } from '../../http/leave/leave-api';
 import { LeaveStatusEnum } from '../../types-enums/leave-status-enum';
-import { LeaveTypeEnum } from '../../types-enums/leave-type-enum';
-import { LeaveService } from './leave';
+import { LeaveService } from './leave.service';
 
 describe('LeaveService', () => {
   let service: LeaveService;
@@ -58,10 +57,9 @@ describe('LeaveService', () => {
 
     expect(leaves[0]).toEqual({
       id: 12,
-      userId: 7,
-      leaveType: LeaveTypeEnum.Sick,
-      startDate: new Date('2026-04-22T00:00:00.000Z'),
-      endDate: new Date('2026-04-23T00:00:00.000Z'),
+      leaveType: 'SICK',
+      startDate: '2026-04-22T00:00:00.000Z',
+      endDate: '2026-04-23T00:00:00.000Z',
       reason: 'Fever',
       status: LeaveStatusEnum.Approved,
       createdAt: new Date('2026-04-20T10:30:00.000Z'),
@@ -69,7 +67,6 @@ describe('LeaveService', () => {
       approverId: 2,
       approverName: 'Manager One',
       decisionAt: new Date('2026-04-21T08:00:00.000Z'),
-      comments: 'Approved',
     });
   });
 });

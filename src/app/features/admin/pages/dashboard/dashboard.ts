@@ -1,10 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
-import { Router} from '@angular/router';
-import { UserModel } from '../../../../core/models/user/user.model';
+import { Component, inject, OnInit } from '@angular/core';
 import { AuthStore } from '../../../../auth/store/auth.store';
 import { LoginResponse } from '../../../../core/models/auth/login-response.model';
 
+interface SummaryCard {
+  label: string;
+  value: string;
+  note: string;
+}
 
 @Component({
   selector: 'app-dashboard',
@@ -12,22 +15,12 @@ import { LoginResponse } from '../../../../core/models/auth/login-response.model
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
-export class Dashboard {
-  private router = inject(Router);
-  private authStore: AuthStore = inject(AuthStore);
-  selectedAction = signal<string | null>(null);
+export class AdminDashboardPage implements OnInit {
+  private authStore = inject(AuthStore);
   user: LoginResponse | null = null;
-  summaryCards = [
-    { label: 'Employees', value: '12', note: 'Active records in the current workspace' },
-    { label: 'Departments', value: '04', note: 'Teams available for leave mapping' },
-    { label: 'Pending Requests', value: '03', note: 'Requests waiting for action' },
-  ];
+  summaryCards: SummaryCard[] = [];
 
-  ngOnInit() {
-    
-    this.user = this.authStore.currentUser
-    
+  ngOnInit(): void {
+    this.user = this.authStore.currentUser;
   }
-
- 
 }

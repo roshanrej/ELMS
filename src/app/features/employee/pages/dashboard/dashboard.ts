@@ -4,8 +4,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { LeaveModel } from '../../../../core/models/leave/leave-model';
 
 import { LeaveStatusEnum } from '../../../../core/types-enums/leave-status-enum';
-import { AnnualLeavePolicy } from '../../../../../environments/environment.development';
-import { LeaveTypeEnum } from '../../../../core/types-enums/leave-type-enum';
+
 
 type UpcomingLeaveView = LeaveModel & { leaveDays: number };
 
@@ -15,9 +14,9 @@ type UpcomingLeaveView = LeaveModel & { leaveDays: number };
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
-export class Dashboard  implements OnInit {
+export class EmployeeDashboardPage implements OnInit {
   employeeLeaves: LeaveModel[] = [];
-  AnnualLeavePolicy = AnnualLeavePolicy
+
   private route : ActivatedRoute = inject(ActivatedRoute)
   leaveBalance = 0;
   usedDays = 0;
@@ -53,23 +52,19 @@ export class Dashboard  implements OnInit {
       .length;
 
     // 🔥 Example balance (assume 24/year)
-    this.leaveBalance =  AnnualLeavePolicy.Total - this.usedDays;
-    this.usedPercent = AnnualLeavePolicy.Total > 0
-      ? Math.min(100, Math.round((this.usedDays / AnnualLeavePolicy.Total) * 100))
-      : 0;
+    // this.leaveBalance =  AnnualLeavePolicy.Total - this.usedDays;
+    // this.usedPercent = AnnualLeavePolicy.Total > 0
+    //   ? Math.min(100, Math.round((this.usedDays / AnnualLeavePolicy.Total) * 100))
+    //   : 0;
   }
- typeMap: Record<LeaveTypeEnum,string> = {
-  [LeaveTypeEnum.Annual]: 'Annual',
-  [LeaveTypeEnum.Sick]: 'Sick',
-  [LeaveTypeEnum.Maternity]: 'Maternity',
-  [LeaveTypeEnum.Paternity]: 'Paternity',
-  [LeaveTypeEnum.Unpaid]: 'Unpaid',
-  [LeaveTypeEnum.Casual]:'Casual'
-};
-
-  getTypeLabel(type: LeaveTypeEnum | null | undefined): string {
+  getTypeLabel(type: string | null | undefined): string {
     if (!type) return '-';
-    return this.typeMap[type] ?? '-';
+    return type
+      .toLowerCase()
+      .split(/[_\s-]+/)
+      .filter(Boolean)
+      .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(' ');
   }
 
   extractUpcoming() {

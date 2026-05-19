@@ -1,15 +1,15 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 
-import { ApplyLeave } from './apply-leave';
+import { ApplyLeavePage } from './apply-leave';
 
-describe('ApplyLeave', () => {
-  let component: ApplyLeave;
-  let fixture: ComponentFixture<ApplyLeave>;
+describe('ApplyLeavePage', () => {
+  let component: ApplyLeavePage;
+  let fixture: ComponentFixture<ApplyLeavePage>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ApplyLeave],
+      imports: [ApplyLeavePage],
       providers: [
         {
           provide: ActivatedRoute,
@@ -18,7 +18,7 @@ describe('ApplyLeave', () => {
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(ApplyLeave);
+    fixture = TestBed.createComponent(ApplyLeavePage);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

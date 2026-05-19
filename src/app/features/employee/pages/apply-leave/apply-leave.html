@@ -1,52 +1,145 @@
 <section class="app-page">
   <header class="app-page__hero">
-    <span class="app-eyebrow">Request Leave</span>
+    <span class="app-eyebrow"> Leave</span>
     <h1 class="app-title">Apply for time away</h1>
-    <p class="app-body mb-0">Fill in the details below to submit or save a leave request.</p>
+    <p class="app-body mb-0">
+      Fill in the details below to submit or save a leave .
+    </p>
   </header>
 
   <div class="row g-3 align-items-start">
+
     <!-- 🔵 FORM -->
     <div class="col-lg-8">
+
       <section class="app-card p-4">
-        <form (ngSubmit)="submitRequest()" [formGroup]="leaveForm">
+
+        <form
+          (ngSubmit)="submitRequest()"
+          [formGroup]="leaveForm"
+        >
+
           <div class="row g-3">
+
             <!-- Leave Type -->
             <div class="col-12">
-              <label class="app-label">Leave type</label>
+
+              <label class="app-label">
+                Leave type
+              </label>
+
               <select
                 class="form-select form-select-sm"
                 formControlName="leaveType"
-                [class.text-muted]="leaveForm.get('leaveType')?.value === null"
+                [class.text-muted]="
+                  leaveForm.get('leaveType')?.value === null
+                "
               >
-                <option [ngValue]="null" class="text-muted">Select leave type</option>
-                <option *ngFor="let type of leaveTypeOptions" [ngValue]="type.value">
-                  {{ type.label }}
+
+                <option
+                  [ngValue]="null"
+                  class="text-muted"
+                >
+                  Select leave type
                 </option>
+
+                <option
+                  *ngFor="let type of leaveTypes"
+                  [ngValue]="type.name"
+                >
+                  {{ formatType(type.name) }}
+                </option>
+
               </select>
+
+              <!-- Validation -->
+              <small
+                class="text-danger"
+                *ngIf="
+                  leaveForm.get('leaveType')?.touched &&
+                  leaveForm.get('leaveType')?.errors?.['required']
+                "
+              >
+                Leave type is required.
+              </small>
+
             </div>
 
             <!-- Start Date -->
             <div class="col-md-6">
-              <label class="app-label">Start date</label>
-              <input class="form-control form-control-sm" type="date" formControlName="startDate" />
+
+              <label class="app-label">
+                Start date
+              </label>
+
+              <input
+                class="form-control form-control-sm"
+                type="date"
+                formControlName="startDate"
+              />
+
+              <!-- Validation -->
+              <small
+                class="text-danger"
+                *ngIf="
+                  leaveForm.errors?.['startBeforeToday']
+                "
+              >
+                Start date cannot be before today.
+              </small>
+
             </div>
 
             <!-- End Date -->
             <div class="col-md-6">
-              <label class="app-label">End date</label>
-              <input class="form-control form-control-sm" type="date" formControlName="endDate" />
+
+              <label class="app-label">
+                End date
+              </label>
+
+              <input
+                class="form-control form-control-sm"
+                type="date"
+                formControlName="endDate"
+              />
+
+              <!-- Validation -->
+              <small
+                class="text-danger"
+                *ngIf="
+                  leaveForm.errors?.['invalidRange']
+                "
+              >
+                End date must be after start date.
+              </small>
+
             </div>
 
             <!-- Reason -->
             <div class="col-12">
-              <label class="app-label">Reason</label>
+
+              <label class="app-label">
+                Reason
+              </label>
+
               <textarea
                 class="form-control form-control-sm"
                 rows="4"
                 formControlName="reason"
-                placeholder="Add a short reason for your request"
+                placeholder="Add a short reason for your "
               ></textarea>
+
+              <!-- Validation -->
+              <small
+                class="text-danger"
+                *ngIf="
+                  leaveForm.get('reason')?.touched &&
+                  leaveForm.get('reason')?.errors?.['required']
+                "
+              >
+                Reason is required.
+              </small>
+
             </div>
 
             <!-- Divider -->
@@ -55,59 +148,116 @@
             </div>
 
             <!-- Actions -->
-            <div class="col-12 d-flex align-items-center gap-2 flex-wrap">
-              <button type="submit" class="btn btn-app btn-sm" [disabled]="leaveForm.invalid">
-                Submit Request
+            <div
+              class="col-12 d-flex align-items-center gap-2 flex-wrap"
+            >
+
+              <button
+                type="submit"
+                class="btn btn-app btn-sm"
+                [disabled]="leaveForm.invalid"
+              >
+                Submit 
               </button>
-              <button type="button" class="btn btn-cream btn-sm" (click)="saveDraft()">
+
+              <button
+                type="button"
+                class="btn btn-cream btn-sm"
+                (click)="saveDraft()"
+              >
                 Save Draft
               </button>
+
             </div>
+
           </div>
+
         </form>
+
       </section>
+
     </div>
 
     <!-- 🔵 SIDEBAR -->
     <div class="col-lg-4">
+
       <aside class="app-card p-4">
+
         <span class="app-eyebrow">
-          {{ selectedLeaveType ? selectedLeaveType + ' Balance' : 'Balance' }}
+
+          {{
+            selectedLeaveType
+              ? selectedLeaveType + ' Balance'
+              : 'Balance'
+          }}
+
         </span>
 
         <div class="app-stat__value my-2">
-          {{ leaveBalance !== null ? leaveBalance : '—' }}
+
+          {{
+            leaveBalance !== null
+              ? leaveBalance
+              : '—'
+          }}
+
         </div>
 
         <p class="text-muted mb-3 small">
+
           {{
             selectedLeaveType
-              ? 'Days remaining for ' + selectedLeaveType + ' leave.'
+              ? 'Days remaining for ' +
+                selectedLeaveType +
+                ' leave.'
               : 'Select a leave type to see your balance.'
           }}
+
         </p>
 
         <ng-container *ngIf="leaveBalance !== null">
+
           <div
             class="progress mb-2"
             role="progressbar"
-            [attr.aria-label]="(selectedLeaveType || 'Leave') + ' balance'"
+            [attr.aria-label]="
+              (selectedLeaveType || 'Leave') +
+              ' balance'
+            "
             [attr.aria-valuenow]="balancePercent"
             aria-valuemin="0"
             aria-valuemax="100"
           >
+
             <div
               class="progress-bar"
-              [ngClass]="getProgressClass(balancePercent)"
+              [ngClass]="
+                getProgressClass(balancePercent)
+              "
               [style.width.%]="balancePercent"
             ></div>
+
           </div>
-          <div class="d-flex justify-content-between small">
-            <span class="text-muted">{{ leaveBalance }} remaining</span>
-            <span class="fw-semibold text-muted">{{ balancePercent }}%</span>
+
+          <div
+            class="d-flex justify-content-between small"
+          >
+
+            <span class="text-muted">
+              {{ leaveBalance }} remaining
+            </span>
+
+            <span class="fw-semibold text-muted">
+              {{ balancePercent }}%
+            </span>
+
           </div>
+
         </ng-container>
+
       </aside>
+
     </div>
+
   </div>
 </section>

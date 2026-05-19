@@ -1,9 +1,18 @@
 import { Route } from "@angular/router"
-import { Login } from "./login/login"
+import { LoginPage } from "./login/login"
 
 
-export const authRoutes : Route[] =[
-    { path: 'login', redirectTo: '', pathMatch: 'full'},
-    { path:'', component: Login },
-    
-]
+export const authRoutes: Route[] = [
+
+  {
+    path: '',
+    component: LoginPage,
+  },
+
+  {
+    path: 'login',
+    redirectTo: '',
+    pathMatch: 'full',
+  },
+
+];

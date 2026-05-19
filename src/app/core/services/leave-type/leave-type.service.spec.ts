@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { Notification } from './notification';
+import { LeaveTypeService } from './leave-type.service';
 
-describe('Notification', () => {
-  let service: Notification;
+describe('LeaveTypeService', () => {
+  let service: LeaveTypeService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(Notification);
+    service = TestBed.inject(LeaveTypeService);
   });
 
   it('should be created', () => {

@@ -6,4 +6,4 @@ import { Component } from '@angular/core';
   templateUrl: './approvals.html',
   styleUrl: './approvals.scss',
 })
-export class Approvals {}
+export class ManagerApprovalsPage {}

@@ -1,6 +1,6 @@
 import { LeaveModel } from '../../models/leave/leave-model';
 import { LeaveStatusEnum } from '../../types-enums/leave-status-enum';
-import { LeaveTypeEnum } from '../../types-enums/leave-type-enum';
+
 import { LeaveBalanceModel } from '../../models/leave/leave-balance.model';
 import { LeaveRequestModel } from '../../models/leave/leave-request.model';
 
@@ -23,14 +23,14 @@ export type LeaveBalanceDto = {
   allocated: number;
   used: number;
   remaining: number;
-  carryForward?: number;
+ 
 };
 
 export type LeaveRequestDto = {
   leaveType: string | null;
   startDate: string | null;
   endDate: string | null;
-  reason: string;
+  reason: string ;
 };
 
 function assertLeaveDto(raw: unknown): LeaveDto {
@@ -53,27 +53,7 @@ function assertLeaveDto(raw: unknown): LeaveDto {
 
   return obj as LeaveDto;
 }
-function toDate(value: string | Date, field: string): Date {
-  const date = value instanceof Date ? value : new Date(value);
 
-  if (Number.isNaN(date.getTime())) {
-    throw new Error(`Invalid ${field}`);
-  }
-
-  return date;
-}
-
-function toOptionalDate(value?: string | Date): Date | undefined {
-  if (!value) return undefined;
-
-  const date = value instanceof Date ? value : new Date(value);
-
-  if (Number.isNaN(date.getTime())) {
-    throw new Error('Invalid optional date');
-  }
-
-  return date;
-}
 
 function toLeaveStatus(value: string): LeaveStatusEnum {
   if (!value) {
@@ -91,55 +71,37 @@ function toLeaveStatus(value: string): LeaveStatusEnum {
   return match;
 }
 
-function toLeaveType(value: string): LeaveTypeEnum {
-  console.log(value)
-  if (!value) {
-    throw new Error('Missing leave type');
-  }
-
-  const normalized = value.toUpperCase();
-
-  const match = Object.values(LeaveTypeEnum).find((type) => type === normalized);
-
-  if (!match) {
-    throw new Error(`Invalid leave type: ${value}`);
-  }
-
-  return match;
-}
 
 export function mapLeaveDtoToModel(rawLeave: unknown): LeaveModel {
   const leave = assertLeaveDto(rawLeave); // 🔥 strict validation
 
   return {
     id: leave.id,
-    leaveType: toLeaveType(leave.leaveType),
-    startDate: toDate(leave.startDate, 'startDate'),
-    endDate: toDate(leave.endDate, 'endDate'),
+    leaveType: leave.leaveType,
+    startDate: leave.startDate,
+    endDate: leave.endDate,
     reason: leave.reason ?? '',
     status: toLeaveStatus(leave.status),
-    createdAt: toDate(leave.createdAt, 'createdAt'),
-    submittedAt: toOptionalDate(leave.submittedAt ?? undefined),
+    createdAt: leave.createdAt,
+    submittedAt: leave.submittedAt ?? undefined,
     approverId: leave.approverId,
     approverName: leave.approverName,
-    decisionAt: toOptionalDate(leave.decisionAt),
+    decisionAt: leave.decisionAt,
    
   };
 }
 
 export function mapLeaveRequestModelToDto(model: LeaveRequestModel): LeaveRequestDto {
-  const toIsoOrNull = (value: Date | string | null): string | null => {
+  const toDateStringOrNull = (value: string | null): string | null => {
     if (!value) return null;
-    const date = value instanceof Date ? value : new Date(value);
-    if (Number.isNaN(date.getTime())) return null;
-    return date.toISOString();
+    return value;
   };
 
   return {
     leaveType: model.leaveType,
-    startDate: toIsoOrNull(model.startDate),
-    endDate: toIsoOrNull(model.endDate),
-    reason: model.reason,
+    startDate: toDateStringOrNull(model.startDate),
+    endDate: toDateStringOrNull(model.endDate),
+    reason: model.reason ?? '',
   };
 }
 
@@ -154,10 +116,32 @@ export function mapLeaveBalanceDtoToModel(raw: unknown): LeaveBalanceModel {
   }
 
   return {
-    leaveType: toLeaveType(String(obj.leaveType)),
+    leaveType:obj.leaveType,
     allocated: Number(obj.allocated),
     used: Number(obj.used),
     remaining: Number(obj.remaining),
-    carryForward: obj.carryForward === undefined ? undefined : Number(obj.carryForward),
+    
   };
 }
+function toOptionalDate(dateString: string | undefined): Date | undefined {
+  if (!dateString) {
+    return undefined;
+  }
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) {
+    throw new Error(`Invalid date format: ${dateString}`);
+  }
+  return date;
+}
+
+function toDate(dateString: string, fieldName: string): Date {
+  if (!dateString) {
+    throw new Error(`Missing ${fieldName}`);
+  }
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) {
+    throw new Error(`Invalid date format for ${fieldName}: ${dateString}`);
+  }
+  return date;
+}
+

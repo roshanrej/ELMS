@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 
-import { AuthApi } from './api';
+import { AuthApi } from './auth-api';
 
 describe('AuthApi', () => {
   let service: AuthApi;

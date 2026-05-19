@@ -1,9 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { AuthService } from '../services/auth';
+import { AuthService } from '../services/auth.service';
 import { RoleTypeEnum } from '../../core/types-enums/role-type.enum';
+import { AuthStore } from '../store/auth.store';
 
 @Component({
   selector: 'app-login',
@@ -12,21 +13,32 @@ import { RoleTypeEnum } from '../../core/types-enums/role-type.enum';
   templateUrl: './login.html',
   styleUrl: './login.scss',
 })
-export class Login {
-  submitted : boolean = false;
-  loading : boolean = false;
-  serverError : string = '';
-  passwordVisible  : boolean = false;
+export class LoginPage implements OnInit {
+  submitted: boolean = false;
+  loading: boolean = false;
+  serverError: string = '';
+  passwordVisible: boolean = false;
+  loginForm: FormGroup;
 
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private authStore = inject(AuthStore);
 
-  loginForm: FormGroup = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(8)]],
-  });
+  constructor() {
+    this.loginForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(8)]],
+    });
+  }
+
+  ngOnInit(): void {
+    const user = this.authStore.currentUser;
+    if (user) {
+      this.navigateByRole(user.role);
+    }
+  }
 
   get f() {
     return this.loginForm.controls;
@@ -36,30 +48,23 @@ export class Login {
     this.passwordVisible = !this.passwordVisible;
   }
 
+  async login(): Promise<void> {
+    this.submitted = true;
+    this.serverError = '';
 
-  
-  async login() {
-  this.submitted = true;
-  this.serverError = '';
+    if (this.loginForm.invalid) return;
 
-  if (this.loginForm.invalid) return;
-
-  try {
-    this.loading = true;
-    const user = await this.authService.loginUser(this.loginForm.value);
-    
-    this.navigateAfterLogin(user.role);
-  } catch (error: any) {
-    // Extract the message you 'threw' in the service
-    this.serverError = error.message || 'Server error';
-    
-    // Better UX: keep email, clear password
-    this.loginForm.get('password')?.reset();
-  } finally {
-    this.loading = false;
+    try {
+      this.loading = true;
+      const user = await this.authService.loginUser(this.loginForm.value);
+      this.navigateAfterLogin(user.role);
+    } catch (error: any) {
+      this.serverError = error.message || 'Server error';
+      this.loginForm.get('password')?.reset();
+    } finally {
+      this.loading = false;
+    }
   }
-}
-
 
   private navigateAfterLogin(role: RoleTypeEnum): void {
     const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
@@ -72,7 +77,7 @@ export class Login {
     this.navigateByRole(role);
   }
 
-  private navigateByRole( role: RoleTypeEnum): void {
+  private navigateByRole(role: RoleTypeEnum): void {
     switch (role) {
       case RoleTypeEnum.ADMIN:
         this.router.navigate(['/admin/dashboard']);
@@ -91,12 +96,6 @@ export class Login {
     }
   }
 
-  private extractErrorMessage(error: any): string {
-    if (error?.error?.message) return error.error.message;
-    if (error?.message) return error.message;
-    return 'Something went wrong. Please try again.';
-  }
-
   private canUseReturnUrl(returnUrl: string, role: RoleTypeEnum): boolean {
     if (!returnUrl.startsWith('/') || returnUrl.startsWith('//')) {
       return false;
@@ -109,3 +108,4 @@ export class Login {
     );
   }
 }
+ 
