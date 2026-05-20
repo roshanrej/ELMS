@@ -1,9 +1,14 @@
 import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivateFn, Router } from '@angular/router';
-import { RoleTypeEnum } from '../../core/types-enums/role-type.enum';
 import { AuthService } from '../services/auth.service';
 import { AuthStore } from '../store/auth.store';
 
+/**
+ * ARCHITECTURAL NOTE:
+ * This guard should ideally be data-driven from backend.
+ * For now, it checks user role against route metadata.
+ * Backend is the source of truth for which roles can access which routes.
+ */
 export const roleGuard: CanActivateFn = async (
   route: ActivatedRouteSnapshot,
   state
@@ -13,7 +18,7 @@ export const roleGuard: CanActivateFn = async (
   const router = inject(Router);
 
   const user = authStore.currentUser ?? await authService.restoreSession();
-  const expectedRole = route.data['role'] as RoleTypeEnum;
+  const requiredRole = route.data['requiredRole'] as string;
 
   if (!user) {
     return router.createUrlTree(['/login'], {
@@ -21,7 +26,7 @@ export const roleGuard: CanActivateFn = async (
     });
   }
 
-  if (!expectedRole || user.role === expectedRole) {
+  if (!requiredRole || user.role === requiredRole) {
     return true;
   }
 

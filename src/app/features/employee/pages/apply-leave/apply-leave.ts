@@ -7,8 +7,13 @@ import { LeaveModel } from '../../../../core/models/leave/leave-model';
 import { LeaveRequestModel } from '../../../../core/models/leave/leave-request.model';
 import { LeaveTypeModel } from '../../../../core/models/leave/leave-type.model';
 import { LeaveService } from '../../../../core/services/leave/leave.service';
-import { LeaveStatusEnum } from '../../../../core/types-enums/leave-status-enum';
 
+/**
+ * ARCHITECTURAL NOTE:
+ * This component handles leave request form submission.
+ * Business logic (calculating used days, validating against policy) is owned by backend.
+ * Backend provides LeaveBalanceModel with pre-calculated metrics.
+ */
 @Component({
   selector: 'app-apply-leave',
   imports: [CommonModule, ReactiveFormsModule],
@@ -88,6 +93,10 @@ export class ApplyLeavePage implements OnInit {
     });
   }
 
+  /**
+   * Use backend-provided balance data.
+   * Do NOT calculate used days locally - backend is the authoritative source.
+   */
   updateBalance(type: string | null) {
     if (!type) {
       this.leaveBalance = null;
@@ -95,14 +104,20 @@ export class ApplyLeavePage implements OnInit {
       return;
     }
 
+    // Backend provides pre-calculated balance
     const balance = this.leaveBalances.find(item => item.leaveType === type);
-    const allocated = balance?.allocated ?? 0;
-    const used = balance?.used ?? this.getUsedDays(type);
 
-    this.leaveBalance = balance ? balance.remaining : Math.max(allocated - used, 0);
-    this.balancePercent = allocated > 0
-      ? Math.round((this.leaveBalance / allocated) * 100)
-      : 0;
+    if (balance) {
+      // Use backend-provided remaining balance
+      this.leaveBalance = balance.remaining;
+      this.balancePercent = balance.allocated > 0
+        ? Math.round((this.leaveBalance / balance.allocated) * 100)
+        : 0;
+    } else {
+      // Fallback: no balance data available
+      this.leaveBalance = 0;
+      this.balancePercent = 0;
+    }
   }
 
   getProgressClass(percent: number): string {
@@ -161,22 +176,7 @@ export class ApplyLeavePage implements OnInit {
     this.balancePercent = 0;
   }
 
-  private getUsedDays(type: string): number {
-    const currentYear = new Date().getFullYear();
-    return this.employeeLeaves
-      .filter(l =>
-        l.leaveType === type &&
-        l.status === LeaveStatusEnum.Approved &&
-        new Date(l.startDate).getFullYear() === currentYear
-      )
-      .reduce((sum, l) => sum + this.calcDays(new Date(l.startDate), new Date(l.endDate)), 0);
-  }
 
-  private calcDays(start: Date, end: Date): number {
-    const s = start.getTime();
-    const e = end.getTime();
-    return Math.round((e - s) / (1000 * 60 * 60 * 24)) + 1;
-  }
 
   private buildPayload(): LeaveRequestModel {
     const raw = this.leaveForm.getRawValue();

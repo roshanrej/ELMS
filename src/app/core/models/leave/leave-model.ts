@@ -1,6 +1,6 @@
 
 
-import { LeaveStatusEnum } from "../../types-enums/leave-status-enum";
+
 
  export interface LeaveModel {
   id: number;
@@ -8,7 +8,7 @@ import { LeaveStatusEnum } from "../../types-enums/leave-status-enum";
   startDate:string;
   endDate: string;
   reason: string;
-  status: LeaveStatusEnum;
+  status: string;
   createdAt: string; // when draft or record was created
   // submission metadata
   approverId?: number;        // who approved/rejected

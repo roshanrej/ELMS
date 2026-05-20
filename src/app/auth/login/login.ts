@@ -3,9 +3,14 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../services/auth.service';
-import { RoleTypeEnum } from '../../core/types-enums/role-type.enum';
 import { AuthStore } from '../store/auth.store';
 
+/**
+ * ARCHITECTURAL NOTE:
+ * This component handles login UI and basic navigation.
+ * Authorization logic (which routes a user can access) is backend-owned.
+ * Frontend should not validate returnUrl against role.
+ */
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -66,10 +71,16 @@ export class LoginPage implements OnInit {
     }
   }
 
-  private navigateAfterLogin(role: RoleTypeEnum): void {
+  /**
+   * Navigate to the appropriate dashboard for the user's role.
+   * Do NOT validate returnUrl against role - guards and backend will enforce access.
+   */
+  private navigateAfterLogin(role: string): void {
     const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
 
-    if (returnUrl && this.canUseReturnUrl(returnUrl, role)) {
+    // TODO: For better UX, validate returnUrl exists as a real route
+    // For now, just redirect to default role-based route
+    if (returnUrl && returnUrl.startsWith('/')) {
       this.router.navigateByUrl(returnUrl);
       return;
     }
@@ -77,35 +88,18 @@ export class LoginPage implements OnInit {
     this.navigateByRole(role);
   }
 
-  private navigateByRole(role: RoleTypeEnum): void {
-    switch (role) {
-      case RoleTypeEnum.ADMIN:
-        this.router.navigate(['/admin/dashboard']);
-        break;
+  /**
+   * Navigate to the default dashboard for a given role.
+   */
+  private navigateByRole(role: string): void {
+    const dashboardMap: Record<string, string> = {
+      'ADMIN': '/admin/dashboard',
+      'EMPLOYEE': '/employee/dashboard',
+      'MANAGER': '/manager/dashboard'
+    };
 
-      case RoleTypeEnum.EMPLOYEE:
-        this.router.navigate(['/employee/dashboard']);
-        break;
-
-      case RoleTypeEnum.MANAGER:
-        this.router.navigate(['/manager/dashboard']);
-        break;
-
-      default:
-        this.router.navigate(['/login']);
-    }
-  }
-
-  private canUseReturnUrl(returnUrl: string, role: RoleTypeEnum): boolean {
-    if (!returnUrl.startsWith('/') || returnUrl.startsWith('//')) {
-      return false;
-    }
-
-    return (
-      (role === RoleTypeEnum.ADMIN && returnUrl.startsWith('/admin')) ||
-      (role === RoleTypeEnum.EMPLOYEE && returnUrl.startsWith('/employee')) ||
-      (role === RoleTypeEnum.MANAGER && returnUrl.startsWith('/manager'))
-    );
+    const dashboard = dashboardMap[role] || '/login';
+    this.router.navigate([dashboard]);
   }
 }
  

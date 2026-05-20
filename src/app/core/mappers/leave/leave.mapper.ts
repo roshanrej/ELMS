@@ -1,5 +1,5 @@
 import { LeaveModel } from '../../models/leave/leave-model';
-import { LeaveStatusEnum } from '../../types-enums/leave-status-enum';
+import { LEAVE_STATUS } from '../../types-enums/leave-status-enum';
 
 import { LeaveBalanceModel } from '../../models/leave/leave-balance.model';
 import { LeaveRequestModel } from '../../models/leave/leave-request.model';
@@ -54,23 +54,17 @@ function assertLeaveDto(raw: unknown): LeaveDto {
   return obj as LeaveDto;
 }
 
-
-function toLeaveStatus(value: string): LeaveStatusEnum {
+/**
+ * Simply return the status string from backend.
+ * Backend is the source of truth for valid statuses.
+ * Frontend should not validate or transform status values.
+ */
+function toLeaveStatus(value: string): string {
   if (!value) {
     throw new Error('Missing leave status');
   }
-
-  const normalized = value.toUpperCase();
-
-  const match = Object.values(LeaveStatusEnum).find((status) => status === normalized);
-
-  if (!match) {
-    throw new Error(`Invalid leave status: ${value}`);
-  }
-
-  return match;
+  return value.toUpperCase();
 }
-
 
 export function mapLeaveDtoToModel(rawLeave: unknown): LeaveModel {
   const leave = assertLeaveDto(rawLeave); // 🔥 strict validation

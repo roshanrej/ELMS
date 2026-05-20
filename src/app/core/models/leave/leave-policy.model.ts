@@ -1,5 +1,10 @@
 export class LeavePolicyModel{
-    constructor(id:number){
+    constructor(
+        id:number,
+        
+
+
+    ){
 
     }
 }
