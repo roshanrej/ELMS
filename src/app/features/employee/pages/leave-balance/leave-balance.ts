@@ -1,13 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { LeaveBalanceModel } from '../../../../core/models/leave/leave-balance.model';
+import { LeaveBalanceProjectionDTO } from '../../../../core/dtos/leave-balance/leave-balance.projection.dto';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-
-
-type LeaveBalanceView = LeaveBalanceModel & {
+type LeaveBalanceView = LeaveBalanceProjectionDTO & {
   remainingPercent: number;
   severityClass: string;
   progressClass: string;
@@ -22,8 +20,7 @@ type LeaveBalanceView = LeaveBalanceModel & {
 export class LeaveBalancePage implements OnInit {
   private route = inject(ActivatedRoute);
 
-
-  balances: LeaveBalanceModel[] = [];
+  balances: LeaveBalanceProjectionDTO[] = [];
   balanceViews: LeaveBalanceView[] = [];
 
   ngOnInit() {
@@ -39,9 +36,15 @@ export class LeaveBalancePage implements OnInit {
     });
   }
 
-  getRemainingPercent(balance: LeaveBalanceModel): number {
-    if (!balance.allocated) return 0;
-    return Math.round((balance.remaining / balance.allocated) * 100);
+  getRemainingPercent(balance: LeaveBalanceProjectionDTO): number {
+    if (!balance.allocatedLeave) return 0;
+    return Math.round((balance.remainingLeave / balance.allocatedLeave) * 100);
+  }
+
+  // Legacy helper referenced in some templates / old code - safe wrapper
+  private getAllocatedForType(type: string): number {
+    const b = this.balances.find(balance => balance.leaveTypeName === type);
+    return b?.allocatedLeave ?? 0;
   }
 
   getCardSeverityClass(percent: number): string {
@@ -61,6 +64,6 @@ export class LeaveBalancePage implements OnInit {
   }
 
   getDefaultAllocation(type: string): number {
-    return this.balances.find(balance => balance.leaveType === type)?.allocated ?? 0;
+    return this.balances.find(balance => balance.leaveTypeName === type)?.allocatedLeave ?? 0;
   }
 }

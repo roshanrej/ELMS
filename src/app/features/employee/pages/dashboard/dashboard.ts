@@ -1,9 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit} from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { LeaveModel } from '../../../../core/models/leave/leave-model';
 
-type UpcomingLeaveView = LeaveModel & { daysLabel: string };
+import { LeaveBalanceProjectionDTO } from '../../../../core/dtos/leave-balance/leave-balance.projection.dto';
+import { EmployeeLeaveRequestDTO } from '../../../../core/dtos/leave-request/employee-leave-request.dto';
+import { LeaveRequestStatusEnum } from '../../../../core/types-enums/leave-request-status-enum';
+
+type UpcomingLeaveView = EmployeeLeaveRequestDTO & { daysLabel: string };
 
 @Component({
   selector: 'app-dashboard',
@@ -12,33 +15,28 @@ type UpcomingLeaveView = LeaveModel & { daysLabel: string };
   styleUrl: './dashboard.scss',
 })
 export class EmployeeDashboardPage implements OnInit {
-  employeeLeaves: LeaveModel[] = [];
+  employeeLeaveRequests: EmployeeLeaveRequestDTO[] = [];
+  employeeLeaveBalances : LeaveBalanceProjectionDTO[] = [];
 
   private route : ActivatedRoute = inject(ActivatedRoute)
-  leaveBalance = 0;
-  usedDays = 0;
+  annualLeaveBalance = 0;
+  annualUsedDays = 0;
   pendingCount = 0;
+  pendingCancelCount = 0;
   upcomingLeaves: UpcomingLeaveView[] = [];
   usedPercent = 0;
 
  ngOnInit() {
-  const data = this.route.snapshot.data['leaves'];
+  const leaveRequests = this.route.snapshot.data['leaveRequests'];
+  const leaveBalances = this.route.snapshot.data['leaveBalances'];
 
-  this.employeeLeaves = data || [];
-
+  this.employeeLeaveBalances  = leaveBalances || [];
+  this.employeeLeaveRequests = leaveRequests || [];
+  this.computeLeaveDetails();
   this.extractUpcoming();
 }
 
-  /**
-   * Do NOT calculate business metrics on frontend.
-   * Backend should provide:
-   * - leaveBalance: from getMyBalances() API endpoint
-   * - usedDays: pre-calculated from approved leaves
-   * - pendingCount: from a dedicated API endpoint
-   * 
-   * TODO: Wire up these backend APIs instead of local calculation.
-   * For now, leave values as 0 to prevent incorrect data display.
-   */
+
   getTypeLabel(type: string | null | undefined): string {
     if (!type) return '-';
     return type
@@ -49,11 +47,29 @@ export class EmployeeDashboardPage implements OnInit {
       .join(' ');
   }
 
+  computeLeaveDetails(){
+this.annualLeaveBalance = this.employeeLeaveBalances.filter(lb=> lb.leaveTypeName === 'ANNUAL')
+  .reduce((sum, balance) => sum + balance.remainingLeave, 0);
+    this.annualUsedDays = this.employeeLeaveBalances.filter(lb=> lb.leaveTypeName === 'ANNUAL').reduce((sum,balance)=> sum + balance.consumedLeave,0);
+   this.pendingCount = this.employeeLeaveRequests.filter(l=> l.status === LeaveRequestStatusEnum.PENDING).length;
+   this.pendingCancelCount  = this.employeeLeaveRequests.filter(l=> l.status === LeaveRequestStatusEnum. CANCEL_PENDING).length;
+   const annualAllocatedLeave = this.employeeLeaveBalances.filter(lb=> lb.leaveTypeName === 'ANNUAL').reduce((sum,balance)=>sum+ balance.allocatedLeave,0)
+   this.usedPercent =
+  annualAllocatedLeave > 0
+    ? (this.annualUsedDays / annualAllocatedLeave) * 100
+    : 0;
+  }
+
+
   extractUpcoming() {
     const today = new Date();
 
-    this.upcomingLeaves = this.employeeLeaves
-      .filter(l => new Date(l.startDate) >= today)
+    this.upcomingLeaves = this.employeeLeaveRequests
+      .filter(
+  l =>
+    l.status === LeaveRequestStatusEnum.APPROVED &&
+    new Date(l.startDate) >= today
+)
       .sort((a, b) =>
         new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
       )
@@ -70,13 +86,13 @@ export class EmployeeDashboardPage implements OnInit {
     const end = new Date(endDate).toLocaleDateString();
     return `${start} - ${end}`;
   }
-
-  statusClassMap: Record<string, string> = {
-    APPROVED: 'badge-soft-green',
-    PENDING: 'badge-soft-yellow',
-    REJECTED: 'badge-soft-red',
-    CANCELLED: 'badge-soft-gray',
-    DRAFT: 'badge-soft-gray'
-  };
+statusClassMap: Record<string, string> = {
+  APPROVED: 'badge-soft-green',
+  PENDING: 'badge-soft-yellow',
+  REJECTED: 'badge-soft-red',
+  CANCELLED: 'badge-soft-gray',
+  DRAFT: 'badge-soft-gray',
+  CANCEL_PENDING: 'badge-soft-orange'
+};
 
 }

@@ -1,0 +1,8 @@
+export enum LeaveRequestStatusEnum {
+  DRAFT = "DRAFT",
+  PENDING = "PENDING",
+  APPROVED = "APPROVED",
+  REJECTED = "REJECTED",
+  CANCELLED = "CANCELLED",
+  CANCEL_PENDING = "CANCEL_PENDING"
+}

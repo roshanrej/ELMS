@@ -3,7 +3,7 @@ import { ActivatedRoute, provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 
 import { EmployeeDashboardPage } from './dashboard';
-import { LeaveService } from '../../../../core/services/leave/leave.service';
+import { LeaveService } from '../../services/leave-requests/leave.service';
 
 describe('EmployeeDashboardPage', () => {
   let component: EmployeeDashboardPage;

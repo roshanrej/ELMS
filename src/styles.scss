@@ -4,13 +4,6 @@
 /*
  * ─────────────────────────────────────────────
  *  SERENE LIGHT THEME
- *  Soft desaturated rose-red accent · Airy whites
- * ─────────────────────────────────────────────
- */
-
-/*
- * ─────────────────────────────────────────────
- *  SERENE LIGHT THEME
  *  Anchor: #FB4B4E — vivid coral-red
  *  Divergence: warm blush neutrals · airy whites
  *  Palette family: coral-red → dusty rose → blush → pearl white
@@ -40,24 +33,24 @@
   --fw-bold: 700;
 
   /* ── Primary accent ── */
-  --app-red: #fb4b4e; /* vivid coral-red — the anchor */
-  --app-red-dark: #d93b3e; /* deeper coral — hover, active states */
-  --app-red-soft: #fff0f0; /* pearl blush — backgrounds, badges */
+  --app-red: #fb4b4e;
+  --app-red-dark: #d93b3e;
+  --app-red-soft: #fff0f0;
   --app-brand-gradient: linear-gradient(140deg, #fb4b4e 0%, #d93b3e 100%);
 
   /* ── Backgrounds ── */
-  --app-cream: #fdfbfa; /* luminous warm white — page bg */
-  --app-cream-strong: #f7eeec; /* soft blush — section separation */
-  --app-white: #ffffff; /* pure white — cards */
+  --app-cream: #fdfbfa;
+  --app-cream-strong: #f7eeec;
+  --app-white: #ffffff;
 
   /* ── Text ── */
-  --app-ink: #2a2122; /* warm near-black with rose undertone */
-  --app-muted: #8c7f80; /* desaturated rose-gray */
+  --app-ink: #2a2122;
+  --app-muted: #8c7f80;
 
   /* ── Border ── */
-  --app-border: #ede5e6; /* warm whisper — barely-there dividers */
+  --app-border: #ede5e6;
 
-  /* ── Status — desaturated to not compete with coral accent ── */
+  /* ── Status ── */
   --app-green-soft: #f2faf5;
   --app-green-dark: #2d6a4f;
 
@@ -73,10 +66,10 @@
   --bg-card: #ffffff;
 
   /* ── Interaction ── */
-  --bg-hover: #fff5f5; /* coral blush hover — warm, barely visible */
+  --bg-hover: #fff5f5;
 
   /* ── Table ── */
-  --bg-table-header: #fff5f5; /* coral pearl header */
+  --bg-table-header: #fff5f5;
   --bg-table-row-hover: #fff5f5;
 
   /* Semantic text */
@@ -94,6 +87,7 @@
   --status-neutral-bg: var(--app-gray-soft);
   --status-neutral-fg: var(--app-gray-dark);
 }
+
 * {
   box-sizing: border-box;
 }
@@ -104,17 +98,10 @@ canvas,
 video {
   max-width: 100%;
 }
-.bg-success {
-  background-color: #22c55e !important; /* green */
-}
 
-.bg-warning {
-  background-color: #f59e0b !important; /* amber */
-}
-
-.bg-danger {
-  background-color: #ef4444 !important; /* red */
-}
+.bg-success { background-color: #22c55e !important; }
+.bg-warning { background-color: #f59e0b !important; }
+.bg-danger  { background-color: #ef4444 !important; }
 
 html,
 body {
@@ -139,6 +126,10 @@ app-root {
   min-height: 100%;
 }
 
+/* ─────────────────────────────────────────────
+   BUTTONS
+───────────────────────────────────────────── */
+
 .btn-app {
   --bs-btn-color: #fff;
   --bs-btn-bg: var(--app-red);
@@ -161,13 +152,36 @@ app-root {
   font-weight: 600;
 }
 
-.text-app-muted {
-  color: var(--app-muted) !important;
+/* ─────────────────────────────────────────────
+   CONFIRM DIALOG
+───────────────────────────────────────────── */
+
+.app-confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
 }
 
-.text-app-red {
-  color: var(--app-red-dark) !important;
+.app-confirm-dialog {
+  width: 100%;
+  max-width: 380px;
+  margin: 1rem;
 }
+
+/* ─────────────────────────────────────────────
+   TYPOGRAPHY UTILITIES
+───────────────────────────────────────────── */
+
+.text-app-muted { color: var(--app-muted) !important; }
+.text-app-red   { color: var(--app-red-dark) !important; }
+.text-primary   { color: var(--text-primary) !important; }
+.text-secondary { color: var(--text-secondary) !important; }
+.text-muted     { color: var(--text-muted) !important; }
+.text-danger    { color: var(--app-red-dark) !important; }
 
 .app-title {
   color: var(--text-primary);
@@ -201,21 +215,15 @@ app-root {
   text-transform: uppercase;
 }
 
-.text-primary {
-  color: var(--text-primary) !important;
-}
+/* ─────────────────────────────────────────────
+   BACKGROUND UTILITIES
+───────────────────────────────────────────── */
 
-.text-secondary {
-  color: var(--text-secondary) !important;
-}
+.bg-app-cream { background: var(--app-cream) !important; }
 
-.text-muted {
-  color: var(--text-muted) !important;
-}
-
-.bg-app-cream {
-  background: var(--app-cream) !important;
-}
+/* ─────────────────────────────────────────────
+   PAGE LAYOUT
+───────────────────────────────────────────── */
 
 .app-page {
   display: grid;
@@ -231,7 +239,10 @@ app-root {
   min-width: 0;
 }
 
-/* ✅ Page hero hierarchy */
+/* ─────────────────────────────────────────────
+   PAGE HERO
+───────────────────────────────────────────── */
+
 .app-page__hero .app-eyebrow {
   font-size: 0.75rem;
   letter-spacing: 0.08em;
@@ -253,6 +264,14 @@ app-root {
   margin-bottom: 0;
   line-height: 1.5;
 }
+
+.app-page__hero {
+  padding: 1.5rem;
+}
+
+/* ─────────────────────────────────────────────
+   CARDS
+───────────────────────────────────────────── */
 
 .app-page__hero,
 .app-card {
@@ -278,9 +297,9 @@ app-root {
   border-color: color-mix(in srgb, var(--status-danger-fg) 25%, white);
 }
 
-.app-page__hero {
-  padding: 1.5rem;
-}
+/* ─────────────────────────────────────────────
+   EYEBROW / BRAND
+───────────────────────────────────────────── */
 
 .app-eyebrow {
   color: var(--app-red-dark);
@@ -333,6 +352,10 @@ app-root {
   text-transform: uppercase;
 }
 
+/* ─────────────────────────────────────────────
+   STAT CARDS
+───────────────────────────────────────────── */
+
 .app-stat {
   min-height: 150px;
 }
@@ -344,56 +367,138 @@ app-root {
   line-height: 1;
 }
 
-/* Table Container */
+/* ─────────────────────────────────────────────
+   TABLE WRAPPER
+   — border/radius live here, not on .app-table
+───────────────────────────────────────────── */
+
 .table-responsive {
   width: 100%;
   overflow-x: auto;
+  overflow-y: visible;
   -webkit-overflow-scrolling: touch;
   border-radius: var(--bs-border-radius);
   border: 1px solid var(--app-border);
   background: var(--app-white);
 }
 
+/* ─────────────────────────────────────────────
+   TABLE — BASE
+   fixed layout: column widths come from col-*
+   classes on <th>, never from cell content.
+───────────────────────────────────────────── */
+
 .app-table {
+  table-layout: fixed;
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
   margin-bottom: 0;
 }
 
+/* ─────────────────────────────────────────────
+   COLUMN WIDTHS
+───────────────────────────────────────────── */
+
+.col-type    { width: 13%; }
+.col-start   { width: 13%; }
+.col-end     { width: 13%; }
+.col-days    { width: 7%;  }
+.col-created { width: 12%; }
+.col-status  { width: 22%; } /* wide enough for "CANCELLATION REQUESTED" on one line */
+.col-action  { width: 13%; }
+
+/* ─────────────────────────────────────────────
+   TABLE — ALL CELLS
+   Padding is declared once here so th and td
+   are always in lock-step — no drift possible.
+───────────────────────────────────────────── */
+
+.app-table th,
+.app-table td {
+  padding: 0.875rem 1rem;
+  text-align: left;
+  vertical-align: middle;
+  white-space: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Edge breathing room */
+.app-table :is(thead, tbody) > tr > :first-child { padding-left: 1.25rem; }
+.app-table :is(thead, tbody) > tr > :last-child  { padding-right: 1.25rem; }
+
+/* ─────────────────────────────────────────────
+   TABLE — THEAD
+───────────────────────────────────────────── */
+
 .app-table thead th {
   background: var(--app-red-soft);
   color: var(--app-red-dark);
-  font-size: 0.75rem;
+  font-size: 0.76rem;
   font-weight: 700;
-  text-transform: uppercase;
   letter-spacing: 0.05em;
-  padding: 1rem;
+  text-transform: uppercase;
   border-bottom: 2px solid var(--app-border);
   white-space: nowrap;
 }
 
+/* ─────────────────────────────────────────────
+   TABLE — TBODY
+───────────────────────────────────────────── */
+
 .app-table tbody td {
-  padding: 1rem;
-  vertical-align: middle;
-  border-bottom: 1px solid var(--app-border);
   color: var(--app-ink);
   font-size: 0.9rem;
   font-weight: 500;
+  line-height: 1.35;
+  border-bottom: 1px solid var(--app-border);
 }
 
-/* Badges */
+.app-table > tbody > tr:last-child > td {
+  border-bottom: 0;
+}
+
+.app-table tbody tr:hover {
+  background-color: var(--app-red-soft);
+}
+
+/* ─────────────────────────────────────────────
+   CENTERED COLUMNS  (days · status · actions)
+   The cell-* class MUST appear on both <th> and
+   <td> so the alignment rule is always identical.
+───────────────────────────────────────────── */
+
+.app-table th.cell-days,
+.app-table td.cell-days,
+.app-table th.cell-status,
+.app-table td.cell-status,
+.app-table th.cell-action,
+.app-table td.cell-action {
+  text-align: center;
+  padding-inline: 0.75rem;
+  white-space: nowrap;
+}
+
+/* ─────────────────────────────────────────────
+   STATUS BADGES
+───────────────────────────────────────────── */
+
 .badge-soft {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.25rem 0.75rem;
+  padding: 0.25rem 0.65rem;
   border-radius: 9999px;
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;
+  letter-spacing: 0.03em;
   border: 1px solid transparent;
   min-width: 90px;
+  line-height: 1.3;
+  text-align: center;
+  white-space: nowrap;      /* stay on one line — column width handles overflow */
 }
 
 .badge-soft-red {
@@ -401,26 +506,94 @@ app-root {
   color: var(--app-red-dark);
   border-color: rgba(248, 113, 113, 0.2);
 }
+
 .badge-soft-green {
   background: var(--app-green-soft);
   color: var(--app-green-dark);
   border-color: rgba(52, 211, 153, 0.2);
 }
+
 .badge-soft-yellow {
   background: var(--app-yellow-soft);
   color: var(--app-yellow-dark);
   border-color: rgba(251, 191, 36, 0.2);
 }
+
 .badge-soft-gray {
   background: var(--app-gray-soft);
   color: var(--app-gray-dark);
   border-color: rgba(167, 164, 159, 0.2);
 }
+
 .badge-soft-orange {
-  background: #fff7ed; /* very soft amber */
-  color: #9a3412; /* deep warm orange */
+  background: #fff7ed;
+  color: #9a3412;
   border-color: rgba(234, 88, 12, 0.2);
 }
+
+/* ─────────────────────────────────────────────
+   ACTION GRID
+   width: 100% makes centering relative to the
+   full td — rows with 1 or 3 buttons stay on
+   the same visual axis as the "ACTIONS" header.
+───────────────────────────────────────────── */
+
+.action-grid {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+
+/* ─────────────────────────────────────────────
+   ICON BUTTONS
+───────────────────────────────────────────── */
+
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--app-border);
+  border-radius: 6px;
+  background: var(--app-white);
+  color: var(--app-ink);
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+  cursor: pointer;
+  flex-shrink: 0;
+
+  &:hover {
+    background: var(--app-gray-soft);
+    border-color: var(--app-muted);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: none;
+  }
+
+  i {
+    font-size: 15px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   EMPTY STATE
+───────────────────────────────────────────── */
+
 .app-empty-state {
   align-items: center;
   color: var(--text-muted);
@@ -437,23 +610,34 @@ app-root {
   font-size: 1.75rem;
 }
 
-.app-space-1 {
-  gap: 4px;
-}
-.app-space-2 {
-  gap: 8px;
-}
-.app-space-3 {
-  gap: 16px;
-}
-.app-space-4 {
-  gap: 24px;
-}
+/* ─────────────────────────────────────────────
+   FILTER CONTROLS
+───────────────────────────────────────────── */
+
+.app-filter-control       { min-width: 100px; }
+.app-filter-control--wide { min-width: 120px; }
+
+/* ─────────────────────────────────────────────
+   SPACING UTILITIES
+───────────────────────────────────────────── */
+
+.app-space-1 { gap: 4px; }
+.app-space-2 { gap: 8px; }
+.app-space-3 { gap: 16px; }
+.app-space-4 { gap: 24px; }
+
+/* ─────────────────────────────────────────────
+   PROGRESS
+───────────────────────────────────────────── */
 
 .progress {
   --bs-progress-bg: var(--app-cream-strong);
   --bs-progress-bar-bg: var(--app-red);
 }
+
+/* ─────────────────────────────────────────────
+   FORM CONTROLS
+───────────────────────────────────────────── */
 
 .form-control,
 .form-select {
@@ -466,6 +650,28 @@ app-root {
   border-color: var(--app-red);
   box-shadow: 0 0 0 0.2rem rgba(248, 113, 113, 0.16);
 }
+
+/* ─────────────────────────────────────────────
+   DRAFT MODE
+   Rebalances column widths when Approver column
+   is absent, giving more room to Status/Action.
+───────────────────────────────────────────── */
+
+.is-draft-mode {
+  .col-status { width: 18%; }
+  .col-action { width: 19%; }
+
+  .app-table th.cell-status,
+  .app-table td.cell-status,
+  .app-table th.cell-action,
+  .app-table td.cell-action {
+    padding-inline: 1rem;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   AUTH PAGES
+───────────────────────────────────────────── */
 
 .auth-page {
   background: var(--app-cream);
@@ -557,6 +763,10 @@ app-root {
   width: 18px;
 }
 
+/* ─────────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────────── */
+
 @media (max-width: 768px) {
   body {
     font-size: 14px;
@@ -592,6 +802,16 @@ app-root {
   .app-table thead th,
   .app-table tbody td {
     padding: 0.75rem;
+  }
+
+  /* Re-centre the centred columns at small breakpoint too */
+  .app-table th.cell-days,
+  .app-table td.cell-days,
+  .app-table th.cell-status,
+  .app-table td.cell-status,
+  .app-table th.cell-action,
+  .app-table td.cell-action {
+    padding-inline: 0.5rem;
   }
 
   .auth-panel {

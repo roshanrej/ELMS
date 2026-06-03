@@ -30,5 +30,15 @@ export const roleGuard: CanActivateFn = async (
     return true;
   }
 
-  return router.createUrlTree(['/']);
+  return router.createUrlTree([dashboardForRole(user.role)]);
 };
+
+function dashboardForRole(role: string): string {
+  const dashboardMap: Record<string, string> = {
+    ADMIN: '/admin/dashboard',
+    EMPLOYEE: '/employee/dashboard',
+    MANAGER: '/manager/dashboard',
+  };
+
+  return dashboardMap[role] ?? '/login';
+}

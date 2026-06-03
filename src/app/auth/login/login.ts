@@ -62,7 +62,7 @@ export class LoginPage implements OnInit {
     try {
       this.loading = true;
       const user = await this.authService.loginUser(this.loginForm.value);
-      this.navigateAfterLogin(user.role);
+      await this.navigateAfterLogin(user.role);
     } catch (error: any) {
       this.serverError = error.message || 'Server error';
       this.loginForm.get('password')?.reset();
@@ -75,17 +75,59 @@ export class LoginPage implements OnInit {
    * Navigate to the appropriate dashboard for the user's role.
    * Do NOT validate returnUrl against role - guards and backend will enforce access.
    */
-  private navigateAfterLogin(role: string): void {
+  private async navigateAfterLogin(role: string): Promise<void> {
     const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
 
-    // TODO: For better UX, validate returnUrl exists as a real route
-    // For now, just redirect to default role-based route
-    if (returnUrl && returnUrl.startsWith('/')) {
+    if (returnUrl && await this.isValidReturnUrl(returnUrl)) {
       this.router.navigateByUrl(returnUrl);
       return;
     }
 
     this.navigateByRole(role);
+  }
+
+  private async isValidReturnUrl(returnUrl: string): Promise<boolean> {
+    if (!returnUrl.startsWith('/') || returnUrl.startsWith('//')) {
+      return false;
+    }
+
+    try {
+      const tree = this.router.parseUrl(returnUrl);
+      const segments = tree.root.children['primary']?.segments.map(segment => segment.path) ?? [];
+      return this.routeExists(segments, this.router.config);
+    } catch {
+      return false;
+    }
+  }
+
+  private async routeExists(segments: string[], routes: any[]): Promise<boolean> {
+    for (const route of routes) {
+      if (route.path === '**') {
+        continue;
+      }
+
+      const routeSegments = route.path ? route.path.split('/') : [];
+      if (!this.matchesLeadingSegments(segments, routeSegments)) {
+        continue;
+      }
+
+      const remainingSegments = segments.slice(routeSegments.length);
+      if (remainingSegments.length === 0 && (route.component || route.redirectTo !== undefined || route.loadChildren)) {
+        return true;
+      }
+
+      const children = route.children ?? await route.loadChildren?.();
+      if (children && await this.routeExists(remainingSegments, children)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  private matchesLeadingSegments(segments: string[], routeSegments: string[]): boolean {
+    return routeSegments.length <= segments.length
+      && routeSegments.every((segment, index) => segment.startsWith(':') || segment === segments[index]);
   }
 
   /**

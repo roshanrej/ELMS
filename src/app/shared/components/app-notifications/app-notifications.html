@@ -1,0 +1,39 @@
+<section
+  class="app-notifications"
+  aria-live="polite"
+  aria-atomic="false"
+>
+  <article
+    *ngFor="let notification of notifications()"
+    class="app-notification"
+    [ngClass]="'app-notification--' + notification.type"
+  >
+    <i
+      class="bi app-notification__icon"
+      [ngClass]="iconFor(notification.type)"
+      aria-hidden="true"
+    ></i>
+
+    <div class="app-notification__content">
+      <strong
+        *ngIf="notification.title"
+        class="app-notification__title"
+      >
+        {{ notification.title }}
+      </strong>
+
+      <p class="app-notification__message">
+        {{ notification.message }}
+      </p>
+    </div>
+
+    <button
+      type="button"
+      class="app-notification__close"
+      aria-label="Dismiss notification"
+      (click)="remove(notification.id)"
+    >
+      <i class="bi bi-x-lg" aria-hidden="true"></i>
+    </button>
+  </article>
+</section>

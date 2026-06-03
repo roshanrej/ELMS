@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { AuthStore } from '../../../../auth/store/auth.store';
-import { LoginResponse } from '../../../../core/models/auth/login-response.model';
+import { UserContextDTO } from '../../../../core/dtos/user/user.model';
+
 
 @Component({
   selector: 'app-dashboard',
@@ -11,7 +12,7 @@ import { LoginResponse } from '../../../../core/models/auth/login-response.model
 })
 export class ManagerDashboardPage implements OnInit {
   private authStore = inject(AuthStore);
-  user: LoginResponse | null = null;
+  user: UserContextDTO | null = null;
 
   ngOnInit(): void {
     this.user = this.authStore.currentUser;

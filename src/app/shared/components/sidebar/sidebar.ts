@@ -3,7 +3,8 @@ import { Component, OnInit, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthStore } from '../../../auth/store/auth.store';
 import { AuthService } from '../../../auth/services/auth.service';
-import { LoginResponse } from '../../../core/models/auth/login-response.model';
+import { UserContextDTO } from '../../../core/dtos/user/user.model';
+
 
 interface NavLink {
   label: string;
@@ -31,7 +32,7 @@ export class Sidebar implements OnInit {
   private authService = inject(AuthService);
   private router = inject(Router);
 
-  user: LoginResponse | null = this.authStore.currentUser;
+  user: UserContextDTO | null = this.authStore.currentUser;
   navLinks: NavLink[] = [];
 
   /**

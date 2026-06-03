@@ -1,23 +1,23 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { LoginResponse } from '../../core/models/auth/login-response.model';
-
+import { UserContextDTO } from '../../core/dtos/user/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthStore {
-
-  private userSubject = new BehaviorSubject<LoginResponse | null>(null);
+  private userSubject = new BehaviorSubject<UserContextDTO | null>(null);
 
   user$ = this.userSubject.asObservable();
 
-  setUser(user: LoginResponse | null) {
+  setUser(user: UserContextDTO | null): void {
     this.userSubject.next(user);
   }
 
-  get currentUser() {
+  get currentUser(): UserContextDTO | null {
     return this.userSubject.value;
   }
-  clearUser(){
+
+
+  clearUser(): void {
     this.userSubject.next(null);
   }
 }

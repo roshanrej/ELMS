@@ -24,16 +24,16 @@
         class="app-card p-4 h-100"
         [ngClass]="balance.severityClass"
       >
-        <span class="app-eyebrow">{{ balance.leaveType }}</span>
+        <span class="app-eyebrow">{{ balance.leaveTypeName }}</span>
 
         <div class="app-stat__value my-3">
-          {{ formatValue(balance.remaining) }}
+          {{ formatValue(balance.remainingLeave) }}
         </div>
 
         <div
           class="progress mb-2"
           role="progressbar"
-          [attr.aria-label]="balance.leaveType + ' leave'"
+          [attr.aria-label]="balance.leaveTypeName + ' leave'"
           [attr.aria-valuenow]="balance.remainingPercent"
           aria-valuemin="0"
           aria-valuemax="100"
@@ -47,7 +47,7 @@
 
         <div class="d-flex justify-content-between small">
           <span class="text-muted">
-            {{ balance.remaining }} of {{ balance.allocated }} remaining
+            {{ balance.remainingLeave }} of {{ balance.allocatedLeave }} remaining
           </span>
           <span class="fw-semibold">
             {{ balance.remainingPercent }}%

@@ -2,6 +2,7 @@ import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { AuthStore } from '../store/auth.store';
+import { UserContextDTO } from '../../core/dtos/user/user.model';
 
 export const authGuard: CanActivateFn = async (_route, state) => {
   const authStore = inject(AuthStore);
@@ -12,7 +13,7 @@ export const authGuard: CanActivateFn = async (_route, state) => {
     return true;
   }
 
-  const restoredUser = await authService.restoreSession();
+  const restoredUser : UserContextDTO | null = await authService.restoreSession();
 
   if (restoredUser) {
     return true;

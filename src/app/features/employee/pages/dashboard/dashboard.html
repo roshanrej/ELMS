@@ -14,25 +14,32 @@
 
     <div class="col-md-4">
       <article class="app-card app-stat p-4">
-        <span class="app-eyebrow">Total Balance</span>
-        <div class="app-stat__value my-3">{{ leaveBalance }}</div>
-        <p class="text-app-muted mb-0">Days remaining this cycle.</p>
+        <span class="app-eyebrow">Annual Leave Balance</span>
+        <div class="app-stat__value my-3">{{ annualLeaveBalance }}</div>
+        <p class="text-app-muted mb-0">Annual leave days remaining this cycle.</p>
       </article>
     </div>
 
     <div class="col-md-4">
       <article class="app-card app-stat p-4">
-        <span class="app-eyebrow">Pending Leaves</span>
+        <span class="app-eyebrow">Pending Requests</span>
         <div class="app-stat__value my-3">{{ pendingCount }}</div>
+        <p class="text-app-muted mb-0">Awaiting manager approval.</p>
+      </article>
+    </div>
+    <div class="col-md-4">
+      <article class="app-card app-stat p-4">
+        <span class="app-eyebrow">Cancellation Requests</span>
+        <div class="app-stat__value my-3">{{ pendingCancelCount }}</div>
         <p class="text-app-muted mb-0">Awaiting manager approval.</p>
       </article>
     </div>
 
     <div class="col-md-4">
       <article class="app-card app-stat p-4">
-        <span class="app-eyebrow">Used</span>
-        <div class="app-stat__value my-3">{{ usedDays }}</div>
-        <p class="text-app-muted mb-0">Leave days taken this year.</p>
+        <span class="app-eyebrow">Annual Used</span>
+        <div class="app-stat__value my-3">{{ annualUsedDays }}</div>
+        <p class="text-app-muted mb-0">Annual leave days taken this year.</p>
       </article>
     </div>
 
@@ -69,7 +76,7 @@
                 <ng-container *ngIf="leave.startDate !== leave.endDate">
                   &ndash; {{ leave.endDate | date:'MMM d, yyyy' }}
                 </ng-container>
-                &middot; {{ leave.leaveDays }} {{ leave.leaveDays === 1 ? 'day' : 'days' }}
+                &middot; {{ leave.noOfDays }} {{ leave.noOfDays === 1 ? 'day' : 'days' }}
               </span>
             </div>
 
@@ -119,8 +126,8 @@
         </h3>
 
         <div class="d-flex justify-content-between mb-1 small">
-          <span class="text-muted">{{ usedDays }} used</span>
-          <span class="text-muted">{{ leaveBalance }} remaining</span>
+          <span class="text-muted">{{ annualUsedDays }} used</span>
+          <span class="text-muted">{{ annualLeaveBalance }} remaining</span>
         </div>
 
         <div class="progress app-progress" role="progressbar" aria-label="Annual leave used progress">

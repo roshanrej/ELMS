@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { AuthStore } from '../../../../auth/store/auth.store';
-import { LoginResponse } from '../../../../core/models/auth/login-response.model';
+import { UserContextDTO } from '../../../../core/dtos/user/user.model';
 
 interface SummaryCard {
   label: string;
@@ -17,7 +17,7 @@ interface SummaryCard {
 })
 export class AdminDashboardPage implements OnInit {
   private authStore = inject(AuthStore);
-  user: LoginResponse | null = null;
+  user: UserContextDTO | null = null;
   summaryCards: SummaryCard[] = [];
 
   ngOnInit(): void {

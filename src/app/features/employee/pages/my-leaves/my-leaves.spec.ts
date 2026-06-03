@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
 
 import { MyLeavesPage } from './my-leaves';
-import { LeaveService } from '../../../../core/services/leave/leave.service';
+import { LeaveService } from '../../services/leave-requests/leave.service';
 
 describe('MyLeavesPage', () => {
   let component: MyLeavesPage;

@@ -1,12 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
-import { LeaveBalanceModel } from '../../../../core/models/leave/leave-balance.model';
-import { LeaveModel } from '../../../../core/models/leave/leave-model';
-import { LeaveRequestModel } from '../../../../core/models/leave/leave-request.model';
-import { LeaveTypeModel } from '../../../../core/models/leave/leave-type.model';
-import { LeaveService } from '../../../../core/services/leave/leave.service';
+import { FormBuilder, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { switchMap } from 'rxjs';
+import { LeaveService } from '../../services/leave-requests/leave-request.service';
+import { LeavePolicyProjectionDTO } from '../../../../core/dtos/leave-policy/leave-policy.projection.dto';
+import { LeaveBalanceProjectionDTO } from '../../../../core/dtos/leave-balance/leave-balance.projection.dto';
+import { LeaveRequestProjectionDTO } from '../../../../core/dtos/leave-request/leave-request.projection.dto';
+import { CreateLeaveRequestDTO } from '../../../../core/dtos/leave-request/create-leave-request.dto';
+import { NotificationService } from '../../../../shared/services/notification.service';
 
 /**
  * ARCHITECTURAL NOTE:
@@ -21,19 +23,21 @@ import { LeaveService } from '../../../../core/services/leave/leave.service';
   styleUrl: './apply-leave.scss',
 })
 export class ApplyLeavePage implements OnInit {
-  private leaveService = inject(LeaveService);
+  
   private fb = inject(FormBuilder);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private leaveRequestService = inject(LeaveService);
+  private notifications = inject(NotificationService);
 
-  leaveTypes: LeaveTypeModel[] = [];
-  appliedLeave: LeaveModel | null = null;
+  leavePolicies: LeavePolicyProjectionDTO[] = [];
+  leaveBalances: LeaveBalanceProjectionDTO[] = [];
+  appliedLeave: LeaveRequestProjectionDTO | null = null;
   selectedLeaveType: string | null = null;
   leaveBalance: number | null = null;
   balancePercent = 0;
   isDraft = false;
-
-  private leaveBalances: LeaveBalanceModel[] = [];
-  private employeeLeaves: LeaveModel[] = [];
+  editDraftId: number | null = null;
 
   leaveForm = this.fb.nonNullable.group(
     {
@@ -45,11 +49,13 @@ export class ApplyLeavePage implements OnInit {
     { validators: this.leaveDateValidator.bind(this) }
   );
 
-  ngOnInit() {
-    this.leaveTypes = this.route.snapshot.data['leaveTypes'] ?? [];
-    this.employeeLeaves = this.route.snapshot.data['leaves'] ?? [];
-    this.leaveBalances = this.route.snapshot.data['leaveBalances'] ?? [];
 
+  ngOnInit() {
+    // Load policies and balances from backend projections (resolver or direct)
+    this.leavePolicies = this.route.snapshot.data['leavePolicies'];
+    this.leaveBalances = this.route.snapshot.data['leaveBalances'];
+    this.loadDraftForEdit();
+    
     this.leaveForm.get('leaveType')?.valueChanges.subscribe(type => {
       if (!type) {
         this.selectedLeaveType = null;
@@ -69,14 +75,29 @@ export class ApplyLeavePage implements OnInit {
 
     if (this.leaveForm.invalid) {
       this.leaveForm.markAllAsTouched();
-      alert('Please fill in all required fields.');
+      this.notifications.showWarning('Please fill in all required fields.');
       return;
     }
 
-    this.leaveService.requestLeave(this.buildPayload()).subscribe(data => {
-      this.appliedLeave = data;
-      alert('Leave request submitted.');
-      this.resetForm();
+    const payload = this.buildPayload();
+    const request$ = this.editDraftId
+      ? this.leaveRequestService
+          .editLeaveDraft(this.editDraftId, payload)
+          .pipe(
+            switchMap(() =>
+              this.leaveRequestService.submitExistingLeaveRequest(this.editDraftId!)
+            )
+          )
+      : this.leaveRequestService.submitLeaveRequest(payload);
+
+    request$.subscribe({
+      next: data => {
+        this.appliedLeave = data;
+        this.notifications.showSuccess('Leave request submitted successfully.');
+        this.resetForm();
+        this.router.navigate(['/employee/leaves']);
+      },
+      error: () => {},
     });
   }
 
@@ -84,19 +105,25 @@ export class ApplyLeavePage implements OnInit {
     this.isDraft = true;
     this.leaveForm.updateValueAndValidity();
 
-    this.leaveService.saveDraft(this.buildPayload()).subscribe(data => {
-      this.appliedLeave = data;
-      this.isDraft = false;
-      this.leaveForm.updateValueAndValidity();
-      alert('Draft saved.');
-      this.resetForm();
+    const payload = this.buildPayload();
+    const request$ = this.editDraftId
+      ? this.leaveRequestService.editLeaveDraft(this.editDraftId, payload)
+      : this.leaveRequestService.createLeaveDraft(payload);
+
+    request$.subscribe({
+      next: data => {
+        this.appliedLeave = data;
+        this.isDraft = false;
+        this.leaveForm.updateValueAndValidity();
+        this.notifications.showInfo('Draft saved successfully.');
+        this.resetForm();
+        this.router.navigate(['/employee/leaves/drafts']);
+      },
+      error: () => {},
     });
   }
 
-  /**
-   * Use backend-provided balance data.
-   * Do NOT calculate used days locally - backend is the authoritative source.
-   */
+  
   updateBalance(type: string | null) {
     if (!type) {
       this.leaveBalance = null;
@@ -104,17 +131,14 @@ export class ApplyLeavePage implements OnInit {
       return;
     }
 
-    // Backend provides pre-calculated balance
-    const balance = this.leaveBalances.find(item => item.leaveType === type);
+    const balance = this.leaveBalances.find(b => b.leaveTypeName === type);
 
     if (balance) {
-      // Use backend-provided remaining balance
-      this.leaveBalance = balance.remaining;
-      this.balancePercent = balance.allocated > 0
-        ? Math.round((this.leaveBalance / balance.allocated) * 100)
+      this.leaveBalance = balance.remainingLeave;
+      this.balancePercent = balance.allocatedLeave > 0
+        ? Math.round((this.leaveBalance / balance.allocatedLeave) * 100)
         : 0;
     } else {
-      // Fallback: no balance data available
       this.leaveBalance = 0;
       this.balancePercent = 0;
     }
@@ -171,24 +195,44 @@ export class ApplyLeavePage implements OnInit {
       endDate: '',
       reason: '',
     });
+    this.editDraftId = null;
     this.selectedLeaveType = null;
     this.leaveBalance = null;
     this.balancePercent = 0;
   }
 
+  private loadDraftForEdit() {
+    const draft = history.state?.draft as LeaveRequestProjectionDTO | undefined;
+    const draftId = Number(this.route.snapshot.queryParamMap.get('draftId'));
 
+    if (!draft || !draftId) {
+      return;
+    }
 
-  private buildPayload(): LeaveRequestModel {
-    const raw = this.leaveForm.getRawValue();
-    return {
-      leaveType: raw.leaveType,
-      startDate: this.toDateOnlyString(raw.startDate),
-      endDate: this.toDateOnlyString(raw.endDate),
-      reason: raw.reason,
-    };
+    this.editDraftId = draftId;
+    this.leaveForm.patchValue({
+      leaveType: draft.leaveType,
+      startDate: this.toDateInputValue(draft.startDate),
+      endDate: this.toDateInputValue(draft.endDate),
+      reason: draft.reason ?? '',
+    });
+    this.selectedLeaveType = this.formatType(draft.leaveType);
+    this.updateBalance(draft.leaveType);
   }
 
-  private toDateOnlyString(value: string | null): string | null {
-    return value ? value : null;
+  private toDateInputValue(value: string): string {
+    return value?.slice(0, 10) ?? '';
+  }
+
+
+
+  private buildPayload(): CreateLeaveRequestDTO {
+    const raw = this.leaveForm.getRawValue();
+    return {
+      leaveType: raw.leaveType ?? '',
+      startDate: raw.startDate,
+      endDate: raw.endDate,
+      reason: raw.reason ?? '',
+    };
   }
 }

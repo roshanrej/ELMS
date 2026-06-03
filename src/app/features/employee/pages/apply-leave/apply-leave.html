@@ -44,10 +44,10 @@
                 </option>
 
                 <option
-                  *ngFor="let type of leaveTypes"
-                  [ngValue]="type.name"
+                  *ngFor="let policy of leavePolicies"
+                  [ngValue]="policy.leaveTypeName"
                 >
-                  {{ formatType(type.name) }}
+                  {{ formatType(policy.leaveTypeName) }}
                 </option>
 
               </select>
@@ -126,7 +126,7 @@
                 class="form-control form-control-sm"
                 rows="4"
                 formControlName="reason"
-                placeholder="Add a short reason for your "
+                placeholder="Add a short reason for your leave"
               ></textarea>
 
               <!-- Validation -->

@@ -1,9 +1,33 @@
-<section class="app-card p-4">
-  <span class="app-eyebrow">Confirm</span>
-  <h3 class="h5 fw-bold mb-2">Confirm action</h3>
-  <p class="text-app-muted">Review the action before continuing.</p>
-  <div class="d-flex gap-2">
-    <button type="button" class="btn btn-app">Confirm</button>
-    <button type="button" class="btn btn-cream">Cancel</button>
+@if (visible) {
+  <div class="app-confirm-overlay" (click)="dismissed.emit()">
+    <div class="app-card p-4 app-confirm-dialog" (click)="$event.stopPropagation()">
+
+      <span class="app-eyebrow">Confirm</span>
+
+      <h3 class="h5 fw-bold mb-2">{{ title }}</h3>
+
+      <p class="text-app-muted">{{ description }}</p>
+
+      <div class="d-flex gap-2">
+        <button
+          type="button"
+          class="btn"
+          [class.btn-danger]="danger"
+          [class.btn-app]="!danger"
+          (click)="confirmed.emit()"
+        >
+          {{ confirmLabel }}
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-cream"
+          (click)="dismissed.emit()"
+        >
+          Cancel
+        </button>
+      </div>
+
+    </div>
   </div>
-</section>
+}
