@@ -1,29 +1,26 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { inject } from '@angular/core';
-import { environment } from '../../../../environments/environment';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { LeaveBalanceProjectionDTO } from '../../dtos/leave-balance/leave-balance.projection.dto';
 import { ApiResponseDTO } from '../../dtos/api/api-response.model';
+import { LeaveBalanceProjectionDTO } from '../../dtos/leave-balance/leave-balance.projection.dto';
+import { EmployeeLeaveBalanceApi } from './employee-leave-balance-api';
+import { ManagerLeaveBalanceApi } from './manager-leave-balance-api';
 
+/**
+ * Backward-compatible facade for older imports.
+ * New feature code should inject the role-specific API classes directly.
+ */
 @Injectable({
   providedIn: 'root',
 })
 export class LeaveBalanceApi {
-  private http: HttpClient = inject(HttpClient);
-  private baseUrl = environment.apiBaseUrl;
+  private employeeApi = inject(EmployeeLeaveBalanceApi);
+  private managerApi = inject(ManagerLeaveBalanceApi);
 
-  // Employee: My leave balances (projection - backend computes remaining etc.)
   getMyLeaveBalances(): Observable<ApiResponseDTO<LeaveBalanceProjectionDTO[]>> {
-    return this.http.get<ApiResponseDTO<LeaveBalanceProjectionDTO[]>>(
-      `${this.baseUrl}/employee/api/leave-balances/me`
-    );
+    return this.employeeApi.getMyLeaveBalances();
   }
 
-  // Manager/Admin: Team balances (if needed)
   getTeamLeaveBalances(): Observable<ApiResponseDTO<LeaveBalanceProjectionDTO[]>> {
-    return this.http.get<ApiResponseDTO<LeaveBalanceProjectionDTO[]>>(
-      `${this.baseUrl}/api/leave-balances/team`
-    );
+    return this.managerApi.getTeamLeaveBalances();
   }
 }

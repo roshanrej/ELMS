@@ -1,7 +1,7 @@
 import { LeaveRequestProjectionDTO } from "./leave-request.projection.dto";
 
 export interface ManagerEmployeeLeaveDTO {
-  leaveRequests: LeaveRequestProjectionDTO[];
+  leaveRequest: LeaveRequestProjectionDTO;
   employeeEmail: string;
   employeeName: string;
 }

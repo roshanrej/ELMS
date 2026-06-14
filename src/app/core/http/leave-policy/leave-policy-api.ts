@@ -1,29 +1,26 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { inject } from '@angular/core';
-import { environment } from '../../../../environments/environment';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { LeavePolicyProjectionDTO } from '../../dtos/leave-policy/leave-policy.projection.dto';
 import { ApiResponseDTO } from '../../dtos/api/api-response.model';
+import { LeavePolicyProjectionDTO } from '../../dtos/leave-policy/leave-policy.projection.dto';
+import { AdminLeavePolicyApi } from './admin-leave-policy-api';
+import { EmployeeLeavePolicyApi } from './employee-leave-policy-api';
 
+/**
+ * Backward-compatible facade for older imports.
+ * New feature code should inject the role-specific API classes directly.
+ */
 @Injectable({
   providedIn: 'root',
 })
 export class LeavePolicyApi {
-  private http: HttpClient = inject(HttpClient);
-  private baseUrl = environment.apiBaseUrl;
+  private employeeApi = inject(EmployeeLeavePolicyApi);
+  private adminApi = inject(AdminLeavePolicyApi);
 
   getActiveLeavePolicies(): Observable<ApiResponseDTO<LeavePolicyProjectionDTO[]>> {
-    return this.http.get<ApiResponseDTO<LeavePolicyProjectionDTO[]>>(
-      `${this.baseUrl}/employee/api/leave-policies/current/active`
-    );
+    return this.employeeApi.getActiveLeavePolicies();
   }
 
-  // For admin management of policies/quotas
   getAllLeavePolicies(): Observable<ApiResponseDTO<LeavePolicyProjectionDTO[]>> {
-    return this.http.get<ApiResponseDTO<LeavePolicyProjectionDTO[]>>(
-      `${this.baseUrl}/api/leave-policies`
-    );
+    return this.adminApi.getAllLeavePolicies();
   }
 }
-

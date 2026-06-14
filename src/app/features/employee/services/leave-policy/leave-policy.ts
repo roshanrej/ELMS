@@ -1,8 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
-import { LeavePolicyApi } from '../../../../core/http/leave-policy/leave-policy-api';
 import { LeavePolicyProjectionDTO } from '../../../../core/dtos/leave-policy/leave-policy.projection.dto';
-import { ApiResponseDTO } from '../../../../core/dtos/api/api-response.model';
+import { unwrapApiResponse } from '../../../../core/dtos/api/api-response.utils';
+import { NotificationService } from '../../../../shared/services/notification.service';
+import { EmployeeLeavePolicyApi } from '../../../../core/http/leave-policy/employee-leave-policy-api';
 
 /**
  * Thin policy service - returns backend projections directly.
@@ -11,12 +12,15 @@ import { ApiResponseDTO } from '../../../../core/dtos/api/api-response.model';
   providedIn: 'root',
 })
 export class LeavePolicyService {
-  private api = inject(LeavePolicyApi);
+  private api = inject(EmployeeLeavePolicyApi);
+  private notifications = inject(NotificationService);
+  private showApiError = (message: string): void => {
+    this.notifications.showError(message);
+  };
 
   getActivePolicies(): Observable<LeavePolicyProjectionDTO[]> {
-    return this.api.getActiveLeavePolicies().pipe(
-      map((res: ApiResponseDTO<LeavePolicyProjectionDTO[]>) => res.data ?? [])
-    );
+    return this.api
+      .getActiveLeavePolicies()
+      .pipe(map((res) => unwrapApiResponse(res, { fallback: [], onError: this.showApiError })));
   }
 }
-

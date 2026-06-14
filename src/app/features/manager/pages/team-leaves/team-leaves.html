@@ -1,61 +1,186 @@
-<section class="app-page">
+﻿<section class="app-page">
   <header class="app-page__hero">
-    <span class="app-eyebrow">Team Leaves</span>
-    <h1 class="app-title mb-3">Team availability</h1>
-    <p class="app-body mb-0">A manager view for scanning upcoming absences and coverage notes.</p>
+    <span class="app-eyebrow">
+      My Team Leaves
+    </span>
+
+    <h1 class="app-title">
+      Leave Request History
+    </h1>
+
+    <p class="app-body mb-0">
+      A table for tracking leave requests and implementing managerial actions.
+    </p>
   </header>
 
-  <div class="row g-3">
-    <div class="col-lg-4">
-      <article class="app-card p-4 h-100">
-        <span class="badge badge-soft-red rounded-pill mb-3">Today</span>
-        <h2 class="app-subtitle mb-1">Daniel Roy</h2>
-        <p class="app-body mb-0">Support Lead is on approved annual leave.</p>
-      </article>
-    </div>
-    <div class="col-lg-4">
-      <article class="app-card p-4 h-100">
-        <span class="badge badge-soft-red rounded-pill mb-3">This week</span>
-        <h2 class="app-subtitle mb-1">2 planned leaves</h2>
-        <p class="app-body mb-0">Coverage remains healthy for the current sprint.</p>
-      </article>
-    </div>
-    <div class="col-lg-4">
-      <article class="app-card p-4 h-100">
-        <span class="badge badge-soft-red rounded-pill mb-3">Next week</span>
-        <h2 class="app-subtitle mb-1">1 request pending</h2>
-        <p class="app-body mb-0">Approval can be finalized after coverage review.</p>
-      </article>
-    </div>
-  </div>
+  <section class="app-card px-3 py-2 mb-3">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+      <span class="text-muted fw-semibold small">
+        Showing: {{ selectedYear === 'ALL' ? 'All Years' : selectedYear }}
+      </span>
 
-  <section class="app-card overflow-hidden">
+      <div class="d-flex align-items-center flex-wrap gap-3">
+        <div class="d-flex align-items-center gap-2">
+          <label class="app-label text-nowrap mb-0">Year:</label>
+
+          <select
+            class="form-select form-select-sm app-filter-control"
+            [(ngModel)]="selectedYear"
+            (change)="applyFilters()"
+          >
+            <option [ngValue]="'ALL'">All</option>
+            <option *ngFor="let year of years" [ngValue]="year">
+              {{ year }}
+            </option>
+          </select>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+          <label class="app-label text-nowrap mb-0">Status:</label>
+
+          <select
+            class="form-select form-select-sm app-filter-control"
+            [(ngModel)]="selectedStatus"
+            (change)="applyFilters()"
+          >
+            <option [ngValue]="'ALL'">All</option>
+            <option [ngValue]="'PENDING'">Pending</option>
+            <option [ngValue]="'APPROVED'">Approved</option>
+            <option [ngValue]="'REJECTED'">Rejected</option>
+            <option [ngValue]="'CANCEL_PENDING'">Cancel Pending</option>
+          </select>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+          <label class="app-label text-nowrap mb-0">Type:</label>
+
+          <select
+            class="form-select form-select-sm app-filter-control app-filter-control--wide"
+            [(ngModel)]="selectedType"
+            (change)="applyFilters()"
+          >
+            <option [ngValue]="'ALL'">All</option>
+            <option *ngFor="let type of leaveTypes" [ngValue]="type">
+              {{ formatType(type) }}
+            </option>
+          </select>
+        </div>
+
+        <button
+          type="button"
+          class="btn btn-outline-secondary btn-sm"
+          (click)="resetFilters()"
+        >
+          Reset filters
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section *ngIf="isLoading()" class="app-card p-3">
+    <span class="text-app-muted">Fetching your team leaves...</span>
+  </section>
+
+  <section
+    *ngIf="!isLoading() && filteredTeamLeaves.length > 0"
+    class="app-card leave-table-card"
+  >
     <div class="table-responsive">
-      <table class="table app-table align-middle">
-        <caption class="visually-hidden">Team leave schedule with employee, leave type, dates, and status.</caption>
+      <table class="table app-table align-middle mb-0">
+        <colgroup>
+          <col class="col-employee" />
+          <col class="col-type" />
+          <col class="col-start" />
+          <col class="col-end" />
+          <col class="col-days" />
+          <col class="col-date-context" />
+          <col class="col-status" />
+          <col class="col-action" />
+        </colgroup>
+
+        <caption class="visually-hidden">
+          Team Leave Request History
+        </caption>
+
         <thead>
           <tr>
             <th scope="col">Employee</th>
-            <th scope="col">Leave</th>
-            <th scope="col">Dates</th>
-            <th scope="col">Status</th>
+            <th scope="col">Type</th>
+            <th scope="col">Start Date</th>
+            <th scope="col">End Date</th>
+            <th scope="col" class="cell-days">Days</th>
+            <th scope="col">Submitted</th>
+            <th scope="col" class="cell-status">Status</th>
+            <th scope="col" class="cell-action">Actions</th>
           </tr>
         </thead>
+
         <tbody>
-          <tr>
-            <td class="fw-bold">Daniel Roy</td>
-            <td>Annual Leave</td>
-            <td>Apr 16 - Apr 17</td>
-            <td><span class="badge badge-soft-red rounded-pill">Approved</span></td>
-          </tr>
-          <tr>
-            <td class="fw-bold">Meera Nair</td>
-            <td>Work from home</td>
-            <td>Apr 22</td>
-            <td><span class="badge badge-soft-red rounded-pill">Scheduled</span></td>
+          <tr *ngFor="let leave of filteredTeamLeaves" [class.menu-open]="isRowMenuOpen(leave.leaveRequest.id)">
+            <td>
+              <div class="fw-bold">{{ leave.employeeName }}</div>
+            </td>
+
+            <td class="fw-bold text-nowrap">
+              {{ getTypeLabel(leave.leaveRequest.leaveType) }}
+            </td>
+
+            <td>{{ leave.leaveRequest.startDate | date: 'MMM d, yyyy' }}</td>
+
+            <td>{{ leave.leaveRequest.endDate | date: 'MMM d, yyyy' }}</td>
+
+            <td class="cell-days">{{ leave.leaveRequest.noOfDays }}</td>
+
+            <td>
+              {{ leave.leaveRequest.submittedAt
+                ? (leave.leaveRequest.submittedAt | date: 'MMM d, yyyy')
+                : '-' }}
+            </td>
+
+            <td class="cell-status">
+              <span
+                class="badge-soft rounded-pill px-2 py-1"
+                [ngClass]="statusClassMap[leave.leaveRequest.status]"
+              >
+                {{ getStatusLabel(leave.leaveRequest.status) }}
+              </span>
+            </td>
+
+            <td class="cell-action">
+              <div class="action-grid">
+                <app-leave-action-menu
+                  [actions]="getAvailableActions(leave)"
+                  [disabled]="isRowPending(leave.leaveRequest.id)"
+                  [pendingAction]="getRowPendingAction(leave.leaveRequest.id)"
+                  [ariaLabel]="'Actions for ' + getTypeLabel(leave.leaveRequest.leaveType)"
+                  (actionSelected)="requestAction(leave, $event)"
+                  (menuStateChanged)="onMenuToggle(leave.leaveRequest.id, $event)"
+                />
+              </div>
+            </td>
           </tr>
         </tbody>
       </table>
     </div>
   </section>
+
+  <section *ngIf="!isLoading() && filteredTeamLeaves.length === 0" class="app-card p-3">
+    <div class="app-empty-state">
+      <i class="bi bi-journal-text app-empty-state__icon" aria-hidden="true"></i>
+
+      <p class="mb-0">
+        No team leave requests are available right now.
+      </p>
+    </div>
+  </section>
+
+  <app-confirm-dialog
+    [visible]="!!confirmTarget"
+    [title]="confirmMeta?.label ?? ''"
+    [description]="confirmMeta?.description ?? ''"
+    [confirmLabel]="confirmMeta?.label ?? 'Confirm'"
+    [danger]="confirmMeta?.danger ?? false"
+    (confirmed)="confirmAction()"
+    (dismissed)="dismissConfirm()"
+  />
 </section>

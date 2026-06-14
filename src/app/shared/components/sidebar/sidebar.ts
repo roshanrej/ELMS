@@ -57,9 +57,8 @@ export class Sidebar implements OnInit {
     ],
     'MANAGER': [
       { label: 'Dashboard', route: '/manager/dashboard' },
-      { label: 'Approvals', route: '/manager/approvals' },
-      { label: 'View Leaves', route: '/manager/view-leaves' },
-      { label: 'Leave Analytics', route: '/manager/leave-analytics' },
+      { label: 'View Leaves', route: '/manager/team/leaves' },
+      { label: 'Leave Analytics', route: '/manager/team/leave-analytics' },
     ],
   };
 

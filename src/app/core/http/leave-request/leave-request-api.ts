@@ -1,110 +1,94 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { inject } from '@angular/core';
-import { environment } from '../../../../environments/environment';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
+import { ApiResponseDTO } from '../../dtos/api/api-response.model';
+import { CreateLeaveRequestDTO } from '../../dtos/leave-request/create-leave-request.dto';
+import { EmployeeLeaveRequestDTO } from '../../dtos/leave-request/employee-leave-request.dto';
 import { LeaveRequestProjectionDTO } from '../../dtos/leave-request/leave-request.projection.dto';
 import { ManagerEmployeeLeaveDTO } from '../../dtos/leave-request/manager-employee-leave.dto';
-import { CreateLeaveRequestDTO } from '../../dtos/leave-request/create-leave-request.dto';
-import { ApiResponseDTO } from '../../dtos/api/api-response.model';
-import { LeaveRequestActionEnum } from '../../types-enums/leave-request-action.enum';
-import { EmployeeLeaveRequestDTO } from '../../dtos/leave-request/employee-leave-request.dto';
+import { AdminLeaveRequestApi } from './admin-leave-request-api';
+import { EmployeeLeaveRequestApi } from './employee-leave-request-api';
+import { ManagerLeaveRequestApi } from './manager-leave-request-api';
 
+/**
+ * Backward-compatible facade for older imports.
+ * New feature code should inject the role-specific API classes directly.
+ */
 @Injectable({
   providedIn: 'root',
 })
 export class LeaveRequestApi {
-  
-  private http: HttpClient = inject(HttpClient);
-  private baseUrl = environment.apiBaseUrl;
+  private employeeApi = inject(EmployeeLeaveRequestApi);
+  private managerApi = inject(ManagerLeaveRequestApi);
+  private adminApi = inject(AdminLeaveRequestApi);
 
-  // Employee: My leave requests (projection - backend owns filtering/actions)
-
-  getEmployeeLeaveDrafts() : Observable<ApiResponseDTO<LeaveRequestProjectionDTO[]>>{
-      return this.http.get<ApiResponseDTO<LeaveRequestProjectionDTO[]>>(
-      `${this.baseUrl}/employee/api/leave-requests/me/drafts`
-    );
+  getEmployeeLeaveDrafts(): Observable<ApiResponseDTO<LeaveRequestProjectionDTO[]>> {
+    return this.employeeApi.getLeaveDrafts();
   }
+
   getEmployeeLeaveRequests(): Observable<ApiResponseDTO<EmployeeLeaveRequestDTO[]>> {
-    return this.http.get<ApiResponseDTO<EmployeeLeaveRequestDTO[]>>(
-      `${this.baseUrl}/employee/api/leave-requests/active/me`
-    );
+    return this.employeeApi.getActiveLeaveRequests();
   }
 
-getEmployeeLeaveProjections(): Observable<ApiResponseDTO<LeaveRequestProjectionDTO[]>> {
-    return this.http.get<ApiResponseDTO<LeaveRequestProjectionDTO[]>>(
-      `${this.baseUrl}/employee/api/leave-requests/me`
-    );
+  getEmployeeLeaveProjections(): Observable<ApiResponseDTO<LeaveRequestProjectionDTO[]>> {
+    return this.employeeApi.getLeaveRequestProjections();
   }
 
-  // Employee: Create new leave request as PENDING
-  submitNewLeaveRequest(dto: CreateLeaveRequestDTO): Observable<ApiResponseDTO<LeaveRequestProjectionDTO>> {
-    return this.http.post<ApiResponseDTO<LeaveRequestProjectionDTO>>(
-      `${this.baseUrl}/employee/api/leave-requests/submit`,
-      dto
-    );
-  }
-  submitExistingLeaveRequest(id: number): Observable<ApiResponseDTO<LeaveRequestProjectionDTO>>{
-     return this.http.post<ApiResponseDTO<LeaveRequestProjectionDTO>>(
-      `${this.baseUrl}/employee/api/leave-requests/${id}/submit`,
-    {}
-    );
+  submitNewLeaveRequest(
+    dto: CreateLeaveRequestDTO,
+  ): Observable<ApiResponseDTO<LeaveRequestProjectionDTO>> {
+    return this.employeeApi.submitNewLeaveRequest(dto);
   }
 
-  // Employee: Create new leave request as DRAFT
-createLeaveDraft (dto: CreateLeaveRequestDTO): Observable<ApiResponseDTO<LeaveRequestProjectionDTO>> {
-    return this.http.post<ApiResponseDTO<LeaveRequestProjectionDTO>>(
-      `${this.baseUrl}/employee/api/leave-requests/draft`,
-      dto
-    );
+  submitExistingLeaveRequest(id: number): Observable<ApiResponseDTO<LeaveRequestProjectionDTO>> {
+    return this.employeeApi.submitExistingLeaveRequest(id);
   }
 
-  // Generic action performer - backend decides validity via allowedActions
-  
-editLeaveDraft(
-  id: number,
-  dto: CreateLeaveRequestDTO
-): Observable<ApiResponseDTO<LeaveRequestProjectionDTO>> {
-  return this.http.put<ApiResponseDTO<LeaveRequestProjectionDTO>>(
-    `${this.baseUrl}/employee/api/leave-requests/drafts/${id}/edit`,
-    dto
-  );
-}
+  createLeaveDraft(
+    dto: CreateLeaveRequestDTO,
+  ): Observable<ApiResponseDTO<LeaveRequestProjectionDTO>> {
+    return this.employeeApi.createLeaveDraft(dto);
+  }
 
-deleteLeaveDraft(
-  id: number
-): Observable<ApiResponseDTO<null>> {
+  editLeaveDraft(
+    id: number,
+    dto: CreateLeaveRequestDTO,
+  ): Observable<ApiResponseDTO<LeaveRequestProjectionDTO>> {
+    return this.employeeApi.editLeaveDraft(id, dto);
+  }
 
-  return this.http.post<ApiResponseDTO<null>>(
-    `${this.baseUrl}/employee/api/leave-requests/drafts/${id}`,
-    {
-      
-    }
-  );
-}
-requestLeaveCancellation(id:number) : Observable<ApiResponseDTO<LeaveRequestProjectionDTO>>{
- return this.http.post<ApiResponseDTO<LeaveRequestProjectionDTO>>(
-    `${this.baseUrl}/employee/api/leave-requests/${id}/request-cancel`,
-    {}
-  );
-}
-cancelLeaveRequest(id: number) :Observable<ApiResponseDTO<LeaveRequestProjectionDTO>>{
- return this.http.post<ApiResponseDTO<LeaveRequestProjectionDTO>>(
-    `${this.baseUrl}/employee/api/leave-requests/${id}/cancel`,
-    {}
-  );
-}
-  // Manager: Team leave requests (projection with employee context)
+  deleteLeaveDraft(id: number): Observable<ApiResponseDTO<null>> {
+    return this.employeeApi.deleteLeaveDraft(id);
+  }
+
+  requestLeaveCancellation(id: number): Observable<ApiResponseDTO<LeaveRequestProjectionDTO>> {
+    return this.employeeApi.requestLeaveCancellation(id);
+  }
+
+  cancelLeaveRequest(id: number): Observable<ApiResponseDTO<LeaveRequestProjectionDTO>> {
+    return this.employeeApi.cancelLeaveRequest(id);
+  }
+
   getTeamLeaveRequests(): Observable<ApiResponseDTO<ManagerEmployeeLeaveDTO[]>> {
-    return this.http.get<ApiResponseDTO<ManagerEmployeeLeaveDTO[]>>(
-      `${this.baseUrl}/api/leave-requests/team`
-    );
+    return this.managerApi.getManagerOwnedLeaveRequests();
   }
 
-  // Admin/Manager: All or filtered (example)
+  approveLeaveRequest(id: number): Observable<ApiResponseDTO<LeaveRequestProjectionDTO>> {
+    return this.managerApi.approveLeaveRequest(id);
+  }
+
+  rejectLeaveRequest(id: number): Observable<ApiResponseDTO<LeaveRequestProjectionDTO>> {
+    return this.managerApi.rejectLeaveRequest(id);
+  }
+
+  approveLeaveCancel(id: number): Observable<ApiResponseDTO<LeaveRequestProjectionDTO>> {
+    return this.managerApi.approveCancelRequest(id);
+  }
+
+  rejectLeaveCancel(id: number): Observable<ApiResponseDTO<LeaveRequestProjectionDTO>> {
+    return this.managerApi.rejectCancelRequest(id);
+  }
+
   getAllLeaveRequests(): Observable<ApiResponseDTO<LeaveRequestProjectionDTO[]>> {
-    return this.http.get<ApiResponseDTO<LeaveRequestProjectionDTO[]>>(
-      `${this.baseUrl}/api/leave-requests`
-    );
+    return this.adminApi.getAllLeaveRequests();
   }
 }

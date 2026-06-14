@@ -20,6 +20,7 @@ export class EmployeeDashboardPage implements OnInit {
 
   private route : ActivatedRoute = inject(ActivatedRoute)
   annualLeaveBalance = 0;
+  annualRemainingDays = 0;
   annualUsedDays = 0;
   pendingCount = 0;
   pendingCancelCount = 0;
@@ -48,9 +49,12 @@ export class EmployeeDashboardPage implements OnInit {
   }
 
   computeLeaveDetails(){
-this.annualLeaveBalance = this.employeeLeaveBalances.filter(lb=> lb.leaveTypeName === 'ANNUAL')
+this.annualRemainingDays = this.employeeLeaveBalances.filter(lb=> lb.leaveTypeName === 'ANNUAL')
   .reduce((sum, balance) => sum + balance.remainingLeave, 0);
-    this.annualUsedDays = this.employeeLeaveBalances.filter(lb=> lb.leaveTypeName === 'ANNUAL').reduce((sum,balance)=> sum + balance.consumedLeave,0);
+  this.annualLeaveBalance = this.employeeLeaveBalances.filter(
+    lb=> lb.leaveTypeName === 'ANNUAL'
+  ).reduce((sum,balance)=> sum + balance.allocatedLeave,0);
+   this.annualUsedDays = this.employeeLeaveBalances.filter(lb=> lb.leaveTypeName === 'ANNUAL').reduce((sum,balance)=> sum + balance.consumedLeave,0);
    this.pendingCount = this.employeeLeaveRequests.filter(l=> l.status === LeaveRequestStatusEnum.PENDING).length;
    this.pendingCancelCount  = this.employeeLeaveRequests.filter(l=> l.status === LeaveRequestStatusEnum. CANCEL_PENDING).length;
    const annualAllocatedLeave = this.employeeLeaveBalances.filter(lb=> lb.leaveTypeName === 'ANNUAL').reduce((sum,balance)=>sum+ balance.allocatedLeave,0)

@@ -127,7 +127,7 @@
 
         <div class="d-flex justify-content-between mb-1 small">
           <span class="text-muted">{{ annualUsedDays }} used</span>
-          <span class="text-muted">{{ annualLeaveBalance }} remaining</span>
+          <span class="text-muted">{{ annualRemainingDays }} remaining</span>
         </div>
 
         <div class="progress app-progress" role="progressbar" aria-label="Annual leave used progress">
@@ -141,7 +141,7 @@
         </div>
 
         <p class="text-muted mt-2 mb-0 small">
-          <!-- Out of {{ AnnualLeavePolicy.Total }} days allocated this year. -->
+          Out of {{ annualLeaveBalance }} days allocated this year.
         </p>
       </section>
 

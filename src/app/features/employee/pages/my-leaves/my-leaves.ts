@@ -3,16 +3,17 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
-import { LeavePolicyProjectionDTO } from '../../../../core/dtos/leave-policy/leave-policy.projection.dto';
 import { LeaveRequestProjectionDTO } from '../../../../core/dtos/leave-request/leave-request.projection.dto';
 import { LeaveRequestActionEnum } from '../../../../core/types-enums/leave-request-action.enum';
 import { LeaveService } from '../../services/leave-requests/leave-request.service';
 import { ConfirmDialog } from '../../../../shared/components/confirm-dialog/confirm-dialog';
 import { NotificationService } from '../../../../shared/services/notification.service';
+import { LeaveActionMenuComponent } from '../../../../shared/components/leave-action-menu/leave-action-menu';
+import { getLeaveRequestActionMeta } from '../../../../shared/models/leave-request-action-menu.model';
 
 @Component({
   selector: 'app-my-leaves',
-  imports: [CommonModule, FormsModule, RouterLink, ConfirmDialog],
+  imports: [CommonModule, FormsModule, RouterLink, ConfirmDialog, LeaveActionMenuComponent],
   templateUrl: './my-leaves.html',
   styleUrl: './my-leaves.scss',
 })
@@ -23,13 +24,11 @@ export class MyLeavesPage implements OnInit {
   private readonly leaveService = inject(LeaveService);
   private readonly notifications = inject(NotificationService);
 
-  readonly LeaveAction = LeaveRequestActionEnum;
-
   mode = 'submitted';
 
   employeeLeaves: LeaveRequestProjectionDTO[] = [];
   filteredLeaves: LeaveRequestProjectionDTO[] = [];
-  leavePolicies: LeavePolicyProjectionDTO[] = [];
+  leaveTypes: string[] = [];
 
   selectedType: string | 'ALL' = 'ALL';
   selectedStatus: string | 'ALL' = 'ALL';
@@ -46,37 +45,7 @@ export class MyLeavesPage implements OnInit {
     action: LeaveRequestActionEnum;
   } | null = null;
 
-  readonly actionMeta: Partial<Record<LeaveRequestActionEnum, {
-    label: string;
-    description: string;
-    danger: boolean;
-  }>> = {
-    [LeaveRequestActionEnum.SUBMIT_REQUEST]: {
-      label: 'Submit Request',
-      description: 'This will submit your leave request for approval. You won\'t be able to edit it after submission.',
-      danger: false,
-    },
-    [LeaveRequestActionEnum.REQUEST_CANCEL]: {
-      label: 'Request Cancellation',
-      description: 'This will send a cancellation request to your manager. The leave will remain active until it is approved.',
-      danger: true,
-    },
-    [LeaveRequestActionEnum.CANCEL_REQUEST]: {
-      label: 'Cancel Request',
-      description: 'This will immediately cancel your pending leave request.',
-      danger: true,
-    },
-    [LeaveRequestActionEnum.DELETE_DRAFT]: {
-      label: 'Delete Draft',
-      description: 'This will permanently delete this draft. This action cannot be undone.',
-      danger: true,
-    },
-    [LeaveRequestActionEnum.EDIT_DRAFT]: {
-      label: 'Edit Draft',
-      description: '',
-      danger: false,
-    },
-  };
+  activeMenuRowId: number | null = null;
 
   statusClassMap: Record<string, string> = {
     APPROVED: 'badge-soft-green',
@@ -93,16 +62,15 @@ export class MyLeavesPage implements OnInit {
     REJECTED: 'Rejected',
     CANCELLED: 'Cancelled',
     DRAFT: 'Draft',
-    CANCEL_PENDING: 'Cancellation Requested',
+    CANCEL_PENDING: 'Cancel Pending',
   };
   get confirmMeta() {
-  if (!this.confirmTarget) return null;
-  return this.actionMeta[this.confirmTarget.action] ?? null;
-}
+    if (!this.confirmTarget) return null;
+    return getLeaveRequestActionMeta(this.confirmTarget.action);
+  }
 
   ngOnInit(): void {
     this.mode = this.route.snapshot.data['mode'] ?? 'submitted';
-    this.leavePolicies = this.route.snapshot.data['leavePolicies'] ?? [];
     this.employeeLeaves = this.route.snapshot.data['leaves'] ?? [];
 
     this.extractYears();
@@ -114,10 +82,6 @@ export class MyLeavesPage implements OnInit {
     leave: LeaveRequestProjectionDTO,
     action: LeaveRequestActionEnum
   ): void {
-    if (action === LeaveRequestActionEnum.EDIT_DRAFT) {
-      this.performAction(leave, action);
-      return;
-    }
     this.confirmTarget = { leave, action };
   }
 
@@ -136,47 +100,54 @@ export class MyLeavesPage implements OnInit {
     return this.actionPending.has(leaveId);
   }
 
+  isRowMenuOpen(leaveId: number): boolean {
+    return this.activeMenuRowId === leaveId;
+  }
+
+  onMenuToggle(leaveId: number, isOpen: boolean): void {
+    this.activeMenuRowId = isOpen ? leaveId : null;
+  }
+
+  getRowPendingAction(leaveId: number): LeaveRequestActionEnum | null {
+    return this.actionPending.get(leaveId) ?? null;
+  }
+
   async performAction(
     leave: LeaveRequestProjectionDTO,
     action: LeaveRequestActionEnum
   ): Promise<void> {
     try {
       this.actionPending.set(leave.id, action);
-      let updatedLeave: LeaveRequestProjectionDTO | null = null;
 
       switch (action) {
 
         case LeaveRequestActionEnum.SUBMIT_REQUEST:
-          updatedLeave = await firstValueFrom(
+          await firstValueFrom(
             this.leaveService.submitExistingLeaveRequest(leave.id)
           );
-          this.notifications.showSuccess('Leave request submitted successfully.');
+          this.notifications.showSuccess(getLeaveRequestActionMeta(action).successMessage);
           break;
 
         case LeaveRequestActionEnum.REQUEST_CANCEL:
-          updatedLeave = await firstValueFrom(
+          await firstValueFrom(
             this.leaveService.requestLeaveCancellation(leave.id)
           );
-          this.notifications.showSuccess('Cancellation request submitted.');
+          this.notifications.showSuccess(getLeaveRequestActionMeta(action).successMessage);
           break;
 
         case LeaveRequestActionEnum.CANCEL_REQUEST:
-          updatedLeave = await firstValueFrom(
+          await firstValueFrom(
             this.leaveService.cancelLeaveRequest(leave.id)
           );
-          this.notifications.showSuccess('Leave request cancelled.');
+          this.notifications.showSuccess(getLeaveRequestActionMeta(action).successMessage);
           break;
 
         case LeaveRequestActionEnum.DELETE_DRAFT:
           await firstValueFrom(
             this.leaveService.deleteLeaveDraft(leave.id)
           );
-          this.employeeLeaves = this.employeeLeaves.filter(
-            l => l.id !== leave.id
-          );
-          this.applyFilters();
-          this.notifications.showSuccess('Draft deleted successfully.');
-          return;
+          this.notifications.showSuccess(getLeaveRequestActionMeta(action).successMessage);
+          break;
 
         case LeaveRequestActionEnum.EDIT_DRAFT:
           await this.router.navigate(
@@ -189,21 +160,26 @@ export class MyLeavesPage implements OnInit {
           return;
 
         default:
+          this.notifications.showError(`${getLeaveRequestActionMeta(action).label} is not available in this view yet.`);
           return;
       }
 
-      if (updatedLeave) {
-        this.employeeLeaves = this.employeeLeaves.map(
-          l => l.id === updatedLeave!.id ? updatedLeave! : l
-        );
-        this.extractYears();
-        this.applyFilters();
-      }
+      await this.refreshLeaves();
 
     } catch {
     } finally {
       this.actionPending.delete(leave.id);
     }
+  }
+
+  async refreshLeaves(): Promise<void> {
+    this.employeeLeaves = await firstValueFrom(
+      this.mode === 'draft'
+        ? this.leaveService.getEmployeeLeaveDrafts()
+        : this.leaveService.getEmployeeLeaveRequestsProjections()
+    );
+    this.extractYears();
+    this.applyFilters();
   }
 
   applyFilters(): void {
@@ -226,8 +202,14 @@ export class MyLeavesPage implements OnInit {
         leave => leave.leaveType === this.selectedType
       );
     }
-
     this.filteredLeaves = filtered;
+  }
+
+  resetFilters(): void {
+    this.selectedYear = 'ALL';
+    this.selectedStatus = 'ALL';
+    this.selectedType = 'ALL';
+    this.applyFilters();
   }
 
   extractYears(): void {
@@ -240,21 +222,13 @@ export class MyLeavesPage implements OnInit {
     this.years = Array.from(years).sort((a, b) => b - a);
   }
 
-  hasAction(
-    leave: LeaveRequestProjectionDTO,
-    action: LeaveRequestActionEnum
-  ): boolean {
-    return leave.allowedActions?.includes(action) ?? false;
+  getAvailableActions(leave: LeaveRequestProjectionDTO): LeaveRequestActionEnum[] {
+    return leave.availableActions ?? leave.allowedActions ?? [];
   }
 
   getTypeLabel(type: string | null | undefined): string {
     if (!type) return '-';
-
-    const policy = this.leavePolicies.find(
-      p => p.leaveTypeName === type
-    );
-
-    return this.formatType(policy?.leaveTypeName ?? type);
+    return this.formatType(type);
   }
 
   formatType(type: string): string {

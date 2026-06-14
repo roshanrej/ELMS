@@ -32,8 +32,7 @@ export const employeeRoutes: Route[] = [
     component: MyLeavesPage,
 
     resolve: {
-      leaves: employeeLeaveRequestsResolver,
-      leavePolicies: leavePoliciesResolver
+      leaves: employeeLeaveRequestsResolver
     },
 
     data: {
@@ -46,8 +45,7 @@ export const employeeRoutes: Route[] = [
     component: MyLeavesPage,
 
     resolve: {
-      leaves: employeeLeaveDraftsResolver,      // placeholder
-      leavePolicies: leavePoliciesResolver
+      leaves: employeeLeaveDraftsResolver // placeholder
     },
 
     data: {

@@ -1,13 +1,24 @@
-import { Route } from "@angular/router";
-import { ManagerAnalyticsPage } from "./pages/analytics/analytics";
-import { ManagerApprovalsPage } from "./pages/approvals/approvals";
-import { ManagerDashboardPage } from "./pages/dashboard/dashboard";
-import { TeamLeavesPage } from "./pages/team-leaves/team-leaves";
+import { Route } from '@angular/router';
+import { ManagerAnalyticsPage } from './pages/analytics/analytics';
 
-export const managerRoutes: Route[]=[
- {path: '', redirectTo: 'dashboard', pathMatch: 'full'},
- {path: 'dashboard', component:ManagerDashboardPage},
- {path: 'approvals', component: ManagerApprovalsPage},
- {path: 'view-leaves', component: TeamLeavesPage},
- {path: 'leave-analytics', component: ManagerAnalyticsPage},
-]
+import { ManagerDashboardPage } from './pages/dashboard/dashboard';
+import { TeamLeavesPage } from './pages/team-leaves/team-leaves';
+import { managerDashboardDetailsResolver } from './resolvers/manager-dashboard-details.resolver';
+import { managerOwnedLeavesResolver } from './resolvers/manager-owned-leave-requests.resolver';
+
+export const managerRoutes: Route[] = [
+  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+  {
+    path: 'dashboard',
+    component: ManagerDashboardPage,
+    resolve: {
+      managerDashboardDetails: managerDashboardDetailsResolver,
+    },
+  },
+  { path: 'team/leaves', component: TeamLeavesPage,
+    resolve:{
+      teamLeaves : managerOwnedLeavesResolver
+    }
+   },
+  { path: 'team/leave-analytics', component: ManagerAnalyticsPage },
+];

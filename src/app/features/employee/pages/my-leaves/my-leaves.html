@@ -69,13 +69,21 @@
           >
             <option [ngValue]="'ALL'">All</option>
             <option
-              *ngFor="let policy of leavePolicies"
-              [ngValue]="policy.leaveTypeName"
+              *ngFor="let type of leaveTypes"
+              [ngValue]="type"
             >
-              {{ formatType(policy.leaveTypeName) }}
+              {{ formatType(type) }}
             </option>
           </select>
         </div>
+
+        <button
+          type="button"
+          class="btn btn-outline-secondary btn-sm"
+          (click)="resetFilters()"
+        >
+          Reset filters
+        </button>
       </div>
     </div>
   </section>
@@ -90,11 +98,21 @@
 
   <section
     *ngIf="!isLoading() && filteredLeaves.length > 0"
-    class="app-card overflow-hidden"
+    class="app-card leave-table-card"
     [class.is-draft-mode]="mode === 'draft'"
   >
     <div class="table-responsive">
       <table class="table app-table align-middle mb-0">
+        <colgroup>
+          <col class="col-type" />
+          <col class="col-start" />
+          <col class="col-end" />
+          <col class="col-days" />
+          <col class="col-date-context" />
+          <col class="col-status" />
+          <col class="col-action" />
+        </colgroup>
+
         <caption class="visually-hidden">
           {{ mode === 'draft' ? 'Draft leave requests' : 'Leave request history' }}
         </caption>
@@ -104,15 +122,15 @@
             <th scope="col">Type</th>
             <th scope="col">Start Date</th>
             <th scope="col">End Date</th>
-            <th scope="col">Days</th>
-            <th scope="col">Created</th>
-            <th scope="col">Status</th>
-            <th scope="col">Actions</th>
+            <th scope="col" class="cell-days">Days</th>
+            <th scope="col">{{ mode === 'draft' ? 'Created' : 'Submitted' }}</th>
+            <th scope="col" class="cell-status">Status</th>
+            <th scope="col" class="cell-action">Actions</th>
           </tr>
         </thead>
 
         <tbody>
-          <tr *ngFor="let leave of filteredLeaves">
+          <tr *ngFor="let leave of filteredLeaves" [class.menu-open]="isRowMenuOpen(leave.id)">
             <td class="fw-bold text-nowrap">
               {{ getTypeLabel(leave.leaveType) }}
             </td>
@@ -121,11 +139,17 @@
 
             <td>{{ leave.endDate | date: 'MMM d, yyyy' }}</td>
 
-            <td>{{ leave.noOfDays }}</td>
-
-            <td>{{ leave.createdAt | date: 'MMM d, yyyy' }}</td>
+            <td class="cell-days">{{ leave.noOfDays }}</td>
 
             <td>
+              {{
+                mode === 'draft'
+                  ? (leave.createdAt | date: 'MMM d, yyyy')
+                  : (leave.submittedAt ? (leave.submittedAt | date: 'MMM d, yyyy') : '-')
+              }}
+            </td>
+
+            <td class="cell-status">
               <span
                 class="badge-soft rounded-pill px-2 py-1"
                 [ngClass]="statusClassMap[leave.status]"
@@ -134,68 +158,16 @@
               </span>
             </td>
 
-            <td>
+            <td class="cell-action">
               <div class="action-grid">
-
-                <!-- Reason -->
-                <button
-                  *ngIf="leave.reason"
-                  class="btn-icon"
-                  [title]="leave.reason"
-                >
-                  <i class="bi bi-chat-left-text"></i>
-                </button>
-
-                <!-- Submit -->
-                <button
-                  *ngIf="hasAction(leave, LeaveAction.SUBMIT_REQUEST)"
-                  class="btn-icon"
-                  title="Submit Request"
-                  (click)="requestAction(leave, LeaveAction.SUBMIT_REQUEST)"
-                >
-                  <i class="bi bi-send-check"></i>
-                </button>
-
-                <!-- Edit Draft -->
-                <button
-                  *ngIf="hasAction(leave, LeaveAction.EDIT_DRAFT)"
-                  class="btn-icon"
-                  title="Edit Draft"
-                  (click)="requestAction(leave, LeaveAction.EDIT_DRAFT)"
-                >
-                  <i class="bi bi-pencil"></i>
-                </button>
-
-                <!-- Cancel Pending Request -->
-                <button
-                  *ngIf="hasAction(leave, LeaveAction.CANCEL_REQUEST)"
-                  class="btn-icon text-danger"
-                  title="Cancel Request"
-                  (click)="requestAction(leave, LeaveAction.CANCEL_REQUEST)"
-                >
-                  <i class="bi bi-x-circle"></i>
-                </button>
-
-                <!-- Request Cancellation -->
-                <button
-                  *ngIf="hasAction(leave, LeaveAction.REQUEST_CANCEL)"
-                  class="btn-icon text-danger"
-                  title="Request Cancellation"
-                  (click)="requestAction(leave, LeaveAction.REQUEST_CANCEL)"
-                >
-                  <i class="bi bi-calendar-x"></i>
-                </button>
-
-                <!-- Delete Draft -->
-                <button
-                  *ngIf="hasAction(leave, LeaveAction.DELETE_DRAFT)"
-                  class="btn-icon text-danger"
-                  title="Delete Draft"
-                  (click)="requestAction(leave, LeaveAction.DELETE_DRAFT)"
-                >
-                  <i class="bi bi-trash3"></i>
-                </button>
-
+                <app-leave-action-menu
+                  [actions]="getAvailableActions(leave)"
+                  [disabled]="isRowPending(leave.id)"
+                  [pendingAction]="getRowPendingAction(leave.id)"
+                  [ariaLabel]="'Actions for ' + getTypeLabel(leave.leaveType)"
+                  (actionSelected)="requestAction(leave, $event)"
+                  (menuStateChanged)="onMenuToggle(leave.id, $event)"
+                />
               </div>
             </td>
           </tr>

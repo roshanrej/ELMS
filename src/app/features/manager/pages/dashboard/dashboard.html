@@ -1,49 +1,107 @@
 <section class="app-page">
+
+  <!-- 🔥 HERO -->
   <header class="app-page__hero">
     <span class="app-eyebrow">Manager Dashboard</span>
-    <h1 class="app-title mb-3">Team leave command center</h1>
-    <p class="app-body mb-0">A crisp overview for pending decisions, coverage, and team availability.</p>
+    <h1 class="app-title">Good to see you.</h1>
+    <p class="app-body mb-0">
+      Here's a snapshot of your team's pending requests, and what's coming up.
+    </p>
   </header>
 
+  <!-- 🔥 STATS -->
   <div class="row g-3">
+
+ 
+
     <div class="col-md-4">
       <article class="app-card app-stat p-4">
-        <span class="app-eyebrow">Pending Approvals</span>
-        <div class="app-stat__value my-3">05</div>
+        <span class="app-eyebrow">Pending Requests</span>
+        <div class="app-stat__value my-3">{{ pendingCount }}</div>
         <p class="text-app-muted mb-0">Requests waiting for manager action.</p>
       </article>
     </div>
     <div class="col-md-4">
       <article class="app-card app-stat p-4">
-        <span class="app-eyebrow">Out Today</span>
-        <div class="app-stat__value my-3">02</div>
-        <p class="text-app-muted mb-0">Team members currently away.</p>
+        <span class="app-eyebrow">Cancellation Requests</span>
+        <div class="app-stat__value my-3">{{ pendingCancelCount }}</div>
+        <p class="text-app-muted mb-0">Requests waiting for manager action.</p>
       </article>
     </div>
-    <div class="col-md-4">
-      <article class="app-card app-stat p-4">
-        <span class="app-eyebrow">Coverage</span>
-        <div class="app-stat__value my-3">86%</div>
-        <p class="text-app-muted mb-0">Current coverage estimate.</p>
-      </article>
-    </div>
+
   </div>
 
-  <section class="app-card p-4">
-    <h2 class="app-subtitle">Decision queue</h2>
-    <div class="list-group list-group-flush">
-      <div class="list-group-item bg-transparent px-0 d-flex justify-content-between">
-        <span>Annual leave requests</span>
-        <span class="badge badge-soft-red rounded-pill">3 pending</span>
-      </div>
-      <div class="list-group-item bg-transparent px-0 d-flex justify-content-between">
-        <span>Sick leave requests</span>
-        <span class="badge badge-soft-red rounded-pill">1 pending</span>
-      </div>
-      <div class="list-group-item bg-transparent px-0 d-flex justify-content-between">
-        <span>Work from home requests</span>
-        <span class="badge badge-soft-red rounded-pill">1 pending</span>
-      </div>
+  <!-- 🔥 CONTENT -->
+  <div class="row g-3">
+
+    <!-- Upcoming Leave -->
+    <div class="col-lg-7">
+      <section class="app-card p-4 h-100">
+
+        <div class="d-flex align-items-center justify-content-between mb-3 app-space-2">
+          <h3 class="app-label mb-0">
+            Upcoming Leave
+          </h3>
+          <a routerLink="/manager/team/leaves/approvals" class="btn btn-cream btn-sm">
+            View all
+          </a>
+        </div>
+
+        <!-- Has upcoming -->
+        <div *ngIf="upcomingLeaves.length > 0; else noUpcoming">
+          <div
+            *ngFor="let leave of upcomingLeaves"
+            class="d-flex align-items-center justify-content-between py-2 border-bottom app-space-2"
+          >
+            <div class="d-flex flex-column">
+              <span class="fw-bold text-primary">
+                {{ leave.name }}
+              </span>
+              <span class="fw-semibold text-primary">
+                {{ getTypeLabel(leave.leaveRequest.leaveType) }}
+              </span>
+              <span class="text-muted small">
+                {{ leave.leaveRequest.startDate | date:'MMM d, yyyy' }}
+                <ng-container *ngIf="leave.leaveRequest.startDate !== leave.leaveRequest.endDate">
+                  &ndash; {{ leave.leaveRequest.endDate | date:'MMM d, yyyy' }}
+                </ng-container>
+                &middot; {{ leave.leaveRequest.noOfDays }} {{ leave.leaveRequest.noOfDays === 1 ? 'day' : 'days' }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty -->
+        <ng-template #noUpcoming>
+          <div class="app-empty-state">
+            <i class="bi bi-calendar2-check app-empty-state__icon" aria-hidden="true"></i>
+            <p class="mb-0">Your team does not have any upcoming leaves.</p>
+            <a routerLink="/manager/team/leaves" class="btn btn-cream btn-sm">View team leaves</a>
+          </div>
+        </ng-template>
+
+      </section>
     </div>
-  </section>
+
+    <!-- Right Column -->
+    <div class="col-lg-5 d-flex flex-column gap-3">
+
+      <!-- Quick Action -->
+      <section class="app-card p-4">
+        <span class="app-eyebrow">Quick Action</span>
+        <h3 class="app-subtitle mt-1 mb-2">
+          View your team leaves
+        </h3>
+        <p class="app-body mb-3">
+          Approve or reject leaves in a simple step.
+        </p>
+        <a routerLink="/employee/team/leaves" class="btn btn-app btn-sm">
+          <i class="bi bi-plus-lg me-1"></i> View Leaves
+        </a>
+      </section>
+      
+    </div>
+
+  </div>
+
 </section>

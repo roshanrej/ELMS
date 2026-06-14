@@ -33,7 +33,9 @@ export class LeaveBalancePage implements OnInit {
         severityClass: this.getCardSeverityClass(remainingPercent),
         progressClass: this.getProgressClass(remainingPercent),
       };
+      
     });
+    
   }
 
   getRemainingPercent(balance: LeaveBalanceProjectionDTO): number {
@@ -41,11 +43,7 @@ export class LeaveBalancePage implements OnInit {
     return Math.round((balance.remainingLeave / balance.allocatedLeave) * 100);
   }
 
-  // Legacy helper referenced in some templates / old code - safe wrapper
-  private getAllocatedForType(type: string): number {
-    const b = this.balances.find(balance => balance.leaveTypeName === type);
-    return b?.allocatedLeave ?? 0;
-  }
+  
 
   getCardSeverityClass(percent: number): string {
     if (percent <= 20) return 'app-card--danger';
