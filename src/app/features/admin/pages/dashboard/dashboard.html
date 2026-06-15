@@ -1,13 +1,9 @@
 <section class="app-page">
-  <header class="app-page__hero">
-    <div class="row g-4 align-items-center">
-      <div class="col-lg-8">
-        <span class="app-eyebrow">Admin Dashboard</span>
-        <h1 class="app-title mb-3">Control leave operations from one place.</h1>
-        <p class="app-body mb-0">Review employees, departments, quotas, and leave activity.</p>
-      </div>
-    </div>
-  </header>
+  <app-page-header
+    eyebrow="Admin Dashboard"
+    title="Control leave operations from one place."
+    subtitle="Review users, teams, leave types, policies, and activity across the organization."
+  ></app-page-header>
 
   <div class="row g-3">
     <div class="col-md-4" *ngFor="let card of summaryCards">

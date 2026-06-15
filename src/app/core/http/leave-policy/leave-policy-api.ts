@@ -20,7 +20,7 @@ export class LeavePolicyApi {
     return this.employeeApi.getActiveLeavePolicies();
   }
 
-  getAllLeavePolicies(): Observable<ApiResponseDTO<LeavePolicyProjectionDTO[]>> {
-    return this.adminApi.getAllLeavePolicies();
+  getLeavePoliciesForYear(year: number): Observable<ApiResponseDTO<LeavePolicyProjectionDTO[]>> {
+    return this.adminApi.getLeavePoliciesForYear(year);
   }
 }

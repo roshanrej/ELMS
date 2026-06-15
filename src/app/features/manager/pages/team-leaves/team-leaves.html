@@ -1,17 +1,9 @@
 ﻿<section class="app-page">
-  <header class="app-page__hero">
-    <span class="app-eyebrow">
-      My Team Leaves
-    </span>
-
-    <h1 class="app-title">
-      Leave Request History
-    </h1>
-
-    <p class="app-body mb-0">
-      A table for tracking leave requests and implementing managerial actions.
-    </p>
-  </header>
+  <app-page-header
+    eyebrow="My Team Leaves"
+    title="Leave Request History"
+    subtitle="A table for tracking leave requests and implementing managerial actions."
+  ></app-page-header>
 
   <section class="app-card px-3 py-2 mb-3">
     <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
@@ -78,7 +70,7 @@
   </section>
 
   <section *ngIf="isLoading()" class="app-card p-3">
-    <span class="text-app-muted">Fetching your team leaves...</span>
+    <app-loading-spinner text="Fetching your team leaves..."></app-loading-spinner>
   </section>
 
   <section
@@ -138,15 +130,10 @@
             </td>
 
             <td class="cell-status">
-              <span
-                class="badge-soft rounded-pill px-2 py-1"
-                [ngClass]="statusClassMap[leave.leaveRequest.status]"
-              >
-                {{ getStatusLabel(leave.leaveRequest.status) }}
-              </span>
+              <app-leave-status-badge [status]="leave.leaveRequest.status"></app-leave-status-badge>
             </td>
 
-            <td class="cell-action">
+            <td class="cell-action" [class.menu-open]="isRowMenuOpen(leave.leaveRequest.id)">
               <div class="action-grid">
                 <app-leave-action-menu
                   [actions]="getAvailableActions(leave)"

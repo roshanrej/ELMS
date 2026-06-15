@@ -43,9 +43,11 @@ export class Sidebar implements OnInit {
   private readonly defaultNavigation: Record<string, NavLink[]> = {
     'ADMIN': [
       { label: 'Dashboard', route: '/admin/dashboard' },
+      { label: 'Users', route: '/admin/employees' },
       { label: 'Departments', route: '/admin/departments' },
-      { label: 'Employees', route: '/admin/employees' },
-      { label: 'Leave Quotas', route: '/admin/leave-quotas' },
+      { label: 'Teams', route: '/admin/teams' },
+      { label: 'Leave Types', route: '/admin/leave-types' },
+      { label: 'Leave Policies', route: '/admin/leave-quotas' },
       { label: 'Analytics', route: '/admin/analytics' },
     ],
     'EMPLOYEE': [

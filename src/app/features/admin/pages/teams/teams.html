@@ -1,0 +1,226 @@
+<section class="app-page">
+  <app-page-header
+    eyebrow="Teams"
+    title="Team administration"
+  ></app-page-header>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <article class="app-card app-stat p-4">
+        <span class="app-eyebrow">Total teams</span>
+        <div class="app-stat__value my-3">{{ totalTeamCount }}</div>
+      </article>
+    </div>
+    <div class="col-md-4">
+      <article class="app-card app-stat p-4">
+        <span class="app-eyebrow">Assigned managers</span>
+        <div class="app-stat__value my-3">{{ assignedTeamCount }}</div>
+      </article>
+    </div>
+    <div class="col-md-4">
+      <article class="app-card app-stat p-4">
+        <span class="app-eyebrow">Unassigned teams</span>
+        <div class="app-stat__value my-3">{{ unassignedTeamCount }}</div>
+      </article>
+    </div>
+  </div>
+
+  <section class="app-card overflow-hidden">
+    <div class="p-4 border-bottom d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center justify-content-between gap-3">
+      <h2 class="app-subtitle mb-0">Teams</h2>
+
+      <div class="d-flex flex-column flex-sm-row gap-2 align-items-stretch align-items-sm-center">
+        <label class="visually-hidden" for="team-search">Search teams</label>
+        <input
+          id="team-search"
+          type="search"
+          class="form-control form-control-sm search-input"
+          placeholder="Search teams or managers"
+          [value]="teamSearch"
+          (input)="searchTeams($any($event.target).value)"
+        />
+        <button type="button" class="btn btn-app btn-sm" (click)="openCreateDialog()">
+          Create team
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="isLoading" class="p-4">
+      <app-loading-spinner text="Loading teams…"></app-loading-spinner>
+    </div>
+
+    <div *ngIf="!isLoading" class="table-responsive">
+      <table class="table app-table align-middle mb-0">
+        <caption class="visually-hidden">Team list with manager ownership and actions.</caption>
+        <colgroup>
+          <col />
+          <col />
+          <col class="col-action" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th scope="col">Team name</th>
+            <th scope="col">Assigned manager</th>
+            <th scope="col" class="cell-action">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let team of filteredTeams" [class.menu-open]="isRowMenuOpen(team.id)">
+            <td>
+              <div class="fw-bold">{{ team.teamName }}</div>
+            </td>
+            <td>
+              <div>{{ team.managerName ?? 'Unassigned' }}</div>
+            </td>
+            <td class="cell-action" [class.menu-open]="isRowMenuOpen(team.id)">
+              <app-row-action-menu
+                [actions]="getTeamActions()"
+                [ariaLabel]="'Actions for ' + team.teamName"
+                (menuStateChanged)="onMenuToggle(team.id, $event)"
+                (actionSelected)="onTeamMenuAction(team, $event)"
+              />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div *ngIf="!filteredTeams.length" class="app-empty-state border-top">
+        <i class="bi bi-people app-empty-state__icon" aria-hidden="true"></i>
+        <p class="mb-0">No teams match this search. Create a new team or clear the filter.</p>
+      </div>
+    </div>
+  </section>
+</section>
+
+<!-- Backdrop -->
+<div
+  class="app-modal-backdrop"
+  *ngIf="createDialogVisible || editDialogVisible || assignDialogVisible"
+  (click)="closeDialogs()"
+></div>
+
+<!-- Create team modal -->
+<section class="app-modal app-card" *ngIf="createDialogVisible">
+  <div class="app-modal__header d-flex justify-content-between align-items-start p-4 border-bottom">
+    <div>
+      <span class="app-eyebrow">Create team</span>
+      <h2 class="app-subtitle mb-1">New team details</h2>
+      <p class="text-app-muted mb-0">Provide a unique name for the new team.</p>
+    </div>
+    <button type="button" class="btn-close" aria-label="Close" (click)="closeDialogs()"></button>
+  </div>
+
+  <div class="app-modal__body p-4">
+    <div class="mb-3">
+      <label class="form-label" for="new-team-name">Team name</label>
+      <input
+        id="new-team-name"
+        type="text"
+        class="form-control"
+        [formControl]="createTeamForm.controls.name"
+        placeholder="Enter team name"
+      />
+      <div
+        class="form-text text-danger"
+        *ngIf="createTeamForm.controls.name.invalid && createTeamForm.controls.name.touched"
+      >
+        Team name is required.
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-end gap-2">
+      <button type="button" class="btn btn-outline-secondary" (click)="closeDialogs()">Cancel</button>
+      <button type="button" class="btn btn-app" (click)="submitCreateTeam()">Create</button>
+    </div>
+  </div>
+</section>
+
+<!-- Edit team modal -->
+<section class="app-modal app-card" *ngIf="editDialogVisible">
+  <div class="app-modal__header d-flex justify-content-between align-items-start p-4 border-bottom">
+    <div>
+      <span class="app-eyebrow">Edit team</span>
+      <h2 class="app-subtitle mb-1">Update team name</h2>
+      <p class="text-app-muted mb-0">Change the team title while preserving ownership details.</p>
+    </div>
+    <button type="button" class="btn-close" aria-label="Close" (click)="closeDialogs()"></button>
+  </div>
+
+  <div class="app-modal__body p-4">
+    <div class="mb-3">
+      <label class="form-label" for="edit-team-name">Team name</label>
+      <input
+        id="edit-team-name"
+        type="text"
+        class="form-control"
+        [formControl]="editTeamForm.controls.name"
+        placeholder="Enter updated team name"
+      />
+      <div
+        class="form-text text-danger"
+        *ngIf="editTeamForm.controls.name.invalid && editTeamForm.controls.name.touched"
+      >
+        Team name is required.
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-end gap-2">
+      <button type="button" class="btn btn-outline-secondary" (click)="closeDialogs()">Cancel</button>
+      <button type="button" class="btn btn-app" (click)="submitEditTeam()">Save</button>
+    </div>
+  </div>
+</section>
+
+<!-- Assign manager modal -->
+<section class="app-modal app-card" *ngIf="assignDialogVisible">
+  <div class="app-modal__header d-flex justify-content-between align-items-start p-4 border-bottom">
+    <div>
+      <span class="app-eyebrow">Assign manager</span>
+      <h2 class="app-subtitle mb-1">Choose a manager</h2>
+      <p class="text-app-muted mb-0">Select an active manager to own the current team.</p>
+    </div>
+    <button type="button" class="btn-close" aria-label="Close" (click)="closeDialogs()"></button>
+  </div>
+
+  <div class="app-modal__body p-4">
+    <div class="mb-3">
+      <label class="form-label" for="manager-search">Search managers</label>
+      <input
+        id="manager-search"
+        type="search"
+        class="form-control"
+        placeholder="Search by name or email"
+        [value]="managerSearch"
+        (input)="managerSearch = $any($event.target).value"
+      />
+    </div>
+
+    <div class="app-picker mb-4">
+      <div *ngIf="!availableManagers.length" class="text-app-muted py-3 px-2">
+        No managers match the current filter.
+      </div>
+      <button
+        *ngFor="let manager of availableManagers"
+        type="button"
+        class="btn btn-light w-100 text-start mb-1 app-picker__item"
+        [class.active]="selectedManagerId === manager.id"
+        (click)="assignManagerForm.patchValue({ managerId: manager.id })"
+      >
+        <div class="fw-semibold">{{ manager.name }}</div>
+        <div class="small text-app-muted">{{ manager.email }}</div>
+      </button>
+    </div>
+
+    <div class="d-flex justify-content-end gap-2">
+      <button type="button" class="btn btn-outline-secondary" (click)="closeDialogs()">Cancel</button>
+      <button
+        type="button"
+        class="btn btn-app"
+        [disabled]="assignManagerForm.invalid"
+        (click)="submitAssignManager()"
+      >
+        Assign
+      </button>
+    </div>
+  </div>
+</section>

@@ -1,55 +1,60 @@
 <section class="app-page">
-  <header class="app-page__hero">
-    <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
-      <div>
-        <span class="app-eyebrow">Employees</span>
-        <h1 class="app-title mb-3">Employee roster</h1>
-        <p class="app-body mb-0">A cream workspace for employee records, leave balances, and profile status.</p>
+  <app-page-header
+    eyebrow="Users"
+    title="Users"
+    subtitle="View organization users provisioned by your admin services."
+  />
+
+  <app-loading-spinner *ngIf="isLoading" />
+
+  <ng-container *ngIf="!isLoading">
+    <div class="row g-3">
+      <div class="col-md-3" *ngFor="let stat of employeeStats">
+        <article class="app-card app-stat p-4">
+          <span class="app-eyebrow">{{ stat.label }}</span>
+          <div class="app-stat__value my-3">{{ stat.value }}</div>
+          <p class="text-app-muted mb-0">{{ stat.note }}</p>
+        </article>
       </div>
-      <button type="button" class="btn btn-app align-self-start">Add Employee</button>
     </div>
-  </header>
 
-  <div class="row g-3">
-    <div class="col-md-4" *ngFor="let stat of employeeStats">
-      <article class="app-card app-stat p-4">
-        <span class="app-eyebrow">{{ stat.label }}</span>
-        <div class="app-stat__value my-3">{{ stat.value }}</div>
-        <p class="text-app-muted mb-0">{{ stat.note }}</p>
-      </article>
-    </div>
-  </div>
-
-  <section class="app-card overflow-hidden">
-    <div class="p-4 border-bottom">
-      <h2 class="app-subtitle mb-1">Directory</h2>
-      <p class="app-body mb-0">Bootstrap table skeleton for the current employee model.</p>
-    </div>
-    <div class="table-responsive">
-      <table class="table app-table align-middle">
-        <caption class="visually-hidden">Employee directory with role, department, status, and leave balance.</caption>
-        <thead>
-          <tr>
-            <th scope="col">Name</th>
-            <th scope="col">Role</th>
-            <th scope="col">Department</th>
-            <th scope="col">Status</th>
-            <th scope="col">Balance</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let employee of employees">
-            <td>
-              <div class="fw-bold">{{ employee.name }}</div>
-              <div class="small text-app-muted">{{ employee.email }}</div>
-            </td>
-            <td>{{ employee.role }}</td>
-            <td>{{ employee.department }}</td>
-            <td><span class="badge badge-soft-red rounded-pill">{{ employee.status }}</span></td>
-            <td class="fw-semibold">{{ employee.balance }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
+    <section class="app-card overflow-hidden mt-4">
+      <div class="p-4 border-bottom">
+        <h2 class="app-subtitle mb-1">Directory</h2>
+        <p class="app-body mb-0">Live user records from the backend.</p>
+      </div>
+      <div class="table-responsive" *ngIf="employees.length; else emptyEmployees">
+        <table class="table app-table align-middle">
+          <caption class="visually-hidden">Employee directory with role, department, and status.</caption>
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Role</th>
+              <th scope="col">Department</th>
+              <th scope="col">Team</th>
+              <th scope="col">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let employee of employees">
+              <td>
+                <div class="fw-bold">{{ employee.name }}</div>
+                <div class="small text-app-muted">{{ employee.email }}</div>
+              </td>
+              <td>{{ formatLabel(employee.role) }}</td>
+              <td>{{ formatLabel(employee.department) }}</td>
+              <td>{{ employee.teamName || 'Unassigned' }}</td>
+              <td><app-leave-status-badge [status]="employee.status"></app-leave-status-badge></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <ng-template #emptyEmployees>
+        <div class="app-empty-state p-5 text-center">
+          <i class="bi bi-people app-empty-state__icon" aria-hidden="true"></i>
+          <p class="mb-0 mt-3">No users found.</p>
+        </div>
+      </ng-template>
+    </section>
+  </ng-container>
 </section>

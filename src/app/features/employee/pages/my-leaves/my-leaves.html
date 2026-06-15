@@ -1,21 +1,9 @@
 <section class="app-page">
-  <header class="app-page__hero">
-    <span class="app-eyebrow">
-      {{ mode === 'draft' ? 'My Drafts' : 'My Leaves' }}
-    </span>
-
-    <h1 class="app-title">
-      {{ mode === 'draft' ? 'Draft Leave Requests' : 'Leave Request History' }}
-    </h1>
-
-    <p class="app-body mb-0">
-      {{
-        mode === 'draft'
-          ? 'A table for tracking created drafts.'
-          : 'A table for tracking submitted leave requests and statuses.'
-      }}
-    </p>
-  </header>
+  <app-page-header
+    [eyebrow]="mode === 'draft' ? 'My Drafts' : 'My Leaves'"
+    [title]="mode === 'draft' ? 'Draft Leave Requests' : 'Leave Request History'"
+    [subtitle]="mode === 'draft' ? 'A table for tracking created drafts.' : 'A table for tracking submitted leave requests and statuses.'"
+  ></app-page-header>
 
   <!-- Filters -->
 
@@ -91,7 +79,7 @@
   <!-- Loading -->
 
   <section *ngIf="isLoading()" class="app-card p-3">
-    <span class="text-app-muted">Fetching your leaves...</span>
+    <app-loading-spinner text="Fetching your leaves..."></app-loading-spinner>
   </section>
 
   <!-- Data -->
@@ -150,15 +138,10 @@
             </td>
 
             <td class="cell-status">
-              <span
-                class="badge-soft rounded-pill px-2 py-1"
-                [ngClass]="statusClassMap[leave.status]"
-              >
-                {{ getStatusLabel(leave.status) }}
-              </span>
+              <app-leave-status-badge [status]="leave.status"></app-leave-status-badge>
             </td>
 
-            <td class="cell-action">
+            <td class="cell-action" [class.menu-open]="isRowMenuOpen(leave.id)">
               <div class="action-grid">
                 <app-leave-action-menu
                   [actions]="getAvailableActions(leave)"

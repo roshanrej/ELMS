@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { AuthStore } from '../../../../auth/store/auth.store';
 import { UserContextDTO } from '../../../../core/dtos/user/user.model';
+import { PageHeader } from '../../../../shared/components/page-header/page-header';
 
 interface SummaryCard {
   label: string;
@@ -11,7 +12,7 @@ interface SummaryCard {
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule],
+  imports: [CommonModule, PageHeader],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })

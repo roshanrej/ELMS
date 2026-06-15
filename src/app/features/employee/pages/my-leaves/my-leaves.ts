@@ -10,10 +10,13 @@ import { ConfirmDialog } from '../../../../shared/components/confirm-dialog/conf
 import { NotificationService } from '../../../../shared/services/notification.service';
 import { LeaveActionMenuComponent } from '../../../../shared/components/leave-action-menu/leave-action-menu';
 import { getLeaveRequestActionMeta } from '../../../../shared/models/leave-request-action-menu.model';
+import { LeaveStatusBadge } from '../../../../shared/components/leave-status-badge/leave-status-badge';
+import { PageHeader } from '../../../../shared/components/page-header/page-header';
+import { LoadingSpinner } from '../../../../shared/components/loading-spinner/loading-spinner';
 
 @Component({
   selector: 'app-my-leaves',
-  imports: [CommonModule, FormsModule, RouterLink, ConfirmDialog, LeaveActionMenuComponent],
+  imports: [CommonModule, FormsModule, RouterLink, ConfirmDialog, LeaveActionMenuComponent, LeaveStatusBadge, PageHeader, LoadingSpinner],
   templateUrl: './my-leaves.html',
   styleUrl: './my-leaves.scss',
 })
@@ -47,23 +50,8 @@ export class MyLeavesPage implements OnInit {
 
   activeMenuRowId: number | null = null;
 
-  statusClassMap: Record<string, string> = {
-    APPROVED: 'badge-soft-green',
-    PENDING: 'badge-soft-yellow',
-    REJECTED: 'badge-soft-red',
-    CANCELLED: 'badge-soft-gray',
-    DRAFT: 'badge-soft-gray',
-    CANCEL_PENDING: 'badge-soft-orange',
-  };
-
-  statusLabelMap: Record<string, string> = {
-    APPROVED: 'Approved',
-    PENDING: 'Pending',
-    REJECTED: 'Rejected',
-    CANCELLED: 'Cancelled',
-    DRAFT: 'Draft',
-    CANCEL_PENDING: 'Cancel Pending',
-  };
+  // Status rendering is now handled by shared LeaveStatusBadge component.
+  // Local maps removed to eliminate duplication.
   get confirmMeta() {
     if (!this.confirmTarget) return null;
     return getLeaveRequestActionMeta(this.confirmTarget.action);
@@ -238,10 +226,6 @@ export class MyLeavesPage implements OnInit {
       .filter(Boolean)
       .map(part => part.charAt(0).toUpperCase() + part.slice(1))
       .join(' ');
-  }
-
-  getStatusLabel(status: string): string {
-    return this.statusLabelMap[status] ?? status;
   }
 
 }

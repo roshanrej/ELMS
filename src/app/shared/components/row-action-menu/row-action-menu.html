@@ -1,0 +1,40 @@
+<div class="row-action-menu">
+  <button
+    type="button"
+    class="row-action-menu__trigger"
+    [attr.aria-label]="ariaLabel"
+    aria-haspopup="menu"
+    [attr.aria-expanded]="isOpen"
+    (click)="toggleMenu()"
+  >
+    <span>Actions</span>
+    <i class="bi" [ngClass]="isOpen ? 'bi-chevron-up' : 'bi-chevron-down'" aria-hidden="true"></i>
+  </button>
+
+  <div
+    #menuPanel
+    *ngIf="isOpen"
+    class="row-action-menu__panel"
+    role="menu"
+    [style.top.px]="menuPosition.top"
+    [style.left.px]="menuPosition.left"
+    style="z-index: 99999"
+  >
+    <button
+      *ngFor="let action of actions"
+      type="button"
+      class="row-action-menu__item"
+      role="menuitem"
+      [class.row-action-menu__item--danger]="isDanger(action)"
+      [disabled]="isActionPending(action.id)"
+      (click)="selectAction(action.id)"
+    >
+      <span>{{ action.label }}</span>
+      <i
+        *ngIf="isActionPending(action.id)"
+        class="bi bi-arrow-repeat row-action-menu__spinner"
+        aria-hidden="true"
+      ></i>
+    </button>
+  </div>
+</div>

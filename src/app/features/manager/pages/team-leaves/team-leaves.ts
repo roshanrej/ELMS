@@ -11,11 +11,14 @@ import { ConfirmDialog } from '../../../../shared/components/confirm-dialog/conf
 import { LeaveActionMenuComponent } from '../../../../shared/components/leave-action-menu/leave-action-menu';
 import { NotificationService } from '../../../../shared/services/notification.service';
 import { getLeaveRequestActionMeta } from '../../../../shared/models/leave-request-action-menu.model';
+import { LeaveStatusBadge } from '../../../../shared/components/leave-status-badge/leave-status-badge';
+import { PageHeader } from '../../../../shared/components/page-header/page-header';
+import { LoadingSpinner } from '../../../../shared/components/loading-spinner/loading-spinner';
 
 @Component({
   selector: 'app-team-leaves',
   standalone: true,
-  imports: [CommonModule, FormsModule, ConfirmDialog, LeaveActionMenuComponent],
+  imports: [CommonModule, FormsModule, ConfirmDialog, LeaveActionMenuComponent, LeaveStatusBadge, PageHeader, LoadingSpinner],
   templateUrl: './team-leaves.html',
   styleUrl: './team-leaves.scss',
 })
@@ -44,19 +47,7 @@ export class TeamLeavesPage implements OnInit {
 
   activeMenuRowId: number | null = null;
 
-  statusClassMap: Record<string, string> = {
-    APPROVED: 'badge-soft-green',
-    PENDING: 'badge-soft-yellow',
-    REJECTED: 'badge-soft-red',
-    CANCEL_PENDING: 'badge-soft-orange',
-  };
-
-  statusLabelMap: Record<string, string> = {
-    APPROVED: 'Approved',
-    PENDING: 'Pending',
-    REJECTED: 'Rejected',
-    CANCEL_PENDING: 'Cancel Pending',
-  };
+  // Status rendering delegated to shared LeaveStatusBadge (eliminates duplicate maps).
 
   ngOnInit(): void {
     this.teamLeaves = this.route.snapshot.data['teamLeaves'] ?? [];
@@ -143,10 +134,6 @@ export class TeamLeavesPage implements OnInit {
       .filter(Boolean)
       .map(part => part.charAt(0).toUpperCase() + part.slice(1))
       .join(' ');
-  }
-
-  getStatusLabel(status: string): string {
-    return this.statusLabelMap[status] ?? status;
   }
 
   requestAction(

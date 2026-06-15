@@ -1,13 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { PageHeader } from '../../../../shared/components/page-header/page-header';
 import { ManagerDashboardProjectionDTO } from '../../../../core/dtos/dashboard/manager-dashboard-projection.dto';
 import { ManagerDashboardLeaveProjectionDTO } from '../../../../core/dtos/leave-request/manager-dashboard-leave-projection.dto';
 
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule],
+  imports: [CommonModule, PageHeader],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })

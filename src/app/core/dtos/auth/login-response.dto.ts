@@ -8,5 +8,5 @@ export interface LoginResponseDTO {
 
 export interface AccessTokenResponseDTO {
   accessToken: string;
-  userContextDTO: UserContextDTO;
+  user: UserContextDTO;
 }

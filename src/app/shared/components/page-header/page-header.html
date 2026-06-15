@@ -1,0 +1,11 @@
+<header class="app-page__hero app-page-header">
+  <div class="app-page-header__main">
+    <span *ngIf="eyebrow" class="app-eyebrow">{{ eyebrow }}</span>
+    <h1 class="app-title">{{ title }}</h1>
+    <p *ngIf="subtitle" class="app-body mb-0">{{ subtitle }}</p>
+  </div>
+
+  <div class="app-page-header__actions">
+    <ng-content></ng-content>
+  </div>
+</header>

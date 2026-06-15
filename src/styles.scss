@@ -460,11 +460,22 @@ app-root {
 .app-table tbody tr {
   transition: background 0.15s ease, box-shadow 0.15s ease;
   position: relative;
-  z-index: 1; // ← add this
+  z-index: 1;
 }
 
+/* Very high z-index on the open row so that any fixed-positioned dropdown
+   inside it (the action menu panel) paints above all other table rows.
+   This is the key to preventing the "hides behind next row" problem in tables. */
 .app-table tbody tr.menu-open {
-  z-index: 20; // ← elevated above all sibling rows
+  z-index: 9999;
+}
+
+/* Additional boost on the action cell itself when its menu is open.
+   Creates a strong stacking context right at the dropdown's container. */
+.app-table tr.menu-open td.cell-action,
+.app-table tr.menu-open th.cell-action {
+  position: relative;
+  z-index: 10000;
 }
 
 .app-table tbody tr:hover {
@@ -492,6 +503,15 @@ app-root {
 .app-table th.cell-action,
 .app-table td.cell-action {
   overflow: visible;
+}
+
+/* When a row's action menu is open, give the action cell a strong stacking context
+   so the fixed/absolute dropdown panel reliably appears above subsequent rows.
+   The row.menu-open already provides background lift; this targets the dropdown specifically. */
+.app-table tr.menu-open td.cell-action,
+.app-table tr.menu-open th.cell-action {
+  position: relative;
+  z-index: 50;
 }
 
 /* ─────────────────────────────────────────────

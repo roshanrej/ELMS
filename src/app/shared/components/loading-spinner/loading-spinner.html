@@ -1,4 +1,9 @@
-<div class="d-flex align-items-center gap-2 text-app-red">
-  <div class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></div>
-  <span class="fw-semibold">Loading</span>
+<div class="d-flex align-items-center gap-2 text-app-red" [class.spinner-md]="size === 'md'">
+  <div
+    class="spinner-border"
+    [class.spinner-border-sm]="size === 'sm'"
+    role="status"
+    aria-hidden="true"
+  ></div>
+  <span class="fw-semibold">{{ text }}</span>
 </div>

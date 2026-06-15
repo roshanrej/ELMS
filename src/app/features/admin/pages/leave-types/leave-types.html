@@ -1,0 +1,167 @@
+<section class="app-page">
+  <app-page-header
+    eyebrow="Admin"
+    title="Leave Types"
+    subtitle="Manage available leave categories. Deactivate instead of deleting to preserve history."
+  ></app-page-header>
+
+  <!-- Stats -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <article class="app-card app-stat p-4">
+        <span class="app-eyebrow">Total types</span>
+        <div class="app-stat__value my-3">{{ totalCount }}</div>
+      </article>
+    </div>
+    <div class="col-md-4">
+      <article class="app-card app-stat p-4">
+        <span class="app-eyebrow">Active</span>
+        <div class="app-stat__value my-3">{{ activeCount }}</div>
+      </article>
+    </div>
+    <div class="col-md-4">
+      <article class="app-card app-stat p-4">
+        <span class="app-eyebrow">Inactive</span>
+        <div class="app-stat__value my-3">{{ inactiveCount }}</div>
+      </article>
+    </div>
+  </div>
+
+  <!-- Main card -->
+  <section class="app-card overflow-hidden">
+    <div class="p-4 border-bottom d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center justify-content-between gap-3">
+      <h2 class="app-subtitle mb-0">Leave Types</h2>
+
+      <div class="d-flex flex-column flex-sm-row gap-2 align-items-stretch align-items-sm-center">
+        <label class="visually-hidden" for="leave-type-search">Search leave types</label>
+        <input
+          id="leave-type-search"
+          type="search"
+          class="form-control form-control-sm search-input"
+          placeholder="Search by name"
+          [value]="leaveTypeSearch"
+          (input)="search($any($event.target).value)"
+        />
+        <button type="button" class="btn btn-app btn-sm" (click)="openCreateDialog()">
+          Create leave type
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="isLoading" class="p-4">
+      <app-loading-spinner text="Loading leave types…"></app-loading-spinner>
+    </div>
+
+    <!-- Table -->
+    <div *ngIf="!isLoading" class="table-responsive">
+      <table class="table app-table align-middle mb-0">
+        <caption class="visually-hidden">Leave types management table</caption>
+        <colgroup>
+          <col />
+          <col class="col-status" />
+          <col class="col-action" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th scope="col">Name</th>
+            <th scope="col" class="cell-status">Status</th>
+            <th scope="col" class="cell-action">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let lt of filteredLeaveTypes" [class.menu-open]="isRowMenuOpen(lt.id)">
+            <td class="fw-bold">{{ lt.leaveTypeName }}</td>
+            <td class="cell-status">
+              <app-leave-status-badge [status]="lt.status"></app-leave-status-badge>
+            </td>
+            <td class="cell-action" [class.menu-open]="isRowMenuOpen(lt.id)">
+              <app-row-action-menu
+                [actions]="getRowActions(lt)"
+                [ariaLabel]="'Actions for ' + lt.leaveTypeName"
+                (menuStateChanged)="onMenuToggle(lt.id, $event)"
+                (actionSelected)="onMenuAction(lt, $event)"
+              />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div *ngIf="!filteredLeaveTypes.length" class="app-empty-state border-top">
+        <i class="bi bi-tags app-empty-state__icon" aria-hidden="true"></i>
+        <p class="mb-0">No leave types match your search.</p>
+      </div>
+    </div>
+  </section>
+</section>
+
+<!-- Backdrop for dialogs -->
+<div
+  class="app-modal-backdrop"
+  *ngIf="createDialogVisible || renameDialogVisible || !!statusConfirmTarget"
+  (click)="closeDialogs(); dismissStatusConfirm()"
+></div>
+
+<!-- Create dialog -->
+<div *ngIf="createDialogVisible" class="app-modal" (click)="$event.stopPropagation()">
+  <div class="app-card p-4 app-modal-card">
+    <span class="app-eyebrow">New Leave Type</span>
+    <h3 class="h5 fw-bold mb-3">Create leave type</h3>
+
+    <form [formGroup]="createForm" (ngSubmit)="submitCreate()">
+      <div class="mb-3">
+        <label class="app-label">Name</label>
+        <input
+          type="text"
+          class="form-control"
+          formControlName="name"
+          placeholder="e.g. Annual Leave"
+        />
+        <div *ngIf="createForm.controls.name.touched && createForm.controls.name.invalid" class="text-danger small mt-1">
+          Name is required.
+        </div>
+      </div>
+
+      <div class="d-flex gap-2 mt-4">
+        <button type="submit" class="btn btn-app" [disabled]="createForm.invalid">Create</button>
+        <button type="button" class="btn btn-cream" (click)="closeDialogs()">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Rename dialog -->
+<div *ngIf="renameDialogVisible && selectedLeaveType" class="app-modal" (click)="$event.stopPropagation()">
+  <div class="app-card p-4 app-modal-card">
+    <span class="app-eyebrow">Rename</span>
+    <h3 class="h5 fw-bold mb-3">Rename {{ selectedLeaveType.leaveTypeName }}</h3>
+
+    <form [formGroup]="renameForm" (ngSubmit)="submitRename()">
+      <div class="mb-3">
+        <label class="app-label">New name</label>
+        <input type="text" class="form-control" formControlName="name" />
+        <div *ngIf="renameForm.controls.name.touched && renameForm.controls.name.invalid" class="text-danger small mt-1">
+          Name is required.
+        </div>
+      </div>
+
+      <div class="d-flex gap-2 mt-4">
+        <button type="submit" class="btn btn-app" [disabled]="renameForm.invalid">Save</button>
+        <button type="button" class="btn btn-cream" (click)="closeDialogs()">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Status confirm -->
+<app-confirm-dialog
+  [visible]="!!statusConfirmTarget"
+  [title]="(statusConfirmTarget?.newStatus === 'ACTIVE' ? 'Activate' : 'Deactivate') + ' leave type?'"
+  [description]="'This will ' + (statusConfirmTarget?.newStatus === 'ACTIVE' ? 'allow' : 'prevent') + ' future use of this leave type. Existing requests are unaffected.'"
+  [confirmLabel]="statusConfirmTarget?.newStatus === 'ACTIVE' ? 'Activate' : 'Deactivate'"
+  [danger]="statusConfirmTarget?.newStatus !== 'ACTIVE'"
+  (confirmed)="confirmStatusChange()"
+  (dismissed)="dismissStatusConfirm()"
+/>
+
+

@@ -1,0 +1,23 @@
+:host {
+  display: block;
+}
+
+.app-page {
+  position: relative;
+}
+
+.search-input {
+  min-width: 260px;
+}
+
+/* ─── Allow action dropdown to overflow the td/cell ─── */
+
+.app-table tbody td.cell-action {
+  overflow: visible;
+}
+
+.app-table tbody tr.menu-open {
+  background-color: var(--app-red-soft);
+  box-shadow: inset 0 0 0 2px var(--app-red);
+  z-index: 10;
+}

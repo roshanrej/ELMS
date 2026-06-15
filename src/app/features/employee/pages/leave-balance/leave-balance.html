@@ -1,12 +1,10 @@
 <section class="app-page">
 
-  <header class="app-page__hero">
-    <span class="app-eyebrow">Leave Balance</span>
-    <h1 class="app-title">Available time off for this year.</h1>
-    <p class="app-body mb-0">
-      A live overview of your remaining leave across all categories.
-    </p>
-  </header>
+  <app-page-header
+    eyebrow="Leave Balance"
+    title="Available time off for this year."
+    subtitle="A live overview of your remaining leave across all categories."
+  ></app-page-header>
 
   <!-- 🔥 Empty -->
   <section *ngIf="balances.length === 0" class="app-card p-4">

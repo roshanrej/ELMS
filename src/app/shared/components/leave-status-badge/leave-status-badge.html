@@ -1,1 +1,7 @@
-<span class="badge badge-soft-red rounded-pill">Status</span>
+<span
+  class="badge-soft rounded-pill px-2 py-1"
+  [ngClass]="cssClass"
+  [attr.aria-label]="'Status: ' + label"
+>
+  {{ label }}
+</span>

@@ -12,9 +12,23 @@ export class AdminLeavePolicyApi {
   private http = inject(HttpClient);
   private baseUrl = environment.apiBaseUrl;
 
-  getAllLeavePolicies(): Observable<ApiResponseDTO<LeavePolicyProjectionDTO[]>> {
+  getLeavePoliciesForYear(year: number): Observable<ApiResponseDTO<LeavePolicyProjectionDTO[]>> {
     return this.http.get<ApiResponseDTO<LeavePolicyProjectionDTO[]>>(
-      `${this.baseUrl}/api/leave-policies`,
+      `${this.baseUrl}/admin/api/leave-policies/${year}`,
+    );
+  }
+
+  createLeavePolicy(
+    dto: {
+      leaveType: string;
+      year: number;
+      allocatedLeave: number;
+      noticePeriodDays?: number;
+    },
+  ): Observable<ApiResponseDTO<LeavePolicyProjectionDTO>> {
+    return this.http.post<ApiResponseDTO<LeavePolicyProjectionDTO>>(
+      `${this.baseUrl}/admin/api/leave-policies/create`,
+      dto,
     );
   }
 }

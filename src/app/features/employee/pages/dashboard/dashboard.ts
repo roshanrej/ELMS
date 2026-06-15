@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { PageHeader } from '../../../../shared/components/page-header/page-header';
+import { LeaveStatusBadge } from '../../../../shared/components/leave-status-badge/leave-status-badge';
 
 import { LeaveBalanceProjectionDTO } from '../../../../core/dtos/leave-balance/leave-balance.projection.dto';
 import { EmployeeLeaveRequestDTO } from '../../../../core/dtos/leave-request/employee-leave-request.dto';
@@ -10,7 +12,7 @@ type UpcomingLeaveView = EmployeeLeaveRequestDTO & { daysLabel: string };
 
 @Component({
   selector: 'app-dashboard',
-  imports: [RouterLink,CommonModule],
+  imports: [RouterLink, CommonModule, PageHeader, LeaveStatusBadge],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
@@ -90,13 +92,4 @@ this.annualRemainingDays = this.employeeLeaveBalances.filter(lb=> lb.leaveTypeNa
     const end = new Date(endDate).toLocaleDateString();
     return `${start} - ${end}`;
   }
-statusClassMap: Record<string, string> = {
-  APPROVED: 'badge-soft-green',
-  PENDING: 'badge-soft-yellow',
-  REJECTED: 'badge-soft-red',
-  CANCELLED: 'badge-soft-gray',
-  DRAFT: 'badge-soft-gray',
-  CANCEL_PENDING: 'badge-soft-orange'
-};
-
 }

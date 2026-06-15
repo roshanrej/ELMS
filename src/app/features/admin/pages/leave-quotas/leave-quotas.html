@@ -1,42 +1,43 @@
 <section class="app-page">
-  <header class="app-page__hero">
-    <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
-      <div>
-        <span class="app-eyebrow">Leave Quotas</span>
-        <h1 class="app-title mb-3">Quota planning skeleton</h1>
-        <p class="app-body mb-0">Set the visual structure for allocation, usage, and remaining leave balances.</p>
-      </div>
-      <button type="button" class="btn btn-app align-self-start">Update Cycle</button>
-    </div>
-  </header>
+  <app-page-header
+    eyebrow="Leave Policies"
+    title="Leave Policies"
+    subtitle="Allocation rules per leave type for the current policy cycle."
+  >
+    <span class="badge badge-soft-red rounded-pill">{{ policyYear }} cycle</span>
+  </app-page-header>
 
-  <section class="app-card overflow-hidden">
-    <div class="table-responsive">
-      <table class="table app-table align-middle">
-        <caption class="visually-hidden">Leave quotas with total allocation, used days, remaining days, and usage progress.</caption>
-        <thead>
-          <tr>
-            <th scope="col">Leave Type</th>
-            <th scope="col">Total</th>
-            <th scope="col">Used</th>
-            <th scope="col">Remaining</th>
-            <th scope="col">Usage</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let quota of quotas">
-            <td class="fw-bold">{{ quota.type }}</td>
-            <td>{{ quota.total }} days</td>
-            <td>{{ quota.used }} days</td>
-            <td><span class="badge badge-soft-red rounded-pill">{{ quota.remaining }} days</span></td>
-            <td class="quota-usage">
-              <div class="progress" role="progressbar" aria-label="Leave usage">
-                <div class="progress-bar" [style.width.%]="(quota.used / quota.total) * 100"></div>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
+  <app-loading-spinner *ngIf="isLoading" />
+
+  <ng-container *ngIf="!isLoading">
+    <section class="app-card overflow-hidden" *ngIf="policies.length; else emptyPolicies">
+      <div class="table-responsive">
+        <table class="table app-table align-middle">
+          <caption class="visually-hidden">Leave policies with allocation and status per leave type.</caption>
+          <thead>
+            <tr>
+              <th scope="col">Leave Type</th>
+              <th scope="col">Year</th>
+              <th scope="col">Allocated Days</th>
+              <th scope="col">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let policy of policies">
+              <td class="fw-bold">{{ formatType(policy.leaveTypeName) }}</td>
+              <td>{{ policy.year }}</td>
+              <td>{{ policy.allocatedLeave }} days</td>
+              <td><app-leave-status-badge [status]="policy.status"></app-leave-status-badge></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <ng-template #emptyPolicies>
+      <div class="app-card app-empty-state p-5 text-center">
+        <i class="bi bi-sliders app-empty-state__icon" aria-hidden="true"></i>
+        <p class="mb-0 mt-3">No leave policies configured for {{ policyYear }}.</p>
+      </div>
+    </ng-template>
+  </ng-container>
 </section>

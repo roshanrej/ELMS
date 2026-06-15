@@ -1,3 +1,6 @@
 :host {
   display: inline-block;
 }
+
+/* Delegates visual styling to global .badge-soft-* rules in styles.scss */
+/* Keeps component lightweight and theme-consistent. */

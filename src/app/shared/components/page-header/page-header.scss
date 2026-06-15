@@ -1,0 +1,26 @@
+.app-page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.app-page-header__main {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.app-page-header__actions {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* On very small screens actions drop below */
+@media (max-width: 575.98px) {
+  .app-page-header__actions {
+    width: 100%;
+  }
+}

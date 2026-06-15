@@ -13,11 +13,13 @@
   </button>
 
   <div
+    #menuPanel
     *ngIf="isOpen"
     class="leave-action-menu__panel"
     role="menu"
     [style.top.px]="menuPosition.top"
     [style.left.px]="menuPosition.left"
+    style="z-index: 99999"
   >
     <button
       *ngFor="let action of visibleActions"

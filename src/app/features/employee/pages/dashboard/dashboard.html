@@ -1,13 +1,11 @@
 <section class="app-page">
 
   <!-- 🔥 HERO -->
-  <header class="app-page__hero">
-    <span class="app-eyebrow">Employee Dashboard</span>
-    <h1 class="app-title">Good to see you.</h1>
-    <p class="app-body mb-0">
-      Here's a snapshot of your leave balance, pending requests, and what's coming up.
-    </p>
-  </header>
+  <app-page-header
+    eyebrow="Employee Dashboard"
+    title="Good to see you."
+    subtitle="Here's a snapshot of your leave balance, pending requests, and what's coming up."
+  ></app-page-header>
 
   <!-- 🔥 STATS -->
   <div class="row g-3">
@@ -80,12 +78,7 @@
               </span>
             </div>
 
-            <span
-              class="badge-soft rounded-pill px-2 py-1"
-              [ngClass]="statusClassMap[leave.status]"
-            >
-              {{ leave.status }}
-            </span>
+            <app-leave-status-badge [status]="leave.status"></app-leave-status-badge>
           </div>
         </div>
 

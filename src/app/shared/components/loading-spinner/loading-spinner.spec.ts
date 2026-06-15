@@ -19,4 +19,10 @@ describe('LoadingSpinner', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should render custom text', () => {
+    component.text = 'Fetching your leaves...';
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Fetching your leaves...');
+  });
 });

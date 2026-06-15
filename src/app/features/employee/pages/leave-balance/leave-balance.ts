@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { LeaveBalanceProjectionDTO } from '../../../../core/dtos/leave-balance/leave-balance.projection.dto';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { PageHeader } from '../../../../shared/components/page-header/page-header';
 
 type LeaveBalanceView = LeaveBalanceProjectionDTO & {
   remainingPercent: number;
@@ -13,7 +14,7 @@ type LeaveBalanceView = LeaveBalanceProjectionDTO & {
 
 @Component({
   selector: 'app-leave-balance',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, PageHeader],
   templateUrl: './leave-balance.html',
   styleUrl: './leave-balance.scss',
 })
