@@ -6,7 +6,7 @@ import { LeaveBalancePage } from './pages/leave-balance/leave-balance';
 import { MyLeavesPage } from './pages/my-leaves/my-leaves';
 
 import { employeeLeaveRequestsResolver , employeeActiveLeaveRequestsResolver} from './resolvers/employee-leave-requests.resolver';
-import { employeeLeaveDraftsResolver } from './resolvers/employee-leave-drafts.resolver';// placeholder
+import { employeeLeaveDraftsResolver } from './resolvers/employee-leave-drafts.resolver';
 import { employeeLeaveBalancesResolver } from './resolvers/leave-balances.resolver';
 import { leavePoliciesResolver } from './resolvers/leave-policies.resolver';
 
@@ -45,7 +45,7 @@ export const employeeRoutes: Route[] = [
     component: MyLeavesPage,
 
     resolve: {
-      leaves: employeeLeaveDraftsResolver // placeholder
+      leaves: employeeLeaveDraftsResolver
     },
 
     data: {

@@ -23,6 +23,16 @@ export class AdminUserService {
     );
   }
 
+  assignUserToTeam(userId: number, teamId: number): Observable<UserProjectionDTO> {
+    return this.api.assignUserToTeam(userId, teamId).pipe(
+      map((response) =>
+        unwrapApiResponse(response, {
+          onError: this.handleServiceError,
+        }),
+      ),
+    );
+  }
+
   private handleServiceError = (message: string): void => {
     this.notifications.showError(message);
   };

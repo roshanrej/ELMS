@@ -1,42 +1,47 @@
 <div class="leave-action-menu">
-  <button
-    type="button"
-    class="leave-action-menu__trigger"
-    [disabled]="isDisabled"
-    [attr.aria-label]="ariaLabel"
-    [attr.aria-expanded]="isOpen"
-    aria-haspopup="menu"
-    (click)="toggleMenu()"
-  >
-    <span>Actions</span>
-    <i class="bi" [ngClass]="isOpen ? 'bi-chevron-up' : 'bi-chevron-down'" aria-hidden="true"></i>
-  </button>
-
-  <div
-    #menuPanel
-    *ngIf="isOpen"
-    class="leave-action-menu__panel"
-    role="menu"
-    [style.top.px]="menuPosition.top"
-    [style.left.px]="menuPosition.left"
-    style="z-index: 99999"
-  >
+  <ng-container *ngIf="hasActions; else noActions">
     <button
-      *ngFor="let action of visibleActions"
       type="button"
-      class="leave-action-menu__item"
-      [class.leave-action-menu__item--danger]="isDanger(action)"
-      [disabled]="pendingAction === action"
-      role="menuitem"
-      (click)="selectAction(action)"
+      class="leave-action-menu__trigger"
+      [disabled]="disabled"
+      [attr.aria-label]="ariaLabel"
+      [attr.aria-expanded]="isOpen"
+      aria-haspopup="menu"
+      (click)="toggleMenu($event)"
     >
-      <i class="bi" [ngClass]="getIcon(action)" aria-hidden="true"></i>
-      <span>{{ getLabel(action) }}</span>
-      <i
-        *ngIf="pendingAction === action"
-        class="bi bi-arrow-repeat leave-action-menu__spinner"
-        aria-hidden="true"
-      ></i>
+      <span>Actions</span>
+      <i class="bi" [ngClass]="isOpen ? 'bi-chevron-up' : 'bi-chevron-down'" aria-hidden="true"></i>
     </button>
-  </div>
+
+    <div
+      #menuPanel
+      *ngIf="isOpen"
+      class="leave-action-menu__panel"
+      role="menu"
+      [style.top.px]="menuPosition.top"
+      [style.left.px]="menuPosition.left"
+    >
+      <button
+        *ngFor="let action of visibleActions"
+        type="button"
+        class="leave-action-menu__item"
+        [class.leave-action-menu__item--danger]="isDanger(action)"
+        [disabled]="pendingAction === action"
+        role="menuitem"
+        (click)="selectAction(action, $event)"
+      >
+        <i class="bi" [ngClass]="getIcon(action)" aria-hidden="true"></i>
+        <span>{{ getLabel(action) }}</span>
+        <i
+          *ngIf="pendingAction === action"
+          class="bi bi-arrow-repeat leave-action-menu__spinner"
+          aria-hidden="true"
+        ></i>
+      </button>
+    </div>
+  </ng-container>
+
+  <ng-template #noActions>
+    <span class="leave-action-menu__empty" aria-hidden="true">—</span>
+  </ng-template>
 </div>

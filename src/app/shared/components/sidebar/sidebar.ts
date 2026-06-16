@@ -4,23 +4,8 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthStore } from '../../../auth/store/auth.store';
 import { AuthService } from '../../../auth/services/auth.service';
 import { UserContextDTO } from '../../../core/dtos/user/user.model';
+import { AppNavItem, getNavigationForRole } from '../../config/navigation.config';
 
-
-interface NavLink {
-  label: string;
-  route: string;
-}
-
-/**
- * ARCHITECTURAL NOTE:
- * Navigation structure should be API-driven from the backend.
- * Backend returns available navigation items based on user role and permissions.
- * 
- * TODO: Replace hardcoded navLinksMap with API call:
- * - Create AuthService.getNavigation() method
- * - Call it in ngOnInit to fetch user's available routes
- * - Backend can customize per user, role, or organization
- */
 @Component({
   selector: 'app-sidebar',
   imports: [CommonModule, RouterLink, RouterLinkActive],
@@ -28,55 +13,28 @@ interface NavLink {
   styleUrl: './sidebar.scss',
 })
 export class Sidebar implements OnInit {
-  private authStore = inject(AuthStore);
-  private authService = inject(AuthService);
-  private router = inject(Router);
+  private readonly authStore = inject(AuthStore);
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
 
-  user: UserContextDTO | null = this.authStore.currentUser;
-  navLinks: NavLink[] = [];
-
-  /**
-   * TEMPORARY: Hardcoded navigation structure.
-   * This should be replaced with backend API call in getNavigation().
-   * Using string keys instead of RoleTypeEnum for flexibility.
-   */
-  private readonly defaultNavigation: Record<string, NavLink[]> = {
-    'ADMIN': [
-      { label: 'Dashboard', route: '/admin/dashboard' },
-      { label: 'Users', route: '/admin/employees' },
-      { label: 'Departments', route: '/admin/departments' },
-      { label: 'Teams', route: '/admin/teams' },
-      { label: 'Leave Types', route: '/admin/leave-types' },
-      { label: 'Leave Policies', route: '/admin/leave-quotas' },
-      { label: 'Analytics', route: '/admin/analytics' },
-    ],
-    'EMPLOYEE': [
-      { label: 'Dashboard', route: '/employee/dashboard' },
-      { label: 'Request Leave', route: '/employee/leaves/apply' },
-      { label: 'Leave History', route: '/employee/leaves' },
-      { label: 'View Leave Balance', route: '/employee/leaves/balance' },
-      { label: 'View Drafts', route: '/employee/leaves/drafts' },
-    ],
-    'MANAGER': [
-      { label: 'Dashboard', route: '/manager/dashboard' },
-      { label: 'View Leaves', route: '/manager/team/leaves' },
-      { label: 'Leave Analytics', route: '/manager/team/leave-analytics' },
-    ],
-  };
+  user: UserContextDTO | null = null;
+  navLinks: AppNavItem[] = [];
 
   ngOnInit(): void {
-    this.loadNavigation();
+    void this.loadNavigation();
   }
 
-  /**
-   * Fetch navigation structure.
-   * TODO: Replace this with backend API call.
-   */
-  private loadNavigation(): void {
-    const userRole = this.authStore.currentUser?.role;
-    if (userRole) {
-      this.navLinks = this.defaultNavigation[userRole] || [];
+  get roleLabel(): string {
+    if (!this.user?.role) {
+      return '';
     }
+
+    return this.user.role.charAt(0) + this.user.role.slice(1).toLowerCase();
+  }
+
+  private async loadNavigation(): Promise<void> {
+    this.user = this.authStore.currentUser ?? (await this.authService.restoreSession());
+    this.navLinks = getNavigationForRole(this.user?.role);
   }
 
   logout(): void {

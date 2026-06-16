@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 import { switchMap } from 'rxjs';
 import { LeaveService } from '../../services/leave-requests/leave-request.service';
 import { LeavePolicyProjectionDTO } from '../../../../core/dtos/leave-policy/leave-policy.projection.dto';
@@ -9,6 +10,7 @@ import { LeaveBalanceProjectionDTO } from '../../../../core/dtos/leave-balance/l
 import { LeaveRequestProjectionDTO } from '../../../../core/dtos/leave-request/leave-request.projection.dto';
 import { CreateLeaveRequestDTO } from '../../../../core/dtos/leave-request/create-leave-request.dto';
 import { NotificationService } from '../../../../shared/services/notification.service';
+import { PageHeader } from '../../../../shared/components/page-header/page-header';
 
 /**
  * ARCHITECTURAL NOTE:
@@ -18,7 +20,7 @@ import { NotificationService } from '../../../../shared/services/notification.se
  */
 @Component({
   selector: 'app-apply-leave',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, PageHeader],
   templateUrl: './apply-leave.html',
   styleUrl: './apply-leave.scss',
 })
@@ -39,6 +41,10 @@ export class ApplyLeavePage implements OnInit {
   isDraft = false;
   editDraftId: number | null = null;
 
+  get isEditingDraft(): boolean {
+    return this.editDraftId !== null;
+  }
+
   leaveForm = this.fb.nonNullable.group(
     {
       leaveType: [null as string | null, Validators.required],
@@ -50,12 +56,11 @@ export class ApplyLeavePage implements OnInit {
   );
 
 
-  ngOnInit() {
-    // Load policies and balances from backend projections (resolver or direct)
-    this.leavePolicies = this.route.snapshot.data['leavePolicies'];
-    this.leaveBalances = this.route.snapshot.data['leaveBalances'];
-    this.loadDraftForEdit();
-    
+  async ngOnInit() {
+    this.leavePolicies = this.route.snapshot.data['leavePolicies'] ?? [];
+    this.leaveBalances = this.route.snapshot.data['leaveBalances'] ?? [];
+    await this.loadDraftForEdit();
+
     this.leaveForm.get('leaveType')?.valueChanges.subscribe(type => {
       if (!type) {
         this.selectedLeaveType = null;
@@ -69,7 +74,7 @@ export class ApplyLeavePage implements OnInit {
     });
   }
 
-  submitRequest() {
+  async submitRequest(): Promise<void> {
     this.isDraft = false;
     this.leaveForm.updateValueAndValidity();
 
@@ -80,47 +85,49 @@ export class ApplyLeavePage implements OnInit {
     }
 
     const payload = this.buildPayload();
-    const request$ = this.editDraftId
-      ? this.leaveRequestService
-          .editLeaveDraft(this.editDraftId, payload)
-          .pipe(
-            switchMap(() =>
-              this.leaveRequestService.submitExistingLeaveRequest(this.editDraftId!)
-            )
-          )
-      : this.leaveRequestService.submitLeaveRequest(payload);
 
-    request$.subscribe({
-      next: data => {
-        this.appliedLeave = data;
-        this.notifications.showSuccess('Leave request submitted successfully.');
-        this.resetForm();
-        this.router.navigate(['/employee/leaves']);
-      },
-      error: () => {},
-    });
+    try {
+      const data = this.editDraftId
+        ? await firstValueFrom(
+            this.leaveRequestService
+              .editLeaveDraft(this.editDraftId, payload)
+              .pipe(
+                switchMap(() =>
+                  this.leaveRequestService.submitExistingLeaveRequest(this.editDraftId!),
+                ),
+              ),
+          )
+        : await firstValueFrom(this.leaveRequestService.submitLeaveRequest(payload));
+
+      this.appliedLeave = data;
+      this.notifications.showSuccess('Leave request submitted successfully.');
+      this.resetForm();
+      await this.router.navigate(['/employee/leaves']);
+    } catch {
+      // LeaveService already surfaces API errors via NotificationService.
+    }
   }
 
-  saveDraft() {
+  async saveDraft(): Promise<void> {
     this.isDraft = true;
     this.leaveForm.updateValueAndValidity();
 
     const payload = this.buildPayload();
-    const request$ = this.editDraftId
-      ? this.leaveRequestService.editLeaveDraft(this.editDraftId, payload)
-      : this.leaveRequestService.createLeaveDraft(payload);
 
-    request$.subscribe({
-      next: data => {
-        this.appliedLeave = data;
-        this.isDraft = false;
-        this.leaveForm.updateValueAndValidity();
-        this.notifications.showInfo('Draft saved successfully.');
-        this.resetForm();
-        this.router.navigate(['/employee/leaves/drafts']);
-      },
-      error: () => {},
-    });
+    try {
+      const data = this.editDraftId
+        ? await firstValueFrom(this.leaveRequestService.editLeaveDraft(this.editDraftId, payload))
+        : await firstValueFrom(this.leaveRequestService.createLeaveDraft(payload));
+
+      this.appliedLeave = data;
+      this.isDraft = false;
+      this.leaveForm.updateValueAndValidity();
+      this.notifications.showInfo('Draft saved successfully.');
+      this.resetForm();
+      await this.router.navigate(['/employee/leaves/drafts']);
+    } catch {
+      // LeaveService already surfaces API errors via NotificationService.
+    }
   }
 
   
@@ -201,11 +208,22 @@ export class ApplyLeavePage implements OnInit {
     this.balancePercent = 0;
   }
 
-  private loadDraftForEdit() {
-    const draft = history.state?.draft as LeaveRequestProjectionDTO | undefined;
+  private async loadDraftForEdit(): Promise<void> {
     const draftId = Number(this.route.snapshot.queryParamMap.get('draftId'));
+    if (!draftId) {
+      return;
+    }
 
-    if (!draft || !draftId) {
+    const draftFromState = history.state?.draft as LeaveRequestProjectionDTO | undefined;
+    const draft =
+      draftFromState?.id === draftId
+        ? draftFromState
+        : (await firstValueFrom(this.leaveRequestService.getEmployeeLeaveDrafts())).find(
+            (item) => item.id === draftId,
+          );
+
+    if (!draft) {
+      this.notifications.showWarning('Draft not found. Start a new request instead.');
       return;
     }
 

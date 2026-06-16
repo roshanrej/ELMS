@@ -10,19 +10,6 @@
   overflow: visible;
 }
 
-// Row highlight when action menu is open
-.app-table tbody tr.menu-open {
-  background-color: var(--app-red-soft);
-  box-shadow: inset 0 0 0 2px var(--app-red);
-  z-index: 10;
-}
-
-// Action cell needs overflow visible for dropdown
-.app-table td.cell-action,
-.app-table th.cell-action {
-  overflow: visible;
-}
-
 .action-grid {
   align-items: center;
   display: inline-flex;

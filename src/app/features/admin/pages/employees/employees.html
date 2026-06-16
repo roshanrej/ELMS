@@ -2,7 +2,7 @@
   <app-page-header
     eyebrow="Users"
     title="Users"
-    subtitle="View organization users provisioned by your admin services."
+    subtitle="View organization users and assign employees to teams."
   />
 
   <app-loading-spinner *ngIf="isLoading" />
@@ -24,7 +24,15 @@
         <p class="app-body mb-0">Live user records from the backend.</p>
       </div>
       <div class="table-responsive" *ngIf="employees.length; else emptyEmployees">
-        <table class="table app-table align-middle">
+        <table class="table app-table align-middle mb-0">
+          <colgroup>
+            <col />
+            <col />
+            <col />
+            <col />
+            <col class="col-status" />
+            <col class="col-action" />
+          </colgroup>
           <caption class="visually-hidden">Employee directory with role, department, and status.</caption>
           <thead>
             <tr>
@@ -32,11 +40,12 @@
               <th scope="col">Role</th>
               <th scope="col">Department</th>
               <th scope="col">Team</th>
-              <th scope="col">Status</th>
+              <th scope="col" class="cell-status">Status</th>
+              <th scope="col" class="cell-action">Actions</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let employee of employees">
+            <tr *ngFor="let employee of employees" [class.menu-open]="isRowMenuOpen(employee.id)">
               <td>
                 <div class="fw-bold">{{ employee.name }}</div>
                 <div class="small text-app-muted">{{ employee.email }}</div>
@@ -44,7 +53,20 @@
               <td>{{ formatLabel(employee.role) }}</td>
               <td>{{ formatLabel(employee.department) }}</td>
               <td>{{ employee.teamName || 'Unassigned' }}</td>
-              <td><app-leave-status-badge [status]="employee.status"></app-leave-status-badge></td>
+              <td class="cell-status"><app-leave-status-badge [status]="employee.status"></app-leave-status-badge></td>
+              <td class="cell-action" [class.menu-open]="isRowMenuOpen(employee.id)">
+                <app-row-action-menu
+                  *ngIf="canAssignTeam(employee); else noEmployeeActions"
+                  [actions]="getEmployeeActions()"
+                  [closeRequested]="isMenuCloseRequested(employee.id)"
+                  [ariaLabel]="'Actions for ' + employee.name"
+                  (menuStateChanged)="onMenuToggle(employee.id, $event)"
+                  (actionSelected)="onEmployeeMenuAction(employee, $event)"
+                />
+                <ng-template #noEmployeeActions>
+                  <span class="text-app-muted">—</span>
+                </ng-template>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -57,4 +79,32 @@
       </ng-template>
     </section>
   </ng-container>
+</section>
+
+<div class="app-modal-backdrop" *ngIf="assignDialogVisible" (click)="closeAssignDialog()"></div>
+
+<section class="app-modal app-card" *ngIf="assignDialogVisible && selectedEmployee">
+  <div class="app-modal__header d-flex justify-content-between align-items-start p-4 border-bottom">
+    <div>
+      <span class="app-eyebrow">Assign team</span>
+      <h2 class="app-subtitle mb-1">{{ selectedEmployee.name }}</h2>
+      <p class="text-app-muted mb-0">Employees need a team (with a manager) before they can submit leave.</p>
+    </div>
+    <button type="button" class="btn-close" aria-label="Close" (click)="closeAssignDialog()"></button>
+  </div>
+
+  <div class="app-modal__body p-4">
+    <div class="mb-3">
+      <label class="form-label" for="employee-team">Team</label>
+      <select id="employee-team" class="form-select" [formControl]="assignTeamForm.controls.teamId">
+        <option [ngValue]="null">Select a team</option>
+        <option *ngFor="let team of teams" [ngValue]="team.id">{{ team.teamName }}</option>
+      </select>
+    </div>
+
+    <div class="d-flex justify-content-end gap-2">
+      <button type="button" class="btn btn-outline-secondary" (click)="closeAssignDialog()">Cancel</button>
+      <button type="button" class="btn btn-app" (click)="submitAssignTeam()">Assign</button>
+    </div>
+  </div>
 </section>

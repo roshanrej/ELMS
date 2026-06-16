@@ -30,6 +30,17 @@
   min-width: 0;
 }
 
+.shell-page-title {
+  color: var(--app-ink);
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.shell-page-subtitle {
+  color: var(--app-muted);
+  font-size: 0.82rem;
+}
+
 .shell-brand-mark {
   box-shadow: none;
   height: 38px;

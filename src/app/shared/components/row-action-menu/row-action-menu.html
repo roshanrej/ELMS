@@ -2,10 +2,11 @@
   <button
     type="button"
     class="row-action-menu__trigger"
+    [disabled]="isDisabled"
     [attr.aria-label]="ariaLabel"
     aria-haspopup="menu"
     [attr.aria-expanded]="isOpen"
-    (click)="toggleMenu()"
+    (click)="toggleMenu($event)"
   >
     <span>Actions</span>
     <i class="bi" [ngClass]="isOpen ? 'bi-chevron-up' : 'bi-chevron-down'" aria-hidden="true"></i>
@@ -18,7 +19,6 @@
     role="menu"
     [style.top.px]="menuPosition.top"
     [style.left.px]="menuPosition.left"
-    style="z-index: 99999"
   >
     <button
       *ngFor="let action of actions"
@@ -27,7 +27,7 @@
       role="menuitem"
       [class.row-action-menu__item--danger]="isDanger(action)"
       [disabled]="isActionPending(action.id)"
-      (click)="selectAction(action.id)"
+      (click)="selectAction(action.id, $event)"
     >
       <span>{{ action.label }}</span>
       <i

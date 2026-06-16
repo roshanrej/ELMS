@@ -13,5 +13,4 @@ export interface LeaveRequestProjectionDTO {
   createdAt: string;
   submittedAt: string | null;
   allowedActions?: LeaveRequestActionEnum[];
-  availableActions?: LeaveRequestActionEnum[];
 }

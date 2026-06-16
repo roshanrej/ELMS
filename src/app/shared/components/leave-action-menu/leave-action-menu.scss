@@ -10,6 +10,13 @@
   position: relative;
 }
 
+.leave-action-menu__empty {
+  color: var(--app-muted, #6c757d);
+  display: inline-block;
+  min-width: 1.5rem;
+  text-align: center;
+}
+
 .leave-action-menu__trigger {
   align-items: center;
   background: var(--app-white);

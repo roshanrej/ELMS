@@ -1,5 +1,18 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, Output, Renderer2, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  Input,
+  OnChanges,
+  OnDestroy,
+  Output,
+  Renderer2,
+  SimpleChanges,
+  ViewChild,
+} from '@angular/core';
+import { BodyAnchoredMenuDom } from '../../utils/body-anchored-menu.dom';
 
 interface MenuPosition {
   top: number;
@@ -13,16 +26,17 @@ interface MenuPosition {
   templateUrl: './row-action-menu.html',
   styleUrl: './row-action-menu.scss',
 })
-export class RowActionMenuComponent implements OnDestroy {
+export class RowActionMenuComponent implements OnChanges, OnDestroy {
   constructor(
     private readonly elementRef: ElementRef<HTMLElement>,
-    private readonly renderer: Renderer2
+    private readonly renderer: Renderer2,
   ) {}
 
   @Input({ required: true }) ariaLabel = 'Row actions';
   @Input() disabled = false;
   @Input() actions: readonly { id: string; label: string; danger?: boolean }[] = [];
   @Input() pendingAction: string | null = null;
+  @Input() closeRequested = false;
 
   @Output() actionSelected = new EventEmitter<string>();
   @Output() menuStateChanged = new EventEmitter<boolean>();
@@ -32,11 +46,16 @@ export class RowActionMenuComponent implements OnDestroy {
   isOpen = false;
   menuPosition: MenuPosition = { top: 0, left: 0 };
 
-  private originalParent: Node | null = null;
-  private isAppendedToBody = false;
+  private readonly bodyAnchor = new BodyAnchoredMenuDom();
 
   get isDisabled(): boolean {
     return this.disabled || this.actions.length === 0;
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['closeRequested']?.currentValue === true && this.isOpen) {
+      this.closeMenu();
+    }
   }
 
   isActionPending(actionId: string): boolean {
@@ -48,70 +67,84 @@ export class RowActionMenuComponent implements OnDestroy {
   }
 
   private isClickInside(target: EventTarget | null): boolean {
-    if (!target) return false;
+    if (!target) {
+      return false;
+    }
+
     const node = target as Node;
     const host = this.elementRef.nativeElement;
-    if (host.contains(node)) return true;
-    if (this.panelRef && this.panelRef.nativeElement.contains(node)) return true;
-    return false;
-  }
-
-  private appendPanelToBody(): void {
-    if (!this.panelRef || this.isAppendedToBody) return;
-    const panelEl = this.panelRef.nativeElement;
-    this.originalParent = panelEl.parentNode;
-    if (this.originalParent) {
-      this.renderer.appendChild(document.body, panelEl);
-      this.isAppendedToBody = true;
+    if (host.contains(node)) {
+      return true;
     }
-  }
 
-  private restorePanelToOriginalParent(): void {
-    if (!this.panelRef || !this.isAppendedToBody || !this.originalParent) return;
-    const panelEl = this.panelRef.nativeElement;
-    this.renderer.appendChild(this.originalParent, panelEl);
-    this.isAppendedToBody = false;
+    return !!this.panelRef?.nativeElement.contains(node);
   }
 
   @HostListener('document:click', ['$event'])
   closeOnOutsideClick(event: MouseEvent): void {
-    if (!this.isClickInside(event.target)) {
-      this.menuStateChanged.emit(false);
+    if (!this.isOpen || this.isClickInside(event.target)) {
+      return;
     }
+
+    this.closeMenu();
   }
 
   @HostListener('keydown.escape')
   closeOnEscape(): void {
     if (this.isOpen) {
-      this.isOpen = false;
-      this.restorePanelToOriginalParent();
-      this.menuStateChanged.emit(false);
+      this.closeMenu();
     }
   }
 
   @HostListener('window:resize')
   @HostListener('window:scroll')
   repositionOpenMenu(): void {
-    this.setMenuPosition();
-  }
-
-  toggleMenu(): void {
-    if (this.isDisabled) return;
-    this.isOpen = !this.isOpen;
     if (this.isOpen) {
       this.setMenuPosition();
-      // Use microtask to ensure the panel is in DOM before moving
-      Promise.resolve().then(() => this.appendPanelToBody());
-    } else {
-      this.restorePanelToOriginalParent();
     }
-    this.menuStateChanged.emit(this.isOpen);
   }
 
-  selectAction(actionId: string): void {
+  toggleMenu(event: MouseEvent): void {
+    event.stopPropagation();
+
+    if (this.isDisabled) {
+      return;
+    }
+
+    if (this.isOpen) {
+      this.closeMenu();
+      return;
+    }
+
+    this.openMenu();
+  }
+
+  selectAction(actionId: string, event: MouseEvent): void {
+    event.stopPropagation();
+    this.closeMenu();
     this.actionSelected.emit(actionId);
+  }
+
+  ngOnDestroy(): void {
+    this.bodyAnchor.restore(this.renderer, this.panelRef?.nativeElement);
+    this.bodyAnchor.reset();
+  }
+
+  private openMenu(): void {
+    this.isOpen = true;
+    this.setMenuPosition();
+    this.menuStateChanged.emit(true);
+    Promise.resolve().then(() => this.bodyAnchor.append(this.renderer, this.panelRef?.nativeElement));
+  }
+
+  private closeMenu(): void {
+    if (!this.isOpen) {
+      this.bodyAnchor.reset();
+      return;
+    }
+
+    this.bodyAnchor.restore(this.renderer, this.panelRef?.nativeElement);
     this.isOpen = false;
-    this.restorePanelToOriginalParent();
     this.menuStateChanged.emit(false);
   }
 
@@ -120,7 +153,9 @@ export class RowActionMenuComponent implements OnDestroy {
       '.row-action-menu__trigger',
     );
 
-    if (!trigger) return;
+    if (!trigger) {
+      return;
+    }
 
     const rect = trigger.getBoundingClientRect();
     const viewportPadding = 8;
@@ -139,9 +174,5 @@ export class RowActionMenuComponent implements OnDestroy {
       left,
       top: opensUp ? rect.top - panelHeight - 6 : rect.bottom + 6,
     };
-  }
-
-  ngOnDestroy(): void {
-    this.restorePanelToOriginalParent();
   }
 }

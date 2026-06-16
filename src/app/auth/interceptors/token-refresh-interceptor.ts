@@ -2,11 +2,12 @@ import {
   HttpErrorResponse,
   HttpInterceptorFn,
   HttpRequest,
-  HttpHandlerFn
+  HttpHandlerFn,
 } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, firstValueFrom, from, switchMap, throwError } from 'rxjs';
+import { NotificationService } from '../../shared/services/notification.service';
 import { AuthService } from '../services/auth.service';
 
 /**
@@ -18,14 +19,20 @@ import { AuthService } from '../services/auth.service';
  */
 let refreshPromise: Promise<string | null> | null = null;
 
+function isSessionExpiredStatus(status: number): boolean {
+  return status === 401 || status === 403;
+}
+
 export const tokenRefreshInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn) => {
   const router = inject(Router);
   const authService = inject(AuthService);
+  const notifications = inject(NotificationService);
 
   const isAuthRecoveryRequest = (url: string): boolean =>
     url.includes('/api/auth/login') ||
     url.includes('/api/auth/register') ||
     url.includes('/api/auth/refresh') ||
+    url.includes('/api/auth/logout') ||
     url.includes('/api/auth/me');
 
   if (isAuthRecoveryRequest(req.url)) {
@@ -36,14 +43,15 @@ export const tokenRefreshInterceptor: HttpInterceptorFn = (req: HttpRequest<unkn
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      if (error.status === 401 && refreshToken) {
+      if (isSessionExpiredStatus(error.status) && refreshToken) {
         refreshPromise ??= firstValueFrom(authService.refreshAccessToken(refreshToken))
           .then((response) => {
-            const newAccessToken = response.success ? response.data?.accessToken : null;
-            if (newAccessToken) {
-              localStorage.setItem('accessToken', newAccessToken);
+            if (!response.success || !response.data?.accessToken) {
+              return null;
             }
-            return newAccessToken ?? null;
+
+            authService.persistRefreshResult(response.data);
+            return response.data.accessToken;
           })
           .finally(() => {
             refreshPromise = null;
@@ -51,7 +59,7 @@ export const tokenRefreshInterceptor: HttpInterceptorFn = (req: HttpRequest<unkn
         return from(refreshPromise).pipe(
           switchMap((newAccessToken) => {
             if (!newAccessToken) {
-              return handleAuthFailure(authService, router, 'Refresh response invalid');
+              return handleAuthFailure(authService, router, notifications, 'Refresh response invalid');
             }
 
             const retryReq = req.clone({
@@ -60,7 +68,7 @@ export const tokenRefreshInterceptor: HttpInterceptorFn = (req: HttpRequest<unkn
             return next(retryReq);
           }),
           catchError((refreshError) => {
-            return handleAuthFailure(authService, router, refreshError);
+            return handleAuthFailure(authService, router, notifications, refreshError);
           })
         );
       }
@@ -70,8 +78,14 @@ export const tokenRefreshInterceptor: HttpInterceptorFn = (req: HttpRequest<unkn
   );
 };
 
-function handleAuthFailure(authService: AuthService, router: Router, error: unknown) {
+function handleAuthFailure(
+  authService: AuthService,
+  router: Router,
+  notifications: NotificationService,
+  error: unknown,
+) {
   authService.logout();
-  router.navigate(['/login']);
+  notifications.showWarning('Your session has expired. Please sign in again.');
+  void router.navigate(['/login']);
   return throwError(() => error);
 }

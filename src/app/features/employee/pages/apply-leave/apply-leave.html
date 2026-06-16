@@ -1,11 +1,9 @@
 <section class="app-page">
-  <header class="app-page__hero">
-    <span class="app-eyebrow"> Leave</span>
-    <h1 class="app-title">Apply for time away</h1>
-    <p class="app-body mb-0">
-      Fill in the details below to submit or save a leave .
-    </p>
-  </header>
+  <app-page-header
+    eyebrow="Leave"
+    [title]="isEditingDraft ? 'Edit draft' : 'Apply for time away'"
+    subtitle="Fill in the details below to submit or save a leave request."
+  ></app-page-header>
 
   <div class="row g-3 align-items-start">
 

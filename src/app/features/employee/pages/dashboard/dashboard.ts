@@ -58,7 +58,7 @@ this.annualRemainingDays = this.employeeLeaveBalances.filter(lb=> lb.leaveTypeNa
   ).reduce((sum,balance)=> sum + balance.allocatedLeave,0);
    this.annualUsedDays = this.employeeLeaveBalances.filter(lb=> lb.leaveTypeName === 'ANNUAL').reduce((sum,balance)=> sum + balance.consumedLeave,0);
    this.pendingCount = this.employeeLeaveRequests.filter(l=> l.status === LeaveRequestStatusEnum.PENDING).length;
-   this.pendingCancelCount  = this.employeeLeaveRequests.filter(l=> l.status === LeaveRequestStatusEnum. CANCEL_PENDING).length;
+   this.pendingCancelCount  = this.employeeLeaveRequests.filter(l=> l.status === LeaveRequestStatusEnum.CANCEL_PENDING).length;
    const annualAllocatedLeave = this.employeeLeaveBalances.filter(lb=> lb.leaveTypeName === 'ANNUAL').reduce((sum,balance)=>sum+ balance.allocatedLeave,0)
    this.usedPercent =
   annualAllocatedLeave > 0

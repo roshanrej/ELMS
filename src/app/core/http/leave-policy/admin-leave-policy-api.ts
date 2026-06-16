@@ -3,6 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { ApiResponseDTO } from '../../dtos/api/api-response.model';
+import { CreateLeavePolicyResponseDTO } from '../../dtos/leave-policy/create-leave-policy-response.dto';
 import { LeavePolicyProjectionDTO } from '../../dtos/leave-policy/leave-policy.projection.dto';
 
 @Injectable({
@@ -25,8 +26,8 @@ export class AdminLeavePolicyApi {
       allocatedLeave: number;
       noticePeriodDays?: number;
     },
-  ): Observable<ApiResponseDTO<LeavePolicyProjectionDTO>> {
-    return this.http.post<ApiResponseDTO<LeavePolicyProjectionDTO>>(
+  ): Observable<ApiResponseDTO<CreateLeavePolicyResponseDTO>> {
+    return this.http.post<ApiResponseDTO<CreateLeavePolicyResponseDTO>>(
       `${this.baseUrl}/admin/api/leave-policies/create`,
       dto,
     );

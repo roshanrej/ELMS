@@ -39,7 +39,8 @@
             <option [ngValue]="'PENDING'">Pending</option>
             <option [ngValue]="'APPROVED'">Approved</option>
             <option [ngValue]="'REJECTED'">Rejected</option>
-            <option [ngValue]="'CANCEL_PENDING'">Cancel Pending</option>
+            <option [ngValue]="'CANCELLED'">Cancelled</option>
+            <option [ngValue]="'CANCEL_PENDING'">Cancellation Requested</option>
           </select>
         </div>
 
@@ -139,6 +140,7 @@
                   [actions]="getAvailableActions(leave)"
                   [disabled]="isRowPending(leave.leaveRequest.id)"
                   [pendingAction]="getRowPendingAction(leave.leaveRequest.id)"
+                  [closeRequested]="isMenuCloseRequested(leave.leaveRequest.id)"
                   [ariaLabel]="'Actions for ' + getTypeLabel(leave.leaveRequest.leaveType)"
                   (actionSelected)="requestAction(leave, $event)"
                   (menuStateChanged)="onMenuToggle(leave.leaveRequest.id, $event)"

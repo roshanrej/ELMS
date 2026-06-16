@@ -1,6 +1,4 @@
 import { Route } from '@angular/router';
-import { ManagerAnalyticsPage } from './pages/analytics/analytics';
-
 import { ManagerDashboardPage } from './pages/dashboard/dashboard';
 import { TeamLeavesPage } from './pages/team-leaves/team-leaves';
 import { managerDashboardDetailsResolver } from './resolvers/manager-dashboard-details.resolver';
@@ -20,5 +18,4 @@ export const managerRoutes: Route[] = [
       teamLeaves : managerOwnedLeavesResolver
     }
    },
-  { path: 'team/leave-analytics', component: ManagerAnalyticsPage },
 ];

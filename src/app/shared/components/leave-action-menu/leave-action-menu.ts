@@ -1,7 +1,20 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, Output, Renderer2, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  Input,
+  OnChanges,
+  OnDestroy,
+  Output,
+  Renderer2,
+  SimpleChanges,
+  ViewChild,
+} from '@angular/core';
 import { LeaveRequestActionEnum } from '../../../core/types-enums/leave-request-action.enum';
 import { getLeaveRequestActionMeta } from '../../models/leave-request-action-menu.model';
+import { BodyAnchoredMenuDom } from '../../utils/body-anchored-menu.dom';
 
 interface MenuPosition {
   top: number;
@@ -15,16 +28,17 @@ interface MenuPosition {
   templateUrl: './leave-action-menu.html',
   styleUrl: './leave-action-menu.scss',
 })
-export class LeaveActionMenuComponent implements OnDestroy {
+export class LeaveActionMenuComponent implements OnChanges, OnDestroy {
   constructor(
     private readonly elementRef: ElementRef<HTMLElement>,
-    private readonly renderer: Renderer2
+    private readonly renderer: Renderer2,
   ) {}
 
   @Input({ required: true }) actions: readonly LeaveRequestActionEnum[] = [];
   @Input() disabled = false;
   @Input() pendingAction: LeaveRequestActionEnum | null = null;
   @Input() ariaLabel = 'Leave request actions';
+  @Input() closeRequested = false;
 
   @Output() actionSelected = new EventEmitter<LeaveRequestActionEnum>();
   @Output() menuStateChanged = new EventEmitter<boolean>();
@@ -34,8 +48,7 @@ export class LeaveActionMenuComponent implements OnDestroy {
   isOpen = false;
   menuPosition: MenuPosition = { top: 0, left: 0 };
 
-  private originalParent: Node | null = null;
-  private isAppendedToBody = false;
+  private readonly bodyAnchor = new BodyAnchoredMenuDom();
 
   get visibleActions(): readonly LeaveRequestActionEnum[] {
     return this.actions ?? [];
@@ -49,49 +62,39 @@ export class LeaveActionMenuComponent implements OnDestroy {
     return this.disabled || !this.hasActions;
   }
 
-  private isClickInside(target: EventTarget | null): boolean {
-    if (!target) return false;
-    const node = target as Node;
-    const host = this.elementRef.nativeElement;
-    if (host.contains(node)) return true;
-    if (this.panelRef && this.panelRef.nativeElement.contains(node)) return true;
-    return false;
-  }
-
-  private appendPanelToBody(): void {
-    if (!this.panelRef || this.isAppendedToBody) return;
-    const panelEl = this.panelRef.nativeElement;
-    this.originalParent = panelEl.parentNode;
-    if (this.originalParent) {
-      this.renderer.appendChild(document.body, panelEl);
-      this.isAppendedToBody = true;
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['closeRequested']?.currentValue === true && this.isOpen) {
+      this.closeMenu();
     }
   }
 
-  private restorePanelToOriginalParent(): void {
-    if (!this.panelRef || !this.isAppendedToBody || !this.originalParent) return;
-    const panelEl = this.panelRef.nativeElement;
-    this.renderer.appendChild(this.originalParent, panelEl);
-    this.isAppendedToBody = false;
+  private isClickInside(target: EventTarget | null): boolean {
+    if (!target) {
+      return false;
+    }
+
+    const node = target as Node;
+    const host = this.elementRef.nativeElement;
+    if (host.contains(node)) {
+      return true;
+    }
+
+    return !!this.panelRef?.nativeElement.contains(node);
   }
 
   @HostListener('document:click', ['$event'])
   closeOnOutsideClick(event: MouseEvent): void {
-    if (!this.isClickInside(event.target)) {
-      if (this.isOpen) {
-        this.isOpen = false;
-        this.restorePanelToOriginalParent();
-        this.menuStateChanged.emit(false);
-      }
+    if (!this.isOpen || this.isClickInside(event.target)) {
+      return;
     }
+
+    this.closeMenu();
   }
 
   @HostListener('keydown.escape')
   closeOnEscape(): void {
     if (this.isOpen) {
-      this.isOpen = false;
-      this.restorePanelToOriginalParent();
-      this.menuStateChanged.emit(false);
+      this.closeMenu();
     }
   }
 
@@ -103,22 +106,24 @@ export class LeaveActionMenuComponent implements OnDestroy {
     }
   }
 
-  toggleMenu(): void {
-    if (this.isDisabled) return;
-    this.isOpen = !this.isOpen;
-    if (this.isOpen) {
-      this.setMenuPosition();
-      Promise.resolve().then(() => this.appendPanelToBody());
-    } else {
-      this.restorePanelToOriginalParent();
+  toggleMenu(event: MouseEvent): void {
+    event.stopPropagation();
+
+    if (this.isDisabled) {
+      return;
     }
-    this.menuStateChanged.emit(this.isOpen);
+
+    if (this.isOpen) {
+      this.closeMenu();
+      return;
+    }
+
+    this.openMenu();
   }
 
-  selectAction(action: LeaveRequestActionEnum): void {
-    this.isOpen = false;
-    this.restorePanelToOriginalParent();
-    this.menuStateChanged.emit(false);
+  selectAction(action: LeaveRequestActionEnum, event: MouseEvent): void {
+    event.stopPropagation();
+    this.closeMenu();
     this.actionSelected.emit(action);
   }
 
@@ -134,12 +139,37 @@ export class LeaveActionMenuComponent implements OnDestroy {
     return getLeaveRequestActionMeta(action).danger;
   }
 
+  ngOnDestroy(): void {
+    this.bodyAnchor.restore(this.renderer, this.panelRef?.nativeElement);
+    this.bodyAnchor.reset();
+  }
+
+  private openMenu(): void {
+    this.isOpen = true;
+    this.setMenuPosition();
+    this.menuStateChanged.emit(true);
+    Promise.resolve().then(() => this.bodyAnchor.append(this.renderer, this.panelRef?.nativeElement));
+  }
+
+  private closeMenu(): void {
+    if (!this.isOpen) {
+      this.bodyAnchor.reset();
+      return;
+    }
+
+    this.bodyAnchor.restore(this.renderer, this.panelRef?.nativeElement);
+    this.isOpen = false;
+    this.menuStateChanged.emit(false);
+  }
+
   private setMenuPosition(): void {
     const trigger = this.elementRef.nativeElement.querySelector<HTMLButtonElement>(
-      '.leave-action-menu__trigger'
+      '.leave-action-menu__trigger',
     );
 
-    if (!trigger) return;
+    if (!trigger) {
+      return;
+    }
 
     const rect = trigger.getBoundingClientRect();
     const viewportPadding = 8;
@@ -151,16 +181,12 @@ export class LeaveActionMenuComponent implements OnDestroy {
 
     const left = Math.min(
       Math.max(rect.right - panelWidth, viewportPadding),
-      window.innerWidth - panelWidth - viewportPadding
+      window.innerWidth - panelWidth - viewportPadding,
     );
 
     this.menuPosition = {
       left,
       top: opensUp ? rect.top - panelHeight - 6 : rect.bottom + 6,
     };
-  }
-
-  ngOnDestroy(): void {
-    this.restorePanelToOriginalParent();
   }
 }

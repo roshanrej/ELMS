@@ -182,7 +182,18 @@ export class LeaveTypesPage implements OnInit {
   }
 
   onMenuToggle(leaveTypeId: number, isOpen: boolean): void {
-    this.activeMenuRowId = isOpen ? leaveTypeId : null;
+    if (isOpen) {
+      this.activeMenuRowId = leaveTypeId;
+      return;
+    }
+
+    if (this.activeMenuRowId === leaveTypeId) {
+      this.activeMenuRowId = null;
+    }
+  }
+
+  isMenuCloseRequested(leaveTypeId: number): boolean {
+    return this.activeMenuRowId !== null && this.activeMenuRowId !== leaveTypeId;
   }
 
   closeDialogs(): void {

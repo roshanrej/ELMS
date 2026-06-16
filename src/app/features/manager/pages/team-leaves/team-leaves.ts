@@ -117,9 +117,7 @@ export class TeamLeavesPage implements OnInit {
   }
 
   getAvailableActions(employeeLeave: ManagerEmployeeLeaveDTO): LeaveRequestActionEnum[] {
-    return (
-      employeeLeave.leaveRequest.availableActions ?? employeeLeave.leaveRequest.allowedActions ?? []
-    );
+    return employeeLeave.leaveRequest.allowedActions ?? [];
   }
 
   getTypeLabel(type: string | null | undefined): string {
@@ -149,7 +147,18 @@ export class TeamLeavesPage implements OnInit {
   }
 
   onMenuToggle(leaveId: number, isOpen: boolean): void {
-    this.activeMenuRowId = isOpen ? leaveId : null;
+    if (isOpen) {
+      this.activeMenuRowId = leaveId;
+      return;
+    }
+
+    if (this.activeMenuRowId === leaveId) {
+      this.activeMenuRowId = null;
+    }
+  }
+
+  isMenuCloseRequested(leaveId: number): boolean {
+    return this.activeMenuRowId !== null && this.activeMenuRowId !== leaveId;
   }
 
   dismissConfirm(): void {
@@ -176,6 +185,10 @@ export class TeamLeavesPage implements OnInit {
     action: LeaveRequestActionEnum,
   ): Promise<void> {
     const leaveId = leave.leaveRequest.id;
+
+    if (this.actionPending.has(leaveId)) {
+      return;
+    }
 
     try {
       this.actionPending.set(leaveId, action);
@@ -218,6 +231,7 @@ export class TeamLeavesPage implements OnInit {
         this.notifications.showSuccess(getLeaveRequestActionMeta(action).successMessage);
       }
     } catch {
+      // ManagerLeaveService already surfaces API errors via NotificationService.
     } finally {
       this.actionPending.delete(leaveId);
     }

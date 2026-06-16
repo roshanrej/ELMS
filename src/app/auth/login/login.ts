@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { AuthStore } from '../store/auth.store';
 
@@ -14,7 +14,7 @@ import { AuthStore } from '../store/auth.store';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, RouterLink],
+  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './login.html',
   styleUrl: './login.scss',
 })
@@ -38,8 +38,8 @@ export class LoginPage implements OnInit {
     });
   }
 
-  ngOnInit(): void {
-    const user = this.authStore.currentUser;
+  async ngOnInit(): Promise<void> {
+    const user = this.authStore.currentUser ?? await this.authService.restoreSession();
     if (user) {
       this.navigateByRole(user.role);
     }

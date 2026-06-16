@@ -61,7 +61,7 @@ export class MyLeavesPage implements OnInit {
     this.mode = this.route.snapshot.data['mode'] ?? 'submitted';
     this.employeeLeaves = this.route.snapshot.data['leaves'] ?? [];
 
-    this.extractYears();
+    this.extractFilters();
     this.applyFilters();
     this.isLoading.set(false);
   }
@@ -70,6 +70,11 @@ export class MyLeavesPage implements OnInit {
     leave: LeaveRequestProjectionDTO,
     action: LeaveRequestActionEnum
   ): void {
+    if (action === LeaveRequestActionEnum.EDIT_DRAFT) {
+      void this.performAction(leave, action);
+      return;
+    }
+
     this.confirmTarget = { leave, action };
   }
 
@@ -93,7 +98,18 @@ export class MyLeavesPage implements OnInit {
   }
 
   onMenuToggle(leaveId: number, isOpen: boolean): void {
-    this.activeMenuRowId = isOpen ? leaveId : null;
+    if (isOpen) {
+      this.activeMenuRowId = leaveId;
+      return;
+    }
+
+    if (this.activeMenuRowId === leaveId) {
+      this.activeMenuRowId = null;
+    }
+  }
+
+  isMenuCloseRequested(leaveId: number): boolean {
+    return this.activeMenuRowId !== null && this.activeMenuRowId !== leaveId;
   }
 
   getRowPendingAction(leaveId: number): LeaveRequestActionEnum | null {
@@ -104,38 +120,44 @@ export class MyLeavesPage implements OnInit {
     leave: LeaveRequestProjectionDTO,
     action: LeaveRequestActionEnum
   ): Promise<void> {
+    if (this.actionPending.has(leave.id)) {
+      return;
+    }
+
     try {
       this.actionPending.set(leave.id, action);
+
+      let updatedLeave: LeaveRequestProjectionDTO | null = null;
 
       switch (action) {
 
         case LeaveRequestActionEnum.SUBMIT_REQUEST:
-          await firstValueFrom(
+          updatedLeave = await firstValueFrom(
             this.leaveService.submitExistingLeaveRequest(leave.id)
           );
-          this.notifications.showSuccess(getLeaveRequestActionMeta(action).successMessage);
           break;
 
         case LeaveRequestActionEnum.REQUEST_CANCEL:
-          await firstValueFrom(
+          updatedLeave = await firstValueFrom(
             this.leaveService.requestLeaveCancellation(leave.id)
           );
-          this.notifications.showSuccess(getLeaveRequestActionMeta(action).successMessage);
           break;
 
         case LeaveRequestActionEnum.CANCEL_REQUEST:
-          await firstValueFrom(
+          updatedLeave = await firstValueFrom(
             this.leaveService.cancelLeaveRequest(leave.id)
           );
-          this.notifications.showSuccess(getLeaveRequestActionMeta(action).successMessage);
           break;
 
         case LeaveRequestActionEnum.DELETE_DRAFT:
           await firstValueFrom(
             this.leaveService.deleteLeaveDraft(leave.id)
           );
+          this.employeeLeaves = this.employeeLeaves.filter((item) => item.id !== leave.id);
+          this.extractFilters();
+          this.applyFilters();
           this.notifications.showSuccess(getLeaveRequestActionMeta(action).successMessage);
-          break;
+          return;
 
         case LeaveRequestActionEnum.EDIT_DRAFT:
           await this.router.navigate(
@@ -152,9 +174,13 @@ export class MyLeavesPage implements OnInit {
           return;
       }
 
-      await this.refreshLeaves();
+      if (updatedLeave) {
+        this.updateLeavePayload(updatedLeave);
+        this.notifications.showSuccess(getLeaveRequestActionMeta(action).successMessage);
+      }
 
     } catch {
+      // LeaveService already surfaces API errors via NotificationService.
     } finally {
       this.actionPending.delete(leave.id);
     }
@@ -166,7 +192,7 @@ export class MyLeavesPage implements OnInit {
         ? this.leaveService.getEmployeeLeaveDrafts()
         : this.leaveService.getEmployeeLeaveRequestsProjections()
     );
-    this.extractYears();
+    this.extractFilters();
     this.applyFilters();
   }
 
@@ -200,18 +226,31 @@ export class MyLeavesPage implements OnInit {
     this.applyFilters();
   }
 
-  extractYears(): void {
+  extractFilters(): void {
     const years = new Set<number>();
+    const types = new Set<string>();
 
-    this.employeeLeaves.forEach(leave => {
+    this.employeeLeaves.forEach((leave) => {
       years.add(new Date(leave.startDate).getFullYear());
+      if (leave.leaveType) {
+        types.add(leave.leaveType);
+      }
     });
 
     this.years = Array.from(years).sort((a, b) => b - a);
+    this.leaveTypes = Array.from(types).sort();
+  }
+
+  private updateLeavePayload(updatedLeave: LeaveRequestProjectionDTO): void {
+    this.employeeLeaves = this.employeeLeaves.map((leave) =>
+      leave.id === updatedLeave.id ? updatedLeave : leave,
+    );
+    this.extractFilters();
+    this.applyFilters();
   }
 
   getAvailableActions(leave: LeaveRequestProjectionDTO): LeaveRequestActionEnum[] {
-    return leave.availableActions ?? leave.allowedActions ?? [];
+    return leave.allowedActions ?? [];
   }
 
   getTypeLabel(type: string | null | undefined): string {

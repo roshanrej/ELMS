@@ -176,7 +176,18 @@ export class TeamManagementPage implements OnInit {
   }
 
   onMenuToggle(teamId: number, isOpen: boolean): void {
-    this.activeMenuRowId = isOpen ? teamId : null;
+    if (isOpen) {
+      this.activeMenuRowId = teamId;
+      return;
+    }
+
+    if (this.activeMenuRowId === teamId) {
+      this.activeMenuRowId = null;
+    }
+  }
+
+  isMenuCloseRequested(teamId: number): boolean {
+    return this.activeMenuRowId !== null && this.activeMenuRowId !== teamId;
   }
 
   closeDialogs(): void {

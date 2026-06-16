@@ -147,6 +147,7 @@
                   [actions]="getAvailableActions(leave)"
                   [disabled]="isRowPending(leave.id)"
                   [pendingAction]="getRowPendingAction(leave.id)"
+                  [closeRequested]="isMenuCloseRequested(leave.id)"
                   [ariaLabel]="'Actions for ' + getTypeLabel(leave.leaveType)"
                   (actionSelected)="requestAction(leave, $event)"
                   (menuStateChanged)="onMenuToggle(leave.id, $event)"

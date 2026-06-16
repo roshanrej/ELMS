@@ -33,8 +33,16 @@
   display: flex;
   font-size: 0.95rem;
   font-weight: 600;
+  gap: 0.55rem;
   padding: 0.6rem 0.75rem;
   transition: background 0.2s ease, color 0.2s ease;
+}
+
+.nav-link__icon {
+  flex-shrink: 0;
+  font-size: 1rem;
+  opacity: 0.9;
+  width: 1.1rem;
 }
 
 .sidebar .border-top {

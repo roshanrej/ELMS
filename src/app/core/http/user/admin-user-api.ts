@@ -23,4 +23,11 @@ export class AdminUserApi {
       `${this.baseUrl}/admin/api/users/active`,
     );
   }
+
+  assignUserToTeam(userId: number, teamId: number): Observable<ApiResponseDTO<UserProjectionDTO>> {
+    return this.http.patch<ApiResponseDTO<UserProjectionDTO>>(
+      `${this.baseUrl}/admin/api/users/${userId}/team/${teamId}`,
+      null,
+    );
+  }
 }

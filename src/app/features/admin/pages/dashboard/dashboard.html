@@ -2,7 +2,7 @@
   <app-page-header
     eyebrow="Admin Dashboard"
     title="Control leave operations from one place."
-    subtitle="Review users, teams, leave types, policies, and activity across the organization."
+    subtitle="Set up users, teams, and leave policies before employees start requesting time off."
   ></app-page-header>
 
   <div class="row g-3">
@@ -15,46 +15,17 @@
     </div>
   </div>
 
-  <div class="row g-3">
-    <div class="col-lg-7">
-      <section class="app-card p-4 h-100">
-        <div class="d-flex justify-content-between align-items-start mb-4">
-          <div>
-            <span class="app-eyebrow">Workflow</span>
-            <h2 class="app-subtitle mb-1">Administrative focus</h2>
-            <p class="app-body mb-0">A basic operating skeleton for the current module set.</p>
-          </div>
-          <button type="button" class="btn btn-cream btn-sm">Review</button>
-        </div>
+  <section class="app-card p-4 mt-3">
+    <span class="app-eyebrow">Quick navigation</span>
+    <h2 class="app-subtitle mb-3">Admin workspace</h2>
 
-        <div class="list-group list-group-flush">
-          <div class="list-group-item px-0 bg-transparent d-flex justify-content-between">
-            <span>Department coverage</span>
-            <span class="badge badge-soft-red">Stable</span>
-          </div>
-          <div class="list-group-item px-0 bg-transparent d-flex justify-content-between">
-            <span>Employee records</span>
-            <span class="badge badge-soft-red">Needs review</span>
-          </div>
-          <div class="list-group-item px-0 bg-transparent d-flex justify-content-between">
-            <span>Leave quota cycle</span>
-            <span class="badge badge-soft-red">Ready</span>
-          </div>
-        </div>
-      </section>
+    <div class="row g-3">
+      <div class="col-md-4" *ngFor="let link of quickLinks">
+        <a [routerLink]="link.route" class="admin-quick-link app-card p-3 h-100 text-decoration-none">
+          <i class="bi admin-quick-link__icon" [ngClass]="link.icon" aria-hidden="true"></i>
+          <span class="admin-quick-link__label">{{ link.label }}</span>
+        </a>
+      </div>
     </div>
-
-    <div class="col-lg-5">
-      <section class="app-card p-4 h-100">
-        <span class="app-eyebrow">Placeholder</span>
-        <h2 class="app-subtitle">Workspace preview</h2>
-        <div class="placeholder-stack mb-3" aria-hidden="true">
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
-        <p class="app-body mb-0">Reserved space for the next admin summary panel.</p>
-      </section>
-    </div>
-  </div>
+  </section>
 </section>

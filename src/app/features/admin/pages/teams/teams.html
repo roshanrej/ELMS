@@ -75,6 +75,7 @@
             <td class="cell-action" [class.menu-open]="isRowMenuOpen(team.id)">
               <app-row-action-menu
                 [actions]="getTeamActions()"
+                [closeRequested]="isMenuCloseRequested(team.id)"
                 [ariaLabel]="'Actions for ' + team.teamName"
                 (menuStateChanged)="onMenuToggle(team.id, $event)"
                 (actionSelected)="onTeamMenuAction(team, $event)"

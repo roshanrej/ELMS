@@ -1,5 +1,4 @@
 import { Route } from "@angular/router";
-import { AdminAnalyticsPage } from "./pages/analytics/analytics";
 import { AdminDashboardPage } from "./pages/dashboard/dashboard";
 import { DepartmentsPage } from "./pages/departments/departments";
 import { EmployeesPage } from "./pages/employees/employees";
@@ -18,7 +17,10 @@ export const adminRoutes: Route[] = [
   {
     path: 'employees',
     component: EmployeesPage,
-    resolve: { employees: adminEmployeesResolver },
+    resolve: {
+      employees: adminEmployeesResolver,
+      teams: adminTeamsResolver,
+    },
   },
   {
     path: 'departments',
@@ -35,7 +37,10 @@ export const adminRoutes: Route[] = [
   {
     path: 'leave-quotas',
     component: LeaveQuotasPage,
-    resolve: { leavePolicies: adminLeavePoliciesResolver },
+    resolve: {
+      leavePolicies: adminLeavePoliciesResolver,
+      leaveTypes: adminLeaveTypesResolver,
+    },
   },
   {
     path: 'leave-types',
@@ -44,5 +49,4 @@ export const adminRoutes: Route[] = [
       leaveTypes: adminLeaveTypesResolver,
     },
   },
-  { path: 'analytics', component: AdminAnalyticsPage },
 ];

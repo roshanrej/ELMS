@@ -36,9 +36,7 @@ export class AuthService {
       this.authStore.setUser(user);
       this.sessionInitialized = true;
       return user;
-
     } catch (err: unknown) {
-
       if (err instanceof HttpErrorResponse) {
         if (err.status === 401) {
           throw new Error('Invalid email or password');
@@ -59,10 +57,20 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    this.authStore.clearUser();
-    this.sessionInitialized = true;
+    const refreshToken = localStorage.getItem('refreshToken');
+    this.clearLocalSession();
+
+    if (refreshToken) {
+      firstValueFrom(this.authApi.logoutUser(refreshToken)).catch(() => undefined);
+    }
+  }
+
+  persistRefreshResult(data: AccessTokenResponseDTO): void {
+    localStorage.setItem('accessToken', data.accessToken);
+
+    if (data.user?.email && data.user.role) {
+      this.authStore.setUser(data.user);
+    }
   }
 
   restoreSession(): Promise<UserContextDTO | null> {
@@ -89,11 +97,10 @@ export class AuthService {
     const refreshToken = localStorage.getItem('refreshToken');
 
     if (!accessToken && !refreshToken) {
-      this.logout();
+      this.clearLocalSession();
       return null;
     }
 
-    // Try current access token first via /me
     if (accessToken) {
       const user = await this.restoreFromCurrentAccessToken();
       if (user) {
@@ -102,7 +109,7 @@ export class AuthService {
     }
 
     if (!refreshToken) {
-      this.logout();
+      this.clearLocalSession();
       return null;
     }
 
@@ -113,11 +120,13 @@ export class AuthService {
         throw new Error('Invalid refresh response');
       }
 
-      localStorage.setItem('accessToken', response.data.accessToken);
+      this.persistRefreshResult(response.data);
 
-      // After refresh, fetch fresh user context
+      if (this.authStore.currentUser) {
+        return this.authStore.currentUser;
+      }
+
       const user = await this.restoreFromCurrentAccessToken();
-
       if (!user) {
         throw new Error('Unable to restore refreshed session');
       }
@@ -143,6 +152,13 @@ export class AuthService {
     } catch {
       return null;
     }
+  }
+
+  private clearLocalSession(): void {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    this.authStore.clearUser();
+    this.sessionInitialized = true;
   }
 
   getCurrentUser(): UserContextDTO | null {

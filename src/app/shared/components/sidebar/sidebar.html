@@ -1,5 +1,5 @@
 <aside class="sidebar d-flex flex-column h-100">
-   <div class="sidebar-header pb-3 mb-3">
+  <div class="sidebar-header pb-3 mb-3">
     <span class="brand-mark d-inline-flex align-items-center justify-content-center fw-bold flex-shrink-0" aria-hidden="true">
       <i class="bi bi-calendar2-check"></i>
     </span>
@@ -14,19 +14,22 @@
       *ngFor="let nav of navLinks"
       [routerLink]="nav.route"
       routerLinkActive="active"
-      [routerLinkActiveOptions]="{ exact: true }"
+      [routerLinkActiveOptions]="{ exact: nav.exact ?? false }"
       class="nav-link fw-medium"
     >
-      {{ nav.label }}
+      <i class="bi nav-link__icon" [ngClass]="nav.icon" aria-hidden="true"></i>
+      <span>{{ nav.label }}</span>
     </a>
   </nav>
 
-  <!-- Logout Section Aligned Conventionally -->
- <div class="mt-auto p-3 border-top">
-  <span class="small fw-medium d-block mb-2 text-sidebar-muted">Signed in as</span>
-  <div class="d-flex justify-content-between align-items-center gap-3">
-    <div class="h6 fw-bold mb-0 text-truncate">{{ user?.name || user?.email }}</div>
-    <button class="btn btn-sm btn-sidebar flex-shrink-0" (click)="logout()">Logout</button>
+  <div class="mt-auto p-3 border-top">
+    <span class="small fw-medium d-block mb-2 text-sidebar-muted">Signed in as</span>
+    <div class="d-flex justify-content-between align-items-center gap-3 mb-2">
+      <div class="min-width-0">
+        <div class="h6 fw-bold mb-0 text-truncate">{{ user?.name || user?.email }}</div>
+        <span *ngIf="roleLabel" class="small text-sidebar-muted">{{ roleLabel }}</span>
+      </div>
+      <button class="btn btn-sm btn-sidebar flex-shrink-0" type="button" (click)="logout()">Logout</button>
+    </div>
   </div>
-</div>
 </aside>
