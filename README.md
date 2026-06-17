@@ -10,7 +10,14 @@ The system provides role-based interfaces for:
 - Managers
 - Employees
 
-This is the **single shared Angular frontend** for `Polus_project`. The `sristhi_project` bundle references it via `../elms` (see `sristhi_project/start.ps1`).
+This is the **single shared website** for `Polus_project`.
+
+**Run it:**
+```powershell
+cd D:\Polus_project\elms
+.\run.ps1
+```
+Then open http://localhost:4200 (start a backend first — see `elms-backend-java/run.ps1` or `sristhi_project/README.md`).
 
 Users can:
 - Submit leave requests
