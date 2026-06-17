@@ -35,6 +35,7 @@ export const roleGuard: CanActivateFn = async (
 
 function dashboardForRole(role: string): string {
   const dashboardMap: Record<string, string> = {
+    SUPER_ADMIN: '/super-admin/dashboard',
     ADMIN: '/admin/dashboard',
     EMPLOYEE: '/employee/dashboard',
     MANAGER: '/manager/dashboard',

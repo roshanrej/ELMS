@@ -1,9 +1,11 @@
 <section class="app-page">
   <app-page-header
     eyebrow="Departments"
-    title="Department coverage overview"
-    subtitle="View departments provisioned by your organization setup."
-  />
+    title="Department management"
+    subtitle="Create departments and manage their lifecycle."
+  >
+    <button type="button" class="btn btn-primary" (click)="openCreateDialog()">Create department</button>
+  </app-page-header>
 
   <app-loading-spinner *ngIf="isLoading" />
 
@@ -17,7 +19,14 @@
             <span class="text-app-muted">Members</span>
             <strong>{{ department.memberCount }}</strong>
           </div>
-          <p class="small text-app-muted mb-0">Department ID: {{ department.id }}</p>
+          <div class="d-flex gap-2">
+            <button type="button" class="btn btn-sm btn-outline-primary" (click)="openRenameDialog(department)">
+              Rename
+            </button>
+            <button type="button" class="btn btn-sm btn-outline-secondary" (click)="toggleStatus(department)">
+              {{ department.status === 'ACTIVE' ? 'Deactivate' : 'Activate' }}
+            </button>
+          </div>
         </article>
       </div>
     </div>
@@ -29,3 +38,41 @@
     </ng-template>
   </ng-container>
 </section>
+
+<div class="modal fade show d-block" tabindex="-1" *ngIf="createDialogVisible" style="background: rgba(0,0,0,.45)">
+  <div class="modal-dialog">
+    <form class="modal-content" [formGroup]="createForm" (ngSubmit)="submitCreate()">
+      <div class="modal-header">
+        <h2 class="modal-title h5">Create department</h2>
+        <button type="button" class="btn-close" (click)="closeCreateDialog()"></button>
+      </div>
+      <div class="modal-body">
+        <label class="app-label" for="department-name">Name</label>
+        <input id="department-name" class="form-control" formControlName="name" />
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" (click)="closeCreateDialog()">Cancel</button>
+        <button type="submit" class="btn btn-primary">Create</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal fade show d-block" tabindex="-1" *ngIf="renameDialogVisible" style="background: rgba(0,0,0,.45)">
+  <div class="modal-dialog">
+    <form class="modal-content" [formGroup]="renameForm" (ngSubmit)="submitRename()">
+      <div class="modal-header">
+        <h2 class="modal-title h5">Rename department</h2>
+        <button type="button" class="btn-close" (click)="closeRenameDialog()"></button>
+      </div>
+      <div class="modal-body">
+        <label class="app-label" for="rename-department-name">Name</label>
+        <input id="rename-department-name" class="form-control" formControlName="name" />
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" (click)="closeRenameDialog()">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save</button>
+      </div>
+    </form>
+  </div>
+</div>

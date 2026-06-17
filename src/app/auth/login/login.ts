@@ -135,6 +135,7 @@ export class LoginPage implements OnInit {
    */
   private navigateByRole(role: string): void {
     const dashboardMap: Record<string, string> = {
+      'SUPER_ADMIN': '/super-admin/dashboard',
       'ADMIN': '/admin/dashboard',
       'EMPLOYEE': '/employee/dashboard',
       'MANAGER': '/manager/dashboard'

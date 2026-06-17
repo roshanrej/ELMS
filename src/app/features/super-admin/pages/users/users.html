@@ -1,0 +1,120 @@
+<section class="app-page">
+  <app-page-header
+    eyebrow="Super Admin"
+    title="User registration & lifecycle"
+    subtitle="Create users and activate or deactivate accounts. ADMIN users cannot perform these actions."
+  >
+    <button type="button" class="btn btn-primary" (click)="openCreateDialog()">Register user</button>
+  </app-page-header>
+
+  <app-loading-spinner *ngIf="isLoading" />
+
+  <ng-container *ngIf="!isLoading">
+    <section class="app-card overflow-hidden">
+      <div class="p-4 border-bottom">
+        <h2 class="app-subtitle mb-1">All users</h2>
+        <p class="app-body mb-0">Full user payload from the super-admin API.</p>
+      </div>
+
+      <div class="table-responsive" *ngIf="users.length; else emptyUsers">
+        <table class="table app-table align-middle mb-0">
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Role</th>
+              <th scope="col">Department</th>
+              <th scope="col">Team</th>
+              <th scope="col">Status</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of users" [class.menu-open]="isRowMenuOpen(user.id)">
+              <td>
+                <div class="fw-bold">{{ user.name }}</div>
+                <div class="small text-app-muted">{{ user.email }}</div>
+              </td>
+              <td>{{ formatLabel(user.role) }}</td>
+              <td>{{ formatLabel(user.department) }}</td>
+              <td>{{ user.teamName || 'Unassigned' }}</td>
+              <td><app-leave-status-badge [status]="user.status"></app-leave-status-badge></td>
+              <td [class.menu-open]="isRowMenuOpen(user.id)">
+                <app-row-action-menu
+                  *ngIf="canManageUser(user); else protectedUser"
+                  [actions]="getUserActions(user)"
+                  [closeRequested]="isMenuCloseRequested(user.id)"
+                  [ariaLabel]="'Actions for ' + user.name"
+                  (menuStateChanged)="onMenuToggle(user.id, $event)"
+                  (actionSelected)="onUserMenuAction(user, $event)"
+                />
+                <ng-template #protectedUser>
+                  <span class="text-app-muted">Protected</span>
+                </ng-template>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ng-template #emptyUsers>
+        <div class="app-empty-state p-5 text-center">
+          <i class="bi bi-people app-empty-state__icon" aria-hidden="true"></i>
+          <p class="mb-0 mt-3">No users found.</p>
+        </div>
+      </ng-template>
+    </section>
+  </ng-container>
+</section>
+
+<div class="app-modal-backdrop" *ngIf="createDialogVisible" (click)="closeCreateDialog()"></div>
+
+<section class="app-modal app-card" *ngIf="createDialogVisible">
+  <div class="app-modal__header d-flex justify-content-between align-items-start p-4 border-bottom">
+    <div>
+      <span class="app-eyebrow">Register user</span>
+      <h2 class="app-subtitle mb-1">Create a new account</h2>
+      <p class="text-app-muted mb-0">Assign ADMIN, MANAGER, or EMPLOYEE roles only.</p>
+    </div>
+    <button type="button" class="btn-close" aria-label="Close" (click)="closeCreateDialog()"></button>
+  </div>
+
+  <form class="app-modal__body p-4" [formGroup]="createForm" (ngSubmit)="submitCreateUser()">
+    <div class="mb-3">
+      <label class="form-label" for="create-name">Full name</label>
+      <input id="create-name" class="form-control" formControlName="name" />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label" for="create-email">Email</label>
+      <input id="create-email" class="form-control" type="email" formControlName="email" />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label" for="create-password">Password</label>
+      <input id="create-password" class="form-control" type="password" formControlName="password" />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label" for="create-department">Department</label>
+      <select id="create-department" class="form-select" formControlName="departmentId">
+        <option [ngValue]="null">Select department</option>
+        <option *ngFor="let department of departments" [ngValue]="department.id">
+          {{ formatLabel(department.name) }}
+        </option>
+      </select>
+    </div>
+
+    <div class="mb-4">
+      <label class="form-label" for="create-role">Role</label>
+      <select id="create-role" class="form-select" formControlName="roleId">
+        <option [ngValue]="null">Select role</option>
+        <option *ngFor="let role of roles" [ngValue]="role.id">{{ formatLabel(role.name) }}</option>
+      </select>
+    </div>
+
+    <div class="d-flex justify-content-end gap-2">
+      <button type="button" class="btn btn-outline-secondary" (click)="closeCreateDialog()">Cancel</button>
+      <button type="submit" class="btn btn-app">Create user</button>
+    </div>
+  </form>
+</section>

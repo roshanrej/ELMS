@@ -6,6 +6,10 @@ export interface AppNavItem {
 }
 
 export const NAVIGATION_BY_ROLE: Record<string, AppNavItem[]> = {
+  SUPER_ADMIN: [
+    { label: 'Dashboard', route: '/super-admin/dashboard', icon: 'bi-grid', exact: true },
+    { label: 'Users', route: '/super-admin/users', icon: 'bi-person-plus', exact: true },
+  ],
   ADMIN: [
     { label: 'Dashboard', route: '/admin/dashboard', icon: 'bi-grid', exact: true },
     { label: 'Users', route: '/admin/employees', icon: 'bi-people', exact: true },

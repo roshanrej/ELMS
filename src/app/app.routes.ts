@@ -10,6 +10,13 @@ export const routes: Route[] = [
     loadChildren: () => import('./auth/auth.routes').then(r => r.authRoutes),
   },
   {
+    path: 'super-admin',
+    canActivate: [authGuard, roleGuard],
+    data: { requiredRole: 'SUPER_ADMIN' },
+    component: MainShell,
+    loadChildren: () => import('./features/super-admin/super-admin.routes').then(m => m.superAdminRoutes),
+  },
+  {
     path: 'admin',
     canActivate: [authGuard, roleGuard],
     data: { requiredRole: 'ADMIN' },

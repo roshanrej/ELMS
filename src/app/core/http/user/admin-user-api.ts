@@ -30,4 +30,21 @@ export class AdminUserApi {
       null,
     );
   }
+
+  assignUserRole(userId: number, roleId: number): Observable<ApiResponseDTO<UserProjectionDTO>> {
+    return this.http.patch<ApiResponseDTO<UserProjectionDTO>>(
+      `${this.baseUrl}/admin/api/users/${userId}/role/${roleId}`,
+      null,
+    );
+  }
+
+  assignUserDepartment(
+    userId: number,
+    departmentId: number,
+  ): Observable<ApiResponseDTO<UserProjectionDTO>> {
+    return this.http.patch<ApiResponseDTO<UserProjectionDTO>>(
+      `${this.baseUrl}/admin/api/users/${userId}/department/${departmentId}`,
+      null,
+    );
+  }
 }

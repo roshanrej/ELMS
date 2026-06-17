@@ -2,7 +2,7 @@
   <app-page-header
     eyebrow="Users"
     title="Users"
-    subtitle="View organization users and assign employees to teams."
+    subtitle="Manage roles, departments, and team assignments."
   />
 
   <app-loading-spinner *ngIf="isLoading" />
@@ -56,16 +56,12 @@
               <td class="cell-status"><app-leave-status-badge [status]="employee.status"></app-leave-status-badge></td>
               <td class="cell-action" [class.menu-open]="isRowMenuOpen(employee.id)">
                 <app-row-action-menu
-                  *ngIf="canAssignTeam(employee); else noEmployeeActions"
-                  [actions]="getEmployeeActions()"
+                  [actions]="getEmployeeActions(employee)"
                   [closeRequested]="isMenuCloseRequested(employee.id)"
                   [ariaLabel]="'Actions for ' + employee.name"
                   (menuStateChanged)="onMenuToggle(employee.id, $event)"
                   (actionSelected)="onEmployeeMenuAction(employee, $event)"
                 />
-                <ng-template #noEmployeeActions>
-                  <span class="text-app-muted">—</span>
-                </ng-template>
               </td>
             </tr>
           </tbody>
@@ -81,30 +77,70 @@
   </ng-container>
 </section>
 
-<div class="app-modal-backdrop" *ngIf="assignDialogVisible" (click)="closeAssignDialog()"></div>
+<div class="app-modal-backdrop" *ngIf="dialogMode" (click)="closeDialog()"></div>
 
-<section class="app-modal app-card" *ngIf="assignDialogVisible && selectedEmployee">
+<section class="app-modal app-card" *ngIf="dialogMode === 'team' && selectedEmployee">
   <div class="app-modal__header d-flex justify-content-between align-items-start p-4 border-bottom">
     <div>
       <span class="app-eyebrow">Assign team</span>
       <h2 class="app-subtitle mb-1">{{ selectedEmployee.name }}</h2>
-      <p class="text-app-muted mb-0">Employees need a team (with a manager) before they can submit leave.</p>
     </div>
-    <button type="button" class="btn-close" aria-label="Close" (click)="closeAssignDialog()"></button>
+    <button type="button" class="btn-close" aria-label="Close" (click)="closeDialog()"></button>
   </div>
-
   <div class="app-modal__body p-4">
-    <div class="mb-3">
-      <label class="form-label" for="employee-team">Team</label>
-      <select id="employee-team" class="form-select" [formControl]="assignTeamForm.controls.teamId">
-        <option [ngValue]="null">Select a team</option>
-        <option *ngFor="let team of teams" [ngValue]="team.id">{{ team.teamName }}</option>
-      </select>
-    </div>
-
-    <div class="d-flex justify-content-end gap-2">
-      <button type="button" class="btn btn-outline-secondary" (click)="closeAssignDialog()">Cancel</button>
+    <label class="form-label" for="employee-team">Team</label>
+    <select id="employee-team" class="form-select" [formControl]="assignTeamForm.controls.teamId">
+      <option [ngValue]="null">Select a team</option>
+      <option *ngFor="let team of teams" [ngValue]="team.id">{{ team.teamName }}</option>
+    </select>
+    <div class="d-flex justify-content-end gap-2 mt-4">
+      <button type="button" class="btn btn-outline-secondary" (click)="closeDialog()">Cancel</button>
       <button type="button" class="btn btn-app" (click)="submitAssignTeam()">Assign</button>
+    </div>
+  </div>
+</section>
+
+<section class="app-modal app-card" *ngIf="dialogMode === 'role' && selectedEmployee">
+  <div class="app-modal__header d-flex justify-content-between align-items-start p-4 border-bottom">
+    <div>
+      <span class="app-eyebrow">Assign role</span>
+      <h2 class="app-subtitle mb-1">{{ selectedEmployee.name }}</h2>
+      <p class="text-app-muted mb-0">Protected leave balances are preserved when roles change.</p>
+    </div>
+    <button type="button" class="btn-close" aria-label="Close" (click)="closeDialog()"></button>
+  </div>
+  <div class="app-modal__body p-4">
+    <label class="form-label" for="employee-role">Role</label>
+    <select id="employee-role" class="form-select" [formControl]="assignRoleForm.controls.roleId">
+      <option [ngValue]="null">Select a role</option>
+      <option *ngFor="let role of roles" [ngValue]="role.id">{{ formatLabel(role.name) }}</option>
+    </select>
+    <div class="d-flex justify-content-end gap-2 mt-4">
+      <button type="button" class="btn btn-outline-secondary" (click)="closeDialog()">Cancel</button>
+      <button type="button" class="btn btn-app" (click)="submitAssignRole()">Assign</button>
+    </div>
+  </div>
+</section>
+
+<section class="app-modal app-card" *ngIf="dialogMode === 'department' && selectedEmployee">
+  <div class="app-modal__header d-flex justify-content-between align-items-start p-4 border-bottom">
+    <div>
+      <span class="app-eyebrow">Assign department</span>
+      <h2 class="app-subtitle mb-1">{{ selectedEmployee.name }}</h2>
+    </div>
+    <button type="button" class="btn-close" aria-label="Close" (click)="closeDialog()"></button>
+  </div>
+  <div class="app-modal__body p-4">
+    <label class="form-label" for="employee-department">Department</label>
+    <select id="employee-department" class="form-select" [formControl]="assignDepartmentForm.controls.departmentId">
+      <option [ngValue]="null">Select a department</option>
+      <option *ngFor="let department of departments" [ngValue]="department.id">
+        {{ formatLabel(department.name) }}
+      </option>
+    </select>
+    <div class="d-flex justify-content-end gap-2 mt-4">
+      <button type="button" class="btn btn-outline-secondary" (click)="closeDialog()">Cancel</button>
+      <button type="button" class="btn btn-app" (click)="submitAssignDepartment()">Assign</button>
     </div>
   </div>
 </section>

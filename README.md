@@ -5,9 +5,12 @@
 The **Employee Leave Management System (ELMS)** frontend is a full-stack enterprise-oriented web application built using Angular for managing employee leave workflows within an organization.
 
 The system provides role-based interfaces for:
-- Employees
-- Managers
+- Super Administrators
 - Administrators
+- Managers
+- Employees
+
+This is the **single shared Angular frontend** for `Polus_project`. The `sristhi_project` bundle references it via `../elms` (see `sristhi_project/start.ps1`).
 
 Users can:
 - Submit leave requests

@@ -1,0 +1,17 @@
+<section class="app-page">
+  <app-page-header
+    eyebrow="Super Admin"
+    title="Platform control"
+    subtitle="Create accounts and manage user lifecycle. Operational admin tasks stay with ADMIN users."
+  />
+
+  <div class="row g-3">
+    <div class="col-md-4" *ngFor="let link of quickLinks">
+      <a class="app-card p-4 d-block text-decoration-none h-100" [routerLink]="link.route">
+        <i class="bi {{ link.icon }} fs-4 mb-3 d-block"></i>
+        <h2 class="app-subtitle mb-1">{{ link.label }}</h2>
+        <p class="text-app-muted mb-0">Open {{ link.label | lowercase }} workspace</p>
+      </a>
+    </div>
+  </div>
+</section>

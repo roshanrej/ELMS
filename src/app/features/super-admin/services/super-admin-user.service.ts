@@ -1,15 +1,16 @@
 import { inject, Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
-import { unwrapApiResponse } from '../../../../core/dtos/api/api-response.utils';
-import { UserProjectionDTO } from '../../../../core/dtos/user/user-projection.dto';
-import { AdminUserApi } from '../../../../core/http/user/admin-user-api';
-import { NotificationService } from '../../../../shared/services/notification.service';
+import { unwrapApiResponse } from '../../../core/dtos/api/api-response.utils';
+import { CreateUserRequestDTO } from '../../../core/dtos/user/create-user-request.dto';
+import { UserProjectionDTO } from '../../../core/dtos/user/user-projection.dto';
+import { SuperAdminUserApi } from '../../../core/http/user/super-admin-user-api';
+import { NotificationService } from '../../../shared/services/notification.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class AdminUserService {
-  private readonly api = inject(AdminUserApi);
+export class SuperAdminUserService {
+  private readonly api = inject(SuperAdminUserApi);
   private readonly notifications = inject(NotificationService);
 
   loadUsers(): Observable<UserProjectionDTO[]> {
@@ -23,8 +24,8 @@ export class AdminUserService {
     );
   }
 
-  assignUserToTeam(userId: number, teamId: number): Observable<UserProjectionDTO> {
-    return this.api.assignUserToTeam(userId, teamId).pipe(
+  createUser(payload: CreateUserRequestDTO): Observable<UserProjectionDTO> {
+    return this.api.createUser(payload).pipe(
       map((response) =>
         unwrapApiResponse(response, {
           onError: this.handleServiceError,
@@ -33,8 +34,8 @@ export class AdminUserService {
     );
   }
 
-  assignUserRole(userId: number, roleId: number): Observable<UserProjectionDTO> {
-    return this.api.assignUserRole(userId, roleId).pipe(
+  activateUser(userId: number): Observable<UserProjectionDTO> {
+    return this.api.activateUser(userId).pipe(
       map((response) =>
         unwrapApiResponse(response, {
           onError: this.handleServiceError,
@@ -43,8 +44,8 @@ export class AdminUserService {
     );
   }
 
-  assignUserDepartment(userId: number, departmentId: number): Observable<UserProjectionDTO> {
-    return this.api.assignUserDepartment(userId, departmentId).pipe(
+  deactivateUser(userId: number): Observable<UserProjectionDTO> {
+    return this.api.deactivateUser(userId).pipe(
       map((response) =>
         unwrapApiResponse(response, {
           onError: this.handleServiceError,

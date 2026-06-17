@@ -9,6 +9,8 @@ import { RowActionMenuComponent } from '../../../../shared/components/row-action
 import { UserProjectionDTO } from '../../../../core/dtos/user/user-projection.dto';
 import { UserStatusEnum } from '../../../../core/types-enums/user-status.enum';
 import { TeamDTO } from '../../../../core/dtos/team/team.model';
+import { DepartmentProjectionDTO } from '../../../../core/dtos/department/department.projection.dto';
+import { RoleDTO } from '../../../../core/http/role/admin-role-api';
 import { AdminUserService } from '../../services/user/admin-user.service';
 import { NotificationService } from '../../../../shared/services/notification.service';
 
@@ -17,6 +19,8 @@ interface EmployeeStat {
   value: string;
   note: string;
 }
+
+type DialogMode = 'team' | 'role' | 'department' | null;
 
 @Component({
   selector: 'app-employees',
@@ -39,19 +43,31 @@ export class EmployeesPage implements OnInit {
 
   employees: UserProjectionDTO[] = [];
   teams: TeamDTO[] = [];
+  departments: DepartmentProjectionDTO[] = [];
+  roles: RoleDTO[] = [];
   employeeStats: EmployeeStat[] = [];
   isLoading = true;
   activeMenuRowId: number | null = null;
-  assignDialogVisible = false;
+  dialogMode: DialogMode = null;
   selectedEmployee: UserProjectionDTO | null = null;
 
   readonly assignTeamForm = this.fb.group({
     teamId: this.fb.control<number | null>(null, Validators.required),
   });
 
+  readonly assignRoleForm = this.fb.group({
+    roleId: this.fb.control<number | null>(null, Validators.required),
+  });
+
+  readonly assignDepartmentForm = this.fb.group({
+    departmentId: this.fb.control<number | null>(null, Validators.required),
+  });
+
   ngOnInit(): void {
     this.employees = this.route.snapshot.data['employees'] ?? [];
     this.teams = this.route.snapshot.data['teams'] ?? [];
+    this.departments = this.route.snapshot.data['departments'] ?? [];
+    this.roles = this.route.snapshot.data['roles'] ?? [];
     this.buildStats();
     this.isLoading = false;
   }
@@ -65,12 +81,15 @@ export class EmployeesPage implements OnInit {
       .join(' ');
   }
 
-  canAssignTeam(employee: UserProjectionDTO): boolean {
-    return employee.role === 'EMPLOYEE';
-  }
-
-  getEmployeeActions(): readonly { id: string; label: string }[] {
-    return [{ id: 'assign-team', label: 'Assign team' }];
+  getEmployeeActions(employee: UserProjectionDTO): readonly { id: string; label: string }[] {
+    const actions: { id: string; label: string }[] = [
+      { id: 'assign-role', label: 'Assign role' },
+      { id: 'assign-department', label: 'Assign department' },
+    ];
+    if (employee.role === 'EMPLOYEE') {
+      actions.push({ id: 'assign-team', label: 'Assign team' });
+    }
+    return actions;
   }
 
   isRowMenuOpen(employeeId: number): boolean {
@@ -93,20 +112,23 @@ export class EmployeesPage implements OnInit {
   }
 
   onEmployeeMenuAction(employee: UserProjectionDTO, actionId: string): void {
+    this.selectedEmployee = employee;
+    this.activeMenuRowId = null;
+
     if (actionId === 'assign-team') {
-      this.openAssignTeamDialog(employee);
+      this.assignTeamForm.reset({ teamId: null });
+      this.dialogMode = 'team';
+    } else if (actionId === 'assign-role') {
+      this.assignRoleForm.reset({ roleId: null });
+      this.dialogMode = 'role';
+    } else if (actionId === 'assign-department') {
+      this.assignDepartmentForm.reset({ departmentId: null });
+      this.dialogMode = 'department';
     }
   }
 
-  openAssignTeamDialog(employee: UserProjectionDTO): void {
-    this.selectedEmployee = employee;
-    this.assignTeamForm.reset({ teamId: null });
-    this.assignDialogVisible = true;
-    this.activeMenuRowId = null;
-  }
-
-  closeAssignDialog(): void {
-    this.assignDialogVisible = false;
+  closeDialog(): void {
+    this.dialogMode = null;
     this.selectedEmployee = null;
   }
 
@@ -117,17 +139,48 @@ export class EmployeesPage implements OnInit {
     }
 
     const teamId = this.assignTeamForm.value.teamId as number;
-
     this.adminUserService.assignUserToTeam(this.selectedEmployee.id, teamId).subscribe({
-      next: (updatedUser) => {
-        this.employees = this.employees.map((employee) =>
-          employee.id === updatedUser.id ? updatedUser : employee,
-        );
-        this.buildStats();
-        this.closeAssignDialog();
-        this.notifications.showSuccess('Employee assigned to team.');
-      },
+      next: (updatedUser) => this.updateEmployee(updatedUser, 'Employee assigned to team.'),
     });
+  }
+
+  submitAssignRole(): void {
+    if (!this.selectedEmployee || this.assignRoleForm.invalid) {
+      this.assignRoleForm.markAllAsTouched();
+      return;
+    }
+
+    const roleId = this.assignRoleForm.value.roleId as number;
+    this.adminUserService.assignUserRole(this.selectedEmployee.id, roleId).subscribe({
+      next: (updatedUser) =>
+        this.updateEmployee(
+          updatedUser,
+          'Role updated. Leave balances were protected for role migration.',
+        ),
+    });
+  }
+
+  submitAssignDepartment(): void {
+    if (!this.selectedEmployee || this.assignDepartmentForm.invalid) {
+      this.assignDepartmentForm.markAllAsTouched();
+      return;
+    }
+
+    const departmentId = this.assignDepartmentForm.value.departmentId as number;
+    this.adminUserService
+      .assignUserDepartment(this.selectedEmployee.id, departmentId)
+      .subscribe({
+        next: (updatedUser) => this.updateEmployee(updatedUser, 'Department assigned.'),
+      });
+  }
+
+  private updateEmployee(updatedUser: UserProjectionDTO, message: string): void {
+    this.employees = this.employees.map((employee) =>
+      employee.id === updatedUser.id ? updatedUser : employee,
+    );
+    this.buildStats();
+    this.closeDialog();
+    this.notifications.showSuccess(message);
   }
 
   private buildStats(): void {

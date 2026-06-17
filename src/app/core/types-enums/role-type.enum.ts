@@ -1,5 +1,6 @@
 
 export enum ROLE_TYPE  {
+  SUPER_ADMIN = 'SUPER_ADMIN',
   ADMIN= 'ADMIN',
   EMPLOYEE = 'EMPLOYEE',
   MANAGER = 'MANAGER'

@@ -9,6 +9,7 @@ import { adminTeamsResolver } from "./resolvers/teams.resolver";
 import { adminLeaveTypesResolver } from "./resolvers/leave-types.resolver";
 import { adminEmployeesResolver } from "./resolvers/employees.resolver";
 import { adminDepartmentsResolver } from "./resolvers/departments.resolver";
+import { adminRolesResolver } from "./resolvers/roles.resolver";
 import { adminLeavePoliciesResolver } from "./resolvers/leave-policies.resolver";
 
 export const adminRoutes: Route[] = [
@@ -20,6 +21,8 @@ export const adminRoutes: Route[] = [
     resolve: {
       employees: adminEmployeesResolver,
       teams: adminTeamsResolver,
+      departments: adminDepartmentsResolver,
+      roles: adminRolesResolver,
     },
   },
   {
