@@ -59,6 +59,7 @@ export class SuperAdminUsersPage implements OnInit {
   get currentUserEmail(): string | undefined {
     return this.authStore.currentUser?.email;
   }
+  
 
   formatLabel(value: string): string {
     return value
